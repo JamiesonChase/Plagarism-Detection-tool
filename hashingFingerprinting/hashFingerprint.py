@@ -7,6 +7,8 @@
 # https://www.digitalocean.com/community/tutorials/how-to-do-math-in-python-3-with-operators
 # https://careerkarma.com/blog/python-string-to-int/
 # https://www.delftstack.com/howto/python/python-overwrite-file/
+# Information about hashing: http://www.cs.cmu.edu/afs/cs/academic/class/15451-f14/www/lectures/lec6/karp-rabin-09-15-14.pdf
+# Information about hashing: https://en.m.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm
 import sys
 
 f = open('testing.txt')
