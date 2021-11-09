@@ -2,14 +2,9 @@ First Draft for preprocessing tool, comments and newline will be stripped. Varia
 
 ## Example
 
-<table border="0">
- <tr>
-    <td><b style="font-size:30px">Before </b></td>
-    <td><b style="font-size:30px">After </b></td>
- </tr>
- <tr>
-   <td><pre>
-  <code>
+### Before
+```py
+
 # This is a test function with junk comments
 
 def main():
@@ -24,11 +19,10 @@ def addNum(x,y): #function
  return x+y
 
 main()
-  </code>
-</pre></td>
-   <td><pre>
-  <code>
- def fun1():
+```
+### After
+```python
+def fun1():
  var1 = fun2(1,2) 
  var2 = fun2(3,4) 
  var3 = var1 + var2
@@ -36,10 +30,7 @@ main()
 def fun2(var4,var5): 
  return var4+var5
 fun1()
-  </code>
-</pre></td>
- </tr>
-</table>
+```
 
 ## Installation:
 First pyminifer needs to be installed. Verify using version 2.2, might have to install directly from github [repo](https://github.com/liftoff/pyminifier).
