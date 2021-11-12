@@ -15,8 +15,16 @@
 # https://www.kite.com/python/answers/how-to-remove-the-first-element-from-a-list-in-python#:~:text=%5B2%2C%203%5D-,Use%20list.,and%20return%20the%20first%20element.
 # https://stackoverflow.com/questions/4945548/remove-the-first-character-of-a-string
 # https://stackoverflow.com/questions/2612802/list-changes-unexpectedly-after-assignment-why-is-this-and-how-can-i-prevent-it
-import sys
 
+def index_to_lines(s, index):
+    """Returns (line_number, col) of `index` in `s`."""
+    s = str(s)
+    if not len(s):
+        return 1
+    a = len(s[:min(index)+1].splitlines())
+    b = len(s[:max(index)+1].splitlines())
+
+    return list(range(a,b+1))
 
 def hashingFunction(inputString, ngram):
 
@@ -44,7 +52,7 @@ def hashingFunction(inputString, ngram):
         firstHashValue = firstHashValue + ord(var)*(2**(ngram - i))
         i = i + 1
 
-    firstArrayOfIndex = list(ArrayOfIndex) #Add the first tupele
+    firstArrayOfIndex = index_to_lines(inputString, ArrayOfIndex) #Add the first tupele
     tupleVariable = (firstArrayOfIndex, firstHashValue)
     ArrayOfTuples.append(tupleVariable)
 
@@ -56,7 +64,7 @@ def hashingFunction(inputString, ngram):
             firstHashValue = ( firstHashValue - ord(beginningString[0]) *2**(ngram - 1) )*2 +  ord(inputString[currentIndex]) # Get the next hash
             del ArrayOfIndex[0] #Remove the index no longer in use
             ArrayOfIndex.append(currentIndex) #Append the new index
-            localArrayOfIndex = list(ArrayOfIndex)
+            localArrayOfIndex = index_to_lines(inputString, ArrayOfIndex)
 
             beginningString = beginningString[1:] #Adjust the next ngrams
             beginningString += inputString[currentIndex]
@@ -74,6 +82,7 @@ FileVaraible = open("test.py_Processed")
 fileString = FileVaraible.read()
 returnArray = hashingFunction(fileString, 4)
 print(returnArray)
+
 
 
 
