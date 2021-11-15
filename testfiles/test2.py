@@ -14,7 +14,7 @@ def main():
 
  #bala blah blah
 
-def addNum(x,y): #function
+def subNum(x,y): #function
  return x-y
 
 main()
