@@ -3,7 +3,7 @@ from hashFingerprint import hashingFunction
 from winnowing import winnow
 import pprint as pp
 
-def inverted_index_create(s):
+def inverted_index_create(s): # create inverted index for particular document
     inverted = {}
     for index, hash in s:
         locations = inverted.setdefault(hash, [])
@@ -12,7 +12,7 @@ def inverted_index_create(s):
                 locations.append(i)
     return inverted
 
-def corpus_add_index(corpus,doc_id, s):
+def corpus_add_index(corpus,doc_id, s): # add an inverted index to corpus
     for word, locations in s.items():
         indices = corpus.setdefault(word, {})
         indices[doc_id] = locations
@@ -21,12 +21,12 @@ def corpus_add_index(corpus,doc_id, s):
 def main():
 
     corpus = {}
-    documents = {'doc1':'test.py', 'doc2':'test2.py'}
+    documents = {'doc1':'testfiles/test.py', 'doc2':'testfiles/test2.py'} # add test files
     for doc_id,path in documents.items():
-        s = process(path)
-        s = hashingFunction(s, 4)
-        s = winnow(4, s)
-        s = inverted_index_create(s)
-        corpus = corpus_add_index(corpus,doc_id,s)
-    pp.pprint(corpus)
+        s = process(path) # pre-process doc
+        s = hashingFunction(s, 4) # create finger print hashes
+        s = winnow(4, s) # perform winnowing algo
+        s = inverted_index_create(s) # created the inverted index
+        corpus = corpus_add_index(corpus,doc_id,s) # add index to corpus
+    pp.pprint(corpus) # pretty print corpus
 main()
