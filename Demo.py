@@ -1,6 +1,6 @@
-from process import process
-from hashFingerprint import hashingFunction
-from winnowing import winnow
+from preprocessing.process import process
+from hashingFingerprinting.hashFingerprint import hashingFunction
+from winnowing.winnowing import winnow
 import pprint as pp
 
 def inverted_index_create(s): # create inverted index for particular document
