@@ -38,25 +38,29 @@ def printFiles(file1, list1):
     print(Style.RESET_ALL,end="")
     f1.close()
 
-def query(corpus,doc_id, s):
+def query(corpus,documents, s):
     percentages = 0
     lines = []
+    masterlist = {}
+    t = PrettyTable(['doc_id', s + ' Similarity'])
+
     s = process(s)
     s = hashingFunction(s,4)
     s = winnow(4,s)
     s = inverted_index_create(s)
 
-    for key,val in s.items():
-        if key in corpus.keys():
-            if doc_id in corpus[key]:
-                percentages = percentages+1
-                lines.append(val)
-    #print("hash similarity percentage: ", percentages/len(s)*100)
-    #print(lines)
-    flat = itertools.chain.from_iterable(lines)
-    c = Counter(list(flat))
-    # pp.pprint(c)
-    return c,"{:.2f}".format(percentages/len(s)*100)
+    for doc_id,path in documents.items():
+        for key,val in s.items():
+            if key in corpus.keys():
+                if doc_id in corpus[key]:
+                    percentages = percentages+1
+                    lines.append(val)
+        flat = itertools.chain.from_iterable(lines)
+        c = Counter(list(flat))
+        masterlist.setdefault(doc_id, c)
+        t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100)])
+        percentages = 0
+    return masterlist,t
 
 def load_documents(d):
     k = os.listdir(d)
@@ -94,14 +98,7 @@ def main():
     inputFile = "inputFile.py" # input file
     documents = load_documents(directory) # find documents inside testfiles directory
     corpus = create_corpus(documents) # create a corpus of those documents
-
-    t = PrettyTable(['doc_id', inputFile + ' Similarity'])
-    masterlist = {}
-
-    for doc_id,path in documents.items(): # query our document with all documents in corpus
-        suspect_lines,percentages = query(corpus,doc_id,inputFile) #query input file in corpus
-        t.add_row([doc_id,percentages]) # add row of doc_id and %
-        masterlist.setdefault(doc_id,suspect_lines) # dictionary of doc_id and suspect_lines
+    masterlist, t = query(corpus, documents, inputFile) #query input file in corpus
     print(t)
 
     # option print LINE similarity between 2 docs after query
