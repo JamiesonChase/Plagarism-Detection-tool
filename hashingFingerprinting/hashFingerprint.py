@@ -21,10 +21,8 @@ def index_to_lines(s, index):
     s = str(s)
     if not len(s):
         return 1
-    a = len(s[:min(index)+1].splitlines())
-    b = len(s[:max(index)+1].splitlines())
-
-    return list(range(a,b+1))
+    a = len(s[:min(index)+4].splitlines())
+    return list(range(a,a+1))
 
 def hashingFunction(inputString, ngram):
 
