@@ -31,7 +31,10 @@ class Analyser:
     def _GetParts(self, line):
         minusTabs = line.replace("\t", " ")
         minusDoubleSpace = minusTabs.replace("  ", " ")
-        parts = minusDoubleSpace.split(" ")
+        if minusDoubleSpace[0:3] == 'def':
+            parts = minusDoubleSpace.split(" ",1)
+        else:
+            parts = minusDoubleSpace.split(" ")
         while "#" in parts:
             del parts[-1]
         while len(parts) > 0 and parts[0] == "":
@@ -80,6 +83,7 @@ class Analyser:
             part=methodNameParts[1].replace("):","")
             part=part.split(",")
             for i in part:
+                i=i.replace(" ","")
                 self._AddName(i,"assignment")
 
 class Translator:
