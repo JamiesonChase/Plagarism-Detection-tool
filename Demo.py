@@ -33,7 +33,7 @@ def main():
     pp.pprint(corpus) # pretty print corpus
 
 
-    a = process('testfiles/inputFile.py') #The input file that is going to be compared against the corpus
+    a = process('inputFile.py') #The input file that is going to be compared against the corpus
     a = hashingFunction(a, 4) #Get the hases of the input document.
     a = winnow(4, a) #Get the fingerprints of the input document.
     amountMatched = {'doc1': 0, 'doc2': 0, 'doc3': 0, 'doc4': 0, 'doc5': 0, 'doc6': 0, 'doc7': 0} #The amount of fingerprints matched.
@@ -51,7 +51,7 @@ def main():
         percentage = (amountMatched[key] / sizeOfInputFile) * 100 #Calculate the percentage.
 
         print("input file compared to " + key + " is: \n\n\n") #Say what the document the input file is being compared to.
-        f = open('testfiles/inputFile.py') #Open the input file.
+        f = open('inputFile.py') #Open the input file.
         lines = f.readlines() #Get all the lines.
         
         originalCopy = listOfLinesMatched[key].copy() #Get an original copy of the line numbers
@@ -66,7 +66,7 @@ def main():
         
         newListOfLines = [] # Lines that will be used to count the line number of the original file.
         if (len(listOfLinesMatched[key]) != 0): #If it's not empty 
-            newListOfLines = TranslateLines('testfiles/inputFile.py_Stripped',newNumber,'testfiles/inputFile.py') #Get the translation
+            newListOfLines = TranslateLines('inputFile.py_Stripped',newNumber,'inputFile.py') #Get the translation
         else:
             newListOfLines = newNumber #Else use the empty list.
 
