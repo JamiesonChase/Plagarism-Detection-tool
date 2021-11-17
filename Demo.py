@@ -51,7 +51,7 @@ def main():
     for key in listOfLinesMatched: #For each DocID
         percentage = (amountMatched[key] / sizeOfInputFile) * 100 #Calculate the percentage.
 
-        print("input file compared to " + key " is: \n\n\n") #Say what the document the input file is being compared o.
+        print("input file compared to " + key + " is: \n\n\n") #Say what the document the input file is being compared o.
         f = open('testfiles/inputFile.py') #Open the input file.
         lines = f.readlines() #Get all the lines.
         i = 1 # Line counter.
