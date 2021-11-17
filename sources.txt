@@ -1,0 +1,14 @@
+https://www.geeksforgeeks.org/python-get-key-from-value-in-dictionary/
+
+https://www.geeksforgeeks.org/python-check-whether-given-key-already-exists-in-a-dictionary/
+
+https://note.nkmk.me/en/python-dict-keys-values-items/
+
+https://pythonguides.com/how-to-create-an-empty-python-dictionary/
+
+https://careerkarma.com/blog/python-add-to-dictionary/#:~:text=There%20is%20no%20add()%20%2C%20append()%20%2C%20or%20insert(),assigning%20it%20a%20particular%20value.
+
+https://note.nkmk.me/en/python-type-isinstance/#:~:text=In%20Python%2C%20to%20get%20the,type()%20and%20isinstance()%20.
+
+https://stackoverflow.com/questions/1720421/how-do-i-concatenate-two-lists-in-python
+

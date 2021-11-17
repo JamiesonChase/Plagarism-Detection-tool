@@ -78,10 +78,10 @@ def hashingFunction(inputString, ngram):
     return ArrayOfTuples
 
 
-FileVaraible = open("test.py_Processed")
-fileString = FileVaraible.read()
-returnArray = hashingFunction(fileString, 4)
-print(returnArray)
+#FileVaraible = open("test.py_Processed")
+#fileString = FileVaraible.read()
+#returnArray = hashingFunction(fileString, 4)
+#print(returnArray)
 
 
 
