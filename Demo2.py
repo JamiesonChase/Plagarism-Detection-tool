@@ -7,6 +7,7 @@ from collections import Counter
 from colorama import Fore, Back, Style
 import os
 from prettytable import PrettyTable
+import pprint as pp
 
 def inverted_index_create(s):
     inverted = {}
@@ -24,7 +25,7 @@ def corpus_add_index(corpus,doc_id, s):
     return corpus
 
 def printFiles(file1, list1):
-    print("File1 source code:\n")
+    print("File1 source code:")
     f1 = open(file1)
     lines = f1.readlines()
     i = 1
@@ -45,7 +46,7 @@ def query(corpus,documents, s):
     t = PrettyTable(['doc_id', s + ' Similarity'])
 
     s = process(s)
-    s = hashingFunction(s,4)
+    s = hashingFunction(s,7)
     s = winnow(4,s)
     s = inverted_index_create(s)
 
@@ -60,6 +61,7 @@ def query(corpus,documents, s):
         masterlist.setdefault(doc_id, c)
         t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100)])
         percentages = 0
+        lines = []
     return masterlist,t
 
 def load_documents(d):
@@ -77,7 +79,7 @@ def create_corpus(documents):
     corpus = {}
     for doc_id,path in documents.items():
         s = process(path)
-        s = hashingFunction(s, 4)
+        s = hashingFunction(s, 7)
         s = winnow(4, s)
         s = inverted_index_create(s)
         corpus = corpus_add_index(corpus,doc_id,s)
@@ -86,10 +88,12 @@ def create_corpus(documents):
 def translate_print(doc_id,masterlist,inputFile):
     endlist = []
     for i,j in masterlist[doc_id].items():
-        if masterlist[doc_id][i] >= 5:
+        if masterlist[doc_id][i] >= 3:
             endlist.append(i)
     endlist.sort()
     L = TranslateLines(inputFile+"_Stripped", endlist, inputFile)
+    if L == None:
+        L = [0]
     printFiles(inputFile, L)
 
 def main():
@@ -102,10 +106,10 @@ def main():
     print(t)
 
     # option print LINE similarity between 2 docs after query
-    #translate_print("doc1", masterlist, inputFile)
-    #translate_print("doc2", masterlist, inputFile)
-    #translate_print("doc3", masterlist, inputFile)
-    #translate_print("doc4", masterlist, inputFile)
-    #translate_print("doc5", masterlist, inputFile)
+    # translate_print("doc1", masterlist, inputFile)
+    # translate_print("doc2", masterlist, inputFile)
+    # translate_print("doc3", masterlist, inputFile)
+    # translate_print("doc4", masterlist, inputFile)
+    # translate_print("doc5", masterlist, inputFile)
 
 main()
