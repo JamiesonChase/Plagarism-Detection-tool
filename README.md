@@ -18,10 +18,10 @@ Run demo.py and verify part output like this:
 | doc_id | inputFile.py Similarity |
 +--------+-------------------------+
 |  doc1  |          100.00         |
-|  doc2  |          76.62          |
-|  doc3  |          72.73          |
-|  doc4  |           6.49          |
-|  doc5  |          35.06          |
+|  doc2  |          63.20          |
+|  doc3  |          47.20          |
+|  doc4  |           0.00          |
+|  doc5  |          10.40          |
 +--------+-------------------------+
  ```
  docId and similarity between input file
