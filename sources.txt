@@ -12,3 +12,7 @@ https://note.nkmk.me/en/python-type-isinstance/#:~:text=In%20Python%2C%20to%20ge
 
 https://stackoverflow.com/questions/1720421/how-do-i-concatenate-two-lists-in-python
 
+https://stackoverflow.com/questions/29336414/python-arguments-inside-triple-quotes
+
+https://www.google.com/amp/s/www.geeksforgeeks.org/creating-and-viewing-html-files-with-python/amp/
+

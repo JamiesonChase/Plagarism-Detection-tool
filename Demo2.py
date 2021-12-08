@@ -45,7 +45,7 @@ def query(corpus,documents, s):
     percentages = 0
     lines = []
     masterlist = {}
-    t = PrettyTable(['doc_id', s + ' Similarity', 'Similarity using size of the corpus file as denominator'])
+    t = PrettyTable(['doc_id', s + ' Similarity'])
 
     s = process(s)
     s = hashingFunction(s,7)
@@ -61,7 +61,10 @@ def query(corpus,documents, s):
         flat = itertools.chain.from_iterable(lines)
         c = Counter(list(flat))
         masterlist.setdefault(doc_id, c)
-        t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100),"{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
+        if(len(s) <= eachCorpusFileTotalHashes[doc_id]):
+            t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100)])
+        else:
+            t.add_row([doc_id,"{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
         percentages = 0
         lines = []
     return masterlist,t
@@ -114,5 +117,19 @@ def main():
     # translate_print("doc3", masterlist, inputFile)
     # translate_print("doc4", masterlist, inputFile)
     # translate_print("doc5", masterlist, inputFile)
+
+    f = open('Testing.html', 'w')
+    html_template = """<html>
+    <head>
+    <title>Title</title>
+    </head>
+    <body>
+    <h2>Table</h2>
+    <p>
+    """
+    html_template = html_template + str(t) 
+    html_template = html_template + "</p>\n</body>\n</html>"
+    f.write(html_template)
+    f.close()
 
 main()
