@@ -9,6 +9,8 @@ import os
 from prettytable import PrettyTable
 import pprint as pp
 
+eachCorpusFileTotalHashes = {}
+
 def inverted_index_create(s):
     inverted = {}
     for index, hash in s:
@@ -43,7 +45,7 @@ def query(corpus,documents, s):
     percentages = 0
     lines = []
     masterlist = {}
-    t = PrettyTable(['doc_id', s + ' Similarity'])
+    t = PrettyTable(['doc_id', s + ' Similarity', 'Similarity using size of the corpus file as denominator'])
 
     s = process(s)
     s = hashingFunction(s,7)
@@ -59,7 +61,7 @@ def query(corpus,documents, s):
         flat = itertools.chain.from_iterable(lines)
         c = Counter(list(flat))
         masterlist.setdefault(doc_id, c)
-        t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100)])
+        t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100),"{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
         percentages = 0
         lines = []
     return masterlist,t
@@ -82,6 +84,7 @@ def create_corpus(documents):
         s = hashingFunction(s, 7)
         s = winnow(4, s)
         s = inverted_index_create(s)
+        eachCorpusFileTotalHashes[doc_id] = len(s)
         corpus = corpus_add_index(corpus,doc_id,s)
     return corpus
 
