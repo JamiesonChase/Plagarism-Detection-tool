@@ -127,7 +127,9 @@ def main():
     <h2>Table</h2>
     <p>
     """
-    html_template = html_template + str(t) 
+    tempT = str(t)
+    tempT = tempT.replace('\n', "<br>")
+    html_template = html_template + str(tempT) 
     html_template = html_template + "</p>\n</body>\n</html>"
     f.write(html_template)
     f.close()

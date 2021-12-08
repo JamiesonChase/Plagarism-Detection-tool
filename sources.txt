@@ -16,3 +16,8 @@ https://stackoverflow.com/questions/29336414/python-arguments-inside-triple-quot
 
 https://www.google.com/amp/s/www.geeksforgeeks.org/creating-and-viewing-html-files-with-python/amp/
 
+https://www.teachucomp.com/add-a-line-break-in-html-tutorial/
+
+https://stackoverflow.com/questions/54760850/replace-all-newline-characters-using-python
+
+
