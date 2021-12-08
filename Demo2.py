@@ -27,6 +27,7 @@ def corpus_add_index(corpus,doc_id, s):
     return corpus
 
 def printFiles(file1, list1):
+    returnString = "File1 source code:\n"
     print("File1 source code:")
     f1 = open(file1)
     lines = f1.readlines()
@@ -34,12 +35,15 @@ def printFiles(file1, list1):
     for line in lines:
         if i in list1:
             print(Fore.BLUE + line,end="")
+            returnString = returnString + line 
             print(Style.RESET_ALL,end="")
         else:
             print(line,end="")
+            returnString = returnString + line 
         i = i + 1
     print(Style.RESET_ALL,end="")
     f1.close()
+    return returnString
 
 def query(corpus,documents, s):
     percentages = 0
@@ -100,7 +104,7 @@ def translate_print(doc_id,masterlist,inputFile):
     L = TranslateLines(inputFile+"_Stripped", endlist, inputFile)
     if L == None:
         L = [0]
-    printFiles(inputFile, L)
+    return printFiles(inputFile, L)
 
 def main():
 
@@ -112,7 +116,7 @@ def main():
     print(t)
 
     # option print LINE similarity between 2 docs after query
-    # translate_print("doc1", masterlist, inputFile)
+    firstFile = translate_print("doc1", masterlist, inputFile)
     # translate_print("doc2", masterlist, inputFile)
     # translate_print("doc3", masterlist, inputFile)
     # translate_print("doc4", masterlist, inputFile)
@@ -129,7 +133,10 @@ def main():
     """
     tempT = str(t)
     tempT = tempT.replace('\n', "<br>")
+    firstFile = firstFile.replace('\n', "<br>")
     html_template = html_template + str(tempT) 
+    html_template = html_template + "<br><br><br>"
+    html_template = html_template + firstFile
     html_template = html_template + "</p>\n</body>\n</html>"
     f.write(html_template)
     f.close()

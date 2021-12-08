@@ -20,4 +20,4 @@ https://www.teachucomp.com/add-a-line-break-in-html-tutorial/
 
 https://stackoverflow.com/questions/54760850/replace-all-newline-characters-using-python
 
-
+https://www.tutorialspoint.com/How-to-set-font-color-in-HTML
