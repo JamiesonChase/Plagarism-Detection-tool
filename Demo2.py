@@ -10,6 +10,7 @@ from prettytable import PrettyTable
 import pprint as pp
 
 eachCorpusFileTotalHashes = {}
+t = PrettyTable(['doc_id Pair', 'File Similarity'])
 
 def inverted_index_create(s):
     inverted = {}
@@ -47,9 +48,12 @@ def printFiles(file1, list1):
 
 def query(corpus,documents, s):
     percentages = 0
+    if len(s) > 15:
+        filename = s[10:]
+    else:
+        filename = s
     lines = []
     masterlist = {}
-    t = PrettyTable(['doc_id', s + ' Similarity'])
 
     s = process(s)
     s = hashingFunction(s,7)
@@ -66,9 +70,10 @@ def query(corpus,documents, s):
         c = Counter(list(flat))
         masterlist.setdefault(doc_id, c)
         if(len(s) <= eachCorpusFileTotalHashes[doc_id]):
-            t.add_row([doc_id,"{:.2f}".format(percentages / len(s) * 100)])
+            if(percentages / len(s) * 100 != 100):
+                t.add_row([doc_id + " - " +filename,float("{:.2f}".format(percentages / len(s) * 100))])
         else:
-            t.add_row([doc_id,"{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
+            t.add_row([doc_id + " - " +filename,float("{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100))])
         percentages = 0
         lines = []
     return masterlist,t
@@ -113,7 +118,16 @@ def main():
     documents = load_documents(directory) # find documents inside testfiles directory
     corpus = create_corpus(documents) # create a corpus of those documents
     masterlist, t = query(corpus, documents, inputFile) #query input file in corpus
+    masterlist, t = query(corpus, documents, 'testfiles/databaseFile1.py') #query input file in corpus
+    masterlist, t = query(corpus, documents, 'testfiles/databaseFile2.py') #query input file in corpus
+    masterlist, t = query(corpus, documents, 'testfiles/databaseFile3.py')
+    masterlist, t = query(corpus, documents, 'testfiles/databaseFile4.py')
+    masterlist, t = query(corpus, documents, 'testfiles/databaseFile5.py')
+    t.sortby = 'File Similarity'
+    t.reversesort = True
+    t.align["doc_id Pair"] = "l"
     print(t)
+    print(masterlist)
 
     # option print LINE similarity between 2 docs after query
     firstFile = translate_print("doc1", masterlist, inputFile)
