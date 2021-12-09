@@ -6,7 +6,7 @@ Hashing/Fingerprinting & Visual - Tracy Hotchkiss & Vinh Duong
 Winnowing - Trevor Holland 
 
 ### Steps to run demo2 file:
-``` 
+
 May need to install colorama with "pip3 install colorama
 ```
 pip install pyminifier 
