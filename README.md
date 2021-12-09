@@ -7,6 +7,8 @@ Winnowing - Trevor Holland
 
 ### Steps to run demo2 file:
 ``` 
+May need to install colorama with "pip3 install colorama
+```
 pip install pyminifier 
 ```
 Then change `__init__.py` pyminifier file (middle click on "import pyminifier"). replace that file with [this](https://github.com/liftoff/pyminifier/blob/master/pyminifier/__init__.py) one.

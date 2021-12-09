@@ -8,6 +8,7 @@ from colorama import Fore, Back, Style
 import os
 from prettytable import PrettyTable
 import pprint as pp
+import sys
 
 eachCorpusFileTotalHashes = {}
 t = PrettyTable(['doc_id Pair', 'File Similarity'])
@@ -112,17 +113,28 @@ def translate_print(doc_id,masterlist,inputFile):
     return printFiles(inputFile, L)
 
 def main():
-
-    directory = "testfiles/" # directory for testfiles
+    
+    directory = sys.argv[1] # directory for testfiles
     inputFile = "inputFile.py" # input file
     documents = load_documents(directory) # find documents inside testfiles directory
     corpus = create_corpus(documents) # create a corpus of those documents
+
+    
+
+
+
+
+
+
+
     masterlist, t = query(corpus, documents, inputFile) #query input file in corpus
-    masterlist, t = query(corpus, documents, 'testfiles/databaseFile1.py') #query input file in corpus
-    masterlist, t = query(corpus, documents, 'testfiles/databaseFile2.py') #query input file in corpus
-    masterlist, t = query(corpus, documents, 'testfiles/databaseFile3.py')
-    masterlist, t = query(corpus, documents, 'testfiles/databaseFile4.py')
-    masterlist, t = query(corpus, documents, 'testfiles/databaseFile5.py')
+    k = os.listdir(directory)
+    k.sort()
+    for file in k:
+        if file.endswith(".py"):
+            fileNamePath = directory + file 
+            masterlist, t = query(corpus, documents, fileNamePath)
+    
     t.sortby = 'File Similarity'
     t.reversesort = True
     t.align["doc_id Pair"] = "l"
