@@ -30,4 +30,8 @@ https://www.geeksforgeeks.org/python-merging-two-dictionaries/
 
 https://www.geeksforgeeks.org/python-ways-to-remove-a-key-from-dictionary/
 
+https://www.w3schools.com/html/html_links.asp
+
+https://www.geeksforgeeks.org/python-append-to-a-file/
+
 

@@ -28,31 +28,44 @@ def corpus_add_index(corpus,doc_id, s):
         indices[doc_id] = locations
     return corpus
 
-def printFiles(file1, list1):
-    returnString = "File1 source code:\n"
-    print("File1 source code:")
+def printFiles(file1, list1, htmlFileName):
+    f = open(htmlFileName, 'w')
+    html_template = """<html>
+    <head>
+    <title>Title</title>
+    </head>
+    <body>
+    <h2>Table</h2>
+    <p>
+    \n
+    """
+    html_template = html_template + file1 + " source code: <br>"
+    #print("File1 source code:")
     f1 = open(file1)
     lines = f1.readlines()
     i = 1
     for line in lines:
         if i in list1:
-            print(Fore.BLUE + line,end="")
-            returnString = returnString + line 
-            print(Style.RESET_ALL,end="")
+            #print(Fore.BLUE + line,end="")
+            html_template = html_template + '<p style="color:blue;">' + line + "</p><br>"
+            #print(Style.RESET_ALL,end="")
         else:
-            print(line,end="")
-            returnString = returnString + line 
+            #print(line,end="")
+            html_template = html_template + '<p style="color:black;">' + line + "</p><br>"
         i = i + 1
     print(Style.RESET_ALL,end="")
     f1.close()
-    return returnString
+    f.write(html_template)
+    f.close()
+    return html_template
 
 def query(corpus,documents, s):
     percentages = 0
+    originalFileName = s
     if len(s) > 15:
-        filename = s
+        filename = s[15:]
     else:
-        filename = s
+        filename = s[15:]
     lines = []
     masterlist = {}
 
@@ -70,11 +83,20 @@ def query(corpus,documents, s):
         flat = itertools.chain.from_iterable(lines)
         c = Counter(list(flat))
         masterlist.setdefault(doc_id, c)
+        f = open('index.html', 'a')
         if(len(s) <= eachCorpusFileTotalHashes[doc_id]):
             #if(percentages / len(s) * 100 != 100):
             t.add_row([doc_id + " - " +filename,float("{:.2f}".format(percentages / len(s) * 100))])
+            f.write("<br>" + "<a href=\"" + doc_id + " - " +filename + ".html" + "\" target=\"_blank\">" + doc_id + " - " + filename + "</a>"  + " |    " + "{:.2f}".format(percentages / len(s) * 100) + "\n")
+            
         else:
             t.add_row([doc_id + " - " +filename,float("{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100))])
+            f.write("<br>" + "<a href=\"" + doc_id + " - " +filename + ".html" + "\" target=\"_blank\">" + doc_id + " - " + filename + "</a>"  + " |    " + "{:.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100) + "\n")
+        f.close()
+        tempString = doc_id + " - " +filename + ".html"
+        translate_print(doc_id,masterlist,originalFileName,tempString)
+        masterlist = {}
+        
         percentages = 0
         lines = []
     return masterlist,t
@@ -113,20 +135,23 @@ def create_corpus(documents,corpus):
         corpus = corpus_add_index(corpus,doc_id,s)
     return corpus
 
-def translate_print(doc_id,masterlist,inputFile):
+def translate_print(doc_id,masterlist,inputFile,htmlFileName):
     endlist = []
     for i,j in masterlist[doc_id].items():
         if masterlist[doc_id][i] >= 3:
             endlist.append(i)
     endlist.sort()
-    L = TranslateLines(inputFile+"_Stripped", endlist, inputFile)
+    if(len(endlist) == 0):
+        L = None 
+    else:
+        L = TranslateLines(inputFile+"_Stripped", endlist, inputFile)
     if L == None:
         L = [0]
-    return printFiles(inputFile, L)
+    return printFiles(inputFile, L,htmlFileName)
 
 def main():
     
-    directory = sys.argv[1] # directory for testfiles
+    directory = "testfiles/" # directory for testfiles
     documents = load_documents(directory) # find documents inside testfiles directory
     documents2 = load_input_directory("inputDirectory/")
     corpus = {}
@@ -134,7 +159,18 @@ def main():
     corpus = create_corpus(documents2,corpus)
 
     
-
+    f = open('index.html', 'w')
+    html_template = """<html>
+    <head>
+    <title>Title</title>
+    </head>
+    <body>
+    <h2>Table</h2>
+    <p>
+    \n
+    """
+    f.write(html_template)
+    f.close()
     k = os.listdir("inputDirectory/")
     k.sort()
     for file in k:
@@ -149,6 +185,9 @@ def main():
     t.reversesort = True
     t.align["doc_id Pair"] = "l"
     print(t)
+    f = open('index.html', 'a')
+    f.write("</p>\n</body>\n</html>")
+    f.close()
 
 
     
