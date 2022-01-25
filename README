@@ -1,0 +1,4 @@
+Has all the dependencies as the base folder.
+Just run the program with no command line argument.
+Will produce index.html and all the other html files
+to link to the page.
