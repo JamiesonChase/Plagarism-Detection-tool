@@ -102,20 +102,10 @@ def createMainTableHTML(table):
     </style>
     </head>
     <body>
-    <table class="center">
-    <tr>
-    <th>doc pairs</th>
-    <th>Pair similarity</th>
-    </tr>
     """
-    for row in table:
-        row.border = False
-        row.header = False
-        html_template = html_template + "<tr>\n<th>"
-        html_template = html_template + row.get_string(fields=["doc pairs"]).strip() + "</th>\n"
-        html_template = html_template + "<th>" + row.get_string(fields=["Pair Similarity"]).strip() + "</th>\n</tr>" 
+    html_template = html_template + table.get_html_string()
 
-    html_template = html_template + "</table>\n</body>\n</html>"
+    html_template = html_template + "</body>\n</html>"
     f.write(html_template)
     f.close()
     return 
