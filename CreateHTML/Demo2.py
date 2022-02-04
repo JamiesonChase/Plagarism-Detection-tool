@@ -120,7 +120,7 @@ def createMainTableHTML(table):
         print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
         print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
         html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html\">{name}</A></th>\n".format(currentNumber=i,name=row.get_string(fields=["doc pairs"]).strip())
-        html_template + html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row.get_string(fields=["Pair Similarity"]).strip())
+        html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row.get_string(fields=["Pair Similarity"]).strip())
         i = i + 1
 
     html_template = html_template + "</table></body>\n</html>"
