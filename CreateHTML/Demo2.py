@@ -83,6 +83,11 @@ def main():
         print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
         print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
     createMainTableHTML(table)
+    createIFramePage(0)
+    createJumpTable(0, ["0-22", "45-67", "88-100"], ["2-18"])
+    createHTMLFiles("Compare.py", [1,7, 18], [5,11,19], 2,0)
+    createHTMLFiles("Student1.py", [24], [25], 3,0)
+
 
 def createMainTableHTML(table):
     f = open('index.html', 'w')
@@ -102,13 +107,143 @@ def createMainTableHTML(table):
     </style>
     </head>
     <body>
+    <table class="center">
+    <tr>
+    <th>doc Pairs</th>
+    <th>Pair Similarity</th>
+    </tr>
     """
-    html_template = html_template + table.get_html_string()
+    i = 0
+    for row in table:
+        row.border = False
+        row.header = False
+        print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
+        print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
+        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html\">{name}</A></th>\n".format(currentNumber=i,name=row.get_string(fields=["doc pairs"]).strip())
+        html_template + html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row.get_string(fields=["Pair Similarity"]).strip())
+        i = i + 1
 
+    html_template = html_template + "</table></body>\n</html>"
+    f.write(html_template)
+    f.close()
+    return 
+
+def createIFramePage(currentRowNumber):
+    htmlFileName = "{number}-1.html".format(number=currentRowNumber)
+
+    f = open(htmlFileName, 'w')
+    html_template = """<!DOCTYPE html>
+    <html>
+    <head>
+    <title>Side by side Comparison</title>
+    
+    </head>
+    """
+    html_template = html_template + "<iframe src=\"{number}-4.html\" height=\"150\" width=\"100%\" title=\"TableFile\"></iframe>\n".format(number=currentRowNumber)
+    html_template = html_template + "<iframe src=\"{number}-2.html\" height=\"450\" width=\"47%\" name=\"LeftFile\"></iframe>\n".format(number=currentRowNumber)
+    html_template = html_template + "<iframe src=\"{number}-3.html\" height=\"450\" width=\"47%\" name=\"RightFile\"></iframe>\n".format(number=currentRowNumber)
     html_template = html_template + "</body>\n</html>"
     f.write(html_template)
     f.close()
     return 
+
+def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight):
+    htmlFileName = "{number}-4.html".format(number=currentRowNumber)
+
+    f = open(htmlFileName, 'w')
+    html_template = """<!DOCTYPE html>
+    <html>
+    <head>
+    <title>Side by side comparison</title>
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    table.center {
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
+    </head>
+    <body>
+    <table class="center">
+        <tr>
+            <th>File1</th>
+            <th>File2</th>
+        </tr>
+    """
+    if (len(arrayOfNamesLeft) > len(arrayOfNamesRight)):
+        for var in list(range(len(arrayOfNamesLeft))):
+            html_template = html_template + "<tr>"
+            if (var < len(arrayOfNamesLeft)):
+                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{numberBlocks}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,numberBlocks=arrayOfNamesLeft[var])
+            else:
+                pass
+
+            if (var < len(arrayOfNamesRight)):
+                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{numberBlocks}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,numberBlocks=arrayOfNamesRight[var])
+            else:
+                pass
+
+            html_template = html_template + "</tr>\n"
+    else:
+        for var in list(range(len(arrayOfNamesRight))):
+            html_template = html_template + "<tr>"
+            if (var < len(arrayOfNamesLeft)):
+                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{numberBlocks}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,numberBlocks=arrayOfNamesLeft[var])
+            else:
+                pass
+
+            if (var < len(arrayOfNamesRight)):
+                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{numberBlocks}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,numberBlocks=arrayOfNamesRight[var])
+            else:
+                pass
+
+            html_template = html_template + "</tr>\n"
+    
+    html_template = html_template + "</table>\n</body>\n</html>"
+    f.write(html_template)
+    f.close()
+    return 
+
+def createHTMLFiles(fileName, blockBegin,blockEnd,LeftOrRight,currentRowNumber):
+    a_file = open(fileName)
+    
+    lines = a_file.readlines()
+
+
+
+
+
+
+    htmlFileName = "{number}-{side}.html".format(number=currentRowNumber,side=LeftOrRight)
+
+    f = open(htmlFileName, 'w')
+    html_template = """<!DOCTYPE html><html><head><title>{nameOfFile}</title></head><body BGCOLOR=white><HR>{nameOfFile}<p><PRE>\n""".format(nameOfFile=fileName)
+    f.write(html_template)
+    a_file.close()
+    i = 1
+    jumpPoint = 0
+    for line in lines:
+        if (i in blockBegin):
+            f.write("<A NAME=\"{j}\"></A><FONT color = #FF0000>\n".format(j=jumpPoint))
+            jumpPoint = jumpPoint + 1
+        
+        f.write(line)
+        if (i in blockEnd):
+            f.write("</FONT>")
+
+        i = i + 1
+        
+    
+    f.write("</PRE></PRE></Body></HTML>")
+    f.close()
+
+    
+
+    
+
 
 
 main()
