@@ -84,9 +84,9 @@ def main():
         print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
     createMainTableHTML(table)
     createIFramePage(0)
-    createJumpTable(0, ["0-22", "45-67", "88-100"], ["2-18"])
+    createJumpTable(0, ["1-5", "7-11", "18-19"], ["25-26"])
     createHTMLFiles("Compare.py", [1,7, 18], [5,11,19], 2,0)
-    createHTMLFiles("Student1.py", [24], [25], 3,0)
+    createHTMLFiles("Student1.py", [25], [26], 3,0)
 
 
 def createMainTableHTML(table):
