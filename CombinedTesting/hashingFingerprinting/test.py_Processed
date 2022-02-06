@@ -1,8 +1,0 @@
-def fun1():
- var1 = fun2(1,2) 
- var2 = fun2(3,4) 
- var3 = var1 + var2
- print(var1," + ", var2, " = ", var3)
-def fun2(var4,var5): 
- return var4+var5
-fun1()
