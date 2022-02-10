@@ -1,0 +1,11 @@
+<div id="load" class="load">
+    <table class="center">
+      <tr>
+        <th>doc Pairs</th>
+        <th>Pair Similarity</th>
+      </tr>
+      {% for i in newEntry %}
+        <tr><th><A HREF="{{i[0]}}-1.html">{{i[1]}}</A></th><th>{{i[2]}}</th></tr>
+        {% endfor %}
+    </table>
+  </div>

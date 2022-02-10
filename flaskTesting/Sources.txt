@@ -1,0 +1,4 @@
+https://blog.miguelgrinberg.com/post/dynamically-update-your-flask-web-pages-using-turbo-flask
+https://www.youtube.com/watch?v=fQrq207zXzU
+https://www.w3schools.com/python/python_variables_global.asp
+

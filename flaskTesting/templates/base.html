@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ComparisonTable</title>
+    <style>
+      table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+      table.center {
+          margin-left: auto;
+          margin-right: auto;
+      }
+  </style>
+    {{ turbo() }}
+  </head>
+  <body>
+    {% include "loadavg.html" %}
+    {% block content %}{% endblock %}
+  </body>
+</html>
