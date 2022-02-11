@@ -72,51 +72,41 @@ def main():
         documents.pop("doc" + str(i))
         table = query(corpus,documents,file)
 
+   
     table.sortby = 'Pair Similarity'
-    table.add_row(["4", "40"])
-    table.add_row(["5", "50"])
-    table.add_row(["6", "60"])
-    table.add_row(["7", "70"])
-    table.add_row(["8", "80"])
     table.reversesort = True
     print(table)
 
+    
+    i = 0
+
 # how to get strings from table rows
-    for row in table:
-        row.border = False
-        row.header = False
-        print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
-        print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
+    Rows = table.rows
+    Rows.sort(key=lambda x: x[1], reverse=True)
+    createMainTableHTML(Rows)
+
+
+    for row in Rows:
+        currentName = row[0]
+        #print(currentName)
+
+        splitNames = currentName.split(" - ")
+        createIFramePage(i)
+        # Here is where you call your functions
+        createJumpTable(i, [[0, 5]], [[0, 5]])
+        createHTMLFiles(splitNames[0], [[0, 5]], 2,i)
+        createHTMLFiles(splitNames[1], [[0, 5]], 3,i)
+        i = i + 1
+        
+        #print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
+        #print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
    
-    createMainTableHTML(table)
+    
 
-    createIFramePage(0)
-    createJumpTable(0, [[0, 5], [7,11], [18, 19]], [[25, 26]])
-    createHTMLFiles("Compare.py", [[0, 5], [7,11], [18, 19]], 2,0)
-    createHTMLFiles("Student1.py", [[25, 25]], 3,0)
-
-    createIFramePage(1)
-    createJumpTable(1, [[21, 24]], [[6, 10], [21,25]])
-    createHTMLFiles("Compare.py", [[21, 24]], 2,1)
-    createHTMLFiles("databaseFile1.py", [[6, 10], [21,25]], 3,1)
-
-    createIFramePage(2)
-    createJumpTable(2, [[7, 8], [32,35]], [[6, 10], [21,25]])
-    createHTMLFiles("Student1.py", [[7, 8], [32,35]], 2,2)
-    createHTMLFiles("databaseFile1.py", [[6, 10], [21,25]], 3,2)
-
-    createIFramePage(3)
-    createJumpTable(3, [[0, 4], [21,24]], [[6, 10], [20,22]])
-    createHTMLFiles("Compare.py", [[0, 4], [21,24]], 2,3)
-    createHTMLFiles("databaseFile2.py", [[6, 10], [20,22]], 3,3)
-
-    createIFramePage(4)
-    createJumpTable(4, [[7, 8], [32,35]], [[6, 10], [20,22]])
-    createHTMLFiles("Student1.py", [[7, 8], [32,35]], 2,4)
-    createHTMLFiles("databaseFile2.py", [[6, 10], [20,22]], 3,4)
+    
 
 
-def createMainTableHTML(table):
+def createMainTableHTML(Rows):
     f = open('index.html', 'w')
     html_template = """<!DOCTYPE html>
     <html>
@@ -141,18 +131,13 @@ def createMainTableHTML(table):
     </tr>
     """
     i = 0
-    for row in table:
-        row.border = False
-        row.header = False
-        if (i < 5):
-            html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html\">{name}</A></th>\n".format(currentNumber=i,name=row.get_string(fields=["doc pairs"]).strip())
-            html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row.get_string(fields=["Pair Similarity"]).strip())
-        else:
-            html_template = html_template + "<tr>\n<th>{name}</th>\n".format(name=row.get_string(fields=["doc pairs"]).strip())
-            html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row.get_string(fields=["Pair Similarity"]).strip())
+    for row in Rows:
+        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html\">{name}</A></th>\n".format(currentNumber=i,name=row[0])
+        html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row[1])   
+        i = i + 1
+        
 
         
-        i = i + 1
 
     html_template = html_template + "</table></body>\n</html>"
     f.write(html_template)
