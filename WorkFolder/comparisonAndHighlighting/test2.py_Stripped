@@ -1,0 +1,10 @@
+def main():
+ b = addNum(3,4) 
+ a = addNum(1,2) 
+ c = a + b
+ print(a," + ", b, " = ", c)
+def dont(num):
+ return num*num / 2
+def addNum(x,y): 
+ return x+y
+main()

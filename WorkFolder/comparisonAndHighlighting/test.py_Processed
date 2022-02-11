@@ -1,0 +1,8 @@
+def fun():
+ var = fun(1,2) 
+ var = fun(3,4) 
+ var = var + var
+ print(var," + ", var, " = ", var)
+def fun(var,var): 
+ return var+var
+fun()
