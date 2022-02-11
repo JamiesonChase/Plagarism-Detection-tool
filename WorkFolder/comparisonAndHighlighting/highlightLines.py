@@ -1,4 +1,5 @@
 from difflib import SequenceMatcher
+from itertools import groupby, count
 
 def findMatches(s1, s2):    
     """
@@ -11,34 +12,20 @@ def findMatches(s1, s2):
     -size = the length of the matching string
     """
     MIN_MATCH_SIZE = 5 # A match must be at least this long 
-    matches = []
 
     string1 = s1
     string2 = s2
 
-    # return empty list if either string is empty
-    if len(string1) < 1 or len(string2) < 1:
-        return matches
-
-    # loop until no large enough matches
-    while True:
-        # find the longest substring ignoring null characters
-        s = SequenceMatcher(lambda x: x == "\0", string1, string2)
-        match = s.find_longest_match(0, len(string1), 0, len(string2))
+    sm = SequenceMatcher(None, string1, string2)
+    blocks = sm.get_matching_blocks()
+    goodBlocks = []
+    for match in blocks:
         a = match.a
         b = match.b
         size = match.size
-
-        # make sure the substring is long enough
         if size >= MIN_MATCH_SIZE:
-            matches.append(match)
-            # replace the matching sections with null characters
-            string1 = string1[:a] + "\0" * size + string1[a+size:]
-            string2 = string2[:b] + "\0" * size + string2[b+size:]
-        else:
-            break
-
-    return matches    
+            goodBlocks.append(match)
+    return goodBlocks  
 
 def getLines(string, matchMin, matchMax):
     """
@@ -69,31 +56,49 @@ def matchProcessedLines(file1String, file2String):
         file1LineBlocks.append(getLines(file1String, match.a, match.a + match.size))
         file2LineBlocks.append(getLines(file2String, match.b, match.b + match.size))
 
-    return (file1LineBlocks, file2LineBlocks)
+    return [file1LineBlocks, file2LineBlocks]
 
 def TranslateLines(StrippedFile,OldLines,SourceFile):
     file = open(StrippedFile)
     content = file.readlines()  # Get all lines from stripped file
     newlines = []
     i = 0
-    lookup = content[OldLines[0]-1].strip()  # initialize first line
+    lookup = content[OldLines[0]].strip()  # initialize first line
     with open(SourceFile) as myFile:  # iterate through source file
         for num, line in enumerate(myFile, 1):
             if lookup in line:  # if processed line is in source line
-                newlines.append(num)  # append source line value
+                newlines.append(num - 1)  # append source line value
                 if i < len(OldLines)-1:
                     i = i+1  # iterate through each suspect old line
-                lookup = content[OldLines[i]-1].strip() #
+                lookup = content[OldLines[i]].strip() #
     return newlines  # return list of translated lines
+
+# this part taken from https://stackoverflow.com/a/10420670
+def as_range(g):
+    l = list(g)
+    return [l[0], l[-1]]
+
+def blockifyLines(list):
+    uniqueLines = []
+    for numberlist in list:
+        for num in numberlist:
+            if not num in uniqueLines:
+                uniqueLines.append(num)
+    uniqueLines.sort()
+    # black magic taken from https://stackoverflow.com/a/10420670
+    return [as_range(g) for _, g in groupby(uniqueLines, key=lambda n, c=count(): n-next(c))]
+
 
 def getHighlightLines(file1, file2, processedFile1, processedFile2, strippedFile1, strippedFile2):
 
     f1 = open(processedFile1, "r"); string1 = f1.read(); f1.close()
     f2 = open(processedFile2, "r"); string2 = f2.read(); f2.close()
 
-    lines = matchProcessedLines(string1, string2)
-    file1Lines = lines[0]
-    file2Lines = lines[1]
+    matchProcessedLines(string1, string2)
+
+    matchedLines = matchProcessedLines(string1, string2)
+    file1Lines = matchedLines[0]
+    file2Lines = matchedLines[1]
 
     newLines1 = []
     newLines2 = []
@@ -102,21 +107,15 @@ def getHighlightLines(file1, file2, processedFile1, processedFile2, strippedFile
     for lineBlock in file1Lines:
         lines = list(range(lineBlock[0], lineBlock[1] + 1))
         newLineBlock = TranslateLines(strippedFile1, lines, file1)
-        newLineBlock = (min(newLineBlock), max(newLineBlock)) 
         newLines1.append(newLineBlock)
 
     for lineBlock in file2Lines:
         lines = list(range(lineBlock[0], lineBlock[1] + 1))
         newLineBlock = TranslateLines(strippedFile2, lines, file2)
-        newLineBlock = (min(newLineBlock), max(newLineBlock)) 
         newLines2.append(newLineBlock)
+    
 
-    newLines1.sort(key=lambda a : a[0])
-    newLines2.sort(key=lambda a : a[0])
+    return [blockifyLines(newLines1), blockifyLines(newLines2)]
 
-    print(newLines1)
-    print(newLines2)
-
-    return (newLines1, newLines2)
-
-#getHighlightLines("test.py", "test2.py", "test.py_Processed", "test2.py_Processed", "test.py_Stripped", "test2.py_Stripped")
+#lines = getHighlightLines("databaseFile2.py", "databaseFile3.py", "databaseFile2.py_Processed", "databaseFile3.py_Processed", "databaseFile2.py_Stripped", "databaseFile3.py_Stripped")
+#print("output: " + str(lines))

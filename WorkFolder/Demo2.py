@@ -94,6 +94,8 @@ def main():
     createMainTableHTML(Rows)
 
 
+    
+
     for row in Rows:
         currentName = row[0]
         #print(currentName)
@@ -101,13 +103,14 @@ def main():
         splitNames = currentName.split(" - ")
         createIFramePage(i)
         file1 = splitNames[0]; file2 = splitNames[1]
+
         highlightLines = comparisonAndHighlighting.highlightLines.getHighlightLines(file1, file2, file1 + "_Processed", file2 + "_Processed", file1 + "_Stripped", file2 + "_Stripped")
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
-        print(file1Lines)
-        print(file2Lines)
+        #print(file1Lines)
+        #print(file2Lines)
         createJumpTable(i, file1Lines, file2Lines)
-        createHTMLFiles(splitNames[0], file1Lines, 2,i)
-        createHTMLFiles(splitNames[1], file2Lines, 3,i)
+        createHTMLFiles(file1, file1Lines, 2,i)
+        createHTMLFiles(file2, file2Lines, 3,i)
         i = i + 1
         
         #print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
