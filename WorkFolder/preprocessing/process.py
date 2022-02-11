@@ -119,6 +119,10 @@ def process(sourceFilePath):
     #print("writing", len(newLines), " lines to", targetFilePath, "starting with", newLines[0])
     sourceFile.close()
 
+    output1 = open(sourceFilePath + "_Processed", 'w')  # rewrite stripped file
+    output1.write(newContent)
+    output1.close()
+
     return newContent
 
 #print(process("test.py"))

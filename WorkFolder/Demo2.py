@@ -8,6 +8,8 @@ from prettytable import PrettyTable
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 
+eachCorpusFileTotalHashes = {}
+
 def inverted_index_create(s):
     inverted = {}
     for index, hash in s:
@@ -37,7 +39,10 @@ def query(corpus,documents, s):
             if key in corpus.keys():
                 if doc_id in corpus[key]:
                     percentages = percentages+1
-        t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100)])
+        if (len(s) <= eachCorpusFileTotalHashes[doc_id]):
+            t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100)])
+        else:
+            t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
         percentages = 0
     return t
 
@@ -59,6 +64,7 @@ def create_corpus(documents):
         s = hashingFunction(s, 7)
         s = winnow(4, s)
         s = inverted_index_create(s)
+        eachCorpusFileTotalHashes[doc_id] = len(s)
         corpus = corpus_add_index(corpus,doc_id,s)
     return corpus
 

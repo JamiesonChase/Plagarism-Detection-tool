@@ -1,0 +1,10 @@
+def fun():
+ var = fun(3,4) 
+ var = fun(1,2) 
+ var = var + var
+ print(var," + ", var, " = ", var)
+def fun(var):
+ return var*var / 2
+def fun(var,var): 
+ return var+var
+fun()
