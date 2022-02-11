@@ -9,9 +9,8 @@ Winnowing - Trevor Holland
 
 May need to install colorama with "pip3 install colorama
 ```
-pip install pyminifier 
+pip install pygments 
 ```
-Then change `__init__.py` pyminifier file (middle click on "import pyminifier"). replace that file with [this](https://github.com/liftoff/pyminifier/blob/master/pyminifier/__init__.py) one.
 
 Run demo.py and verify part output like this:
 
