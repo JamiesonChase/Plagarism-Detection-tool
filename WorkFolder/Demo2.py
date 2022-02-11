@@ -54,7 +54,7 @@ def load_documents(d):
     i=1
     docs = {}
     for file in k:
-        if file.endswith(".py"):
+        if file.endswith(".py") or file.endswith(".c"):
             item = docs.setdefault("doc" + str(i),""+d+file)
             i = i + 1
     return docs
