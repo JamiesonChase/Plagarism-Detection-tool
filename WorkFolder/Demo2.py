@@ -1,8 +1,10 @@
 import itertools
+from mailcap import findmatch
 from preprocessing.process import process
 from preprocessing.translate import TranslateLines
 from hashingFingerprinting.hashFingerprint import hashingFunction
 from winnowing.winnowing import winnow
+import comparisonAndHighlighting.highlightLines
 import os
 from prettytable import PrettyTable
 
@@ -98,10 +100,14 @@ def main():
 
         splitNames = currentName.split(" - ")
         createIFramePage(i)
-        # Here is where you call your functions
-        createJumpTable(i, [[0, 5]], [[0, 5]])
-        createHTMLFiles(splitNames[0], [[0, 5]], 2,i)
-        createHTMLFiles(splitNames[1], [[0, 5]], 3,i)
+        file1 = splitNames[0]; file2 = splitNames[1]
+        highlightLines = comparisonAndHighlighting.highlightLines.getHighlightLines(file1, file2, file1 + "_Processed", file2 + "_Processed", file1 + "_Stripped", file2 + "_Stripped")
+        file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
+        print(file1Lines)
+        print(file2Lines)
+        createJumpTable(i, file1Lines, file2Lines)
+        createHTMLFiles(splitNames[0], file1Lines, 2,i)
+        createHTMLFiles(splitNames[1], file2Lines, 3,i)
         i = i + 1
         
         #print(row.get_string(fields=["doc pairs"]).strip())  # Column 1

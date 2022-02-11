@@ -1,6 +1,6 @@
 from difflib import SequenceMatcher
 
-def findMatches(string1, string2):    
+def findMatches(s1, s2):    
     """
     Repeatedly searches for longest common substrings within both input strings
     until a substring too small is found.
@@ -13,10 +13,13 @@ def findMatches(string1, string2):
     MIN_MATCH_SIZE = 5 # A match must be at least this long 
     matches = []
 
+    string1 = s1
+    string2 = s2
+
     # return empty list if either string is empty
     if len(string1) < 1 or len(string2) < 1:
         return matches
-    
+
     # loop until no large enough matches
     while True:
         # find the longest substring ignoring null characters
@@ -25,6 +28,7 @@ def findMatches(string1, string2):
         a = match.a
         b = match.b
         size = match.size
+
         # make sure the substring is long enough
         if size >= MIN_MATCH_SIZE:
             matches.append(match)
@@ -44,7 +48,7 @@ def getLines(string, matchMin, matchMax):
     """
     minLine = len(string[:matchMin+1].splitlines(keepends=True)) - 1
     maxLine = len(string[:matchMax+1].splitlines(keepends=True)) - 1
-    return(minLine, maxLine)
+    return [minLine, maxLine]
     
 def matchProcessedLines(file1String, file2String):
     """
@@ -84,7 +88,10 @@ def TranslateLines(StrippedFile,OldLines,SourceFile):
 
 def getHighlightLines(file1, file2, processedFile1, processedFile2, strippedFile1, strippedFile2):
 
-    lines = matchProcessedLines(processedFile1, processedFile2)
+    f1 = open(processedFile1, "r"); string1 = f1.read(); f1.close()
+    f2 = open(processedFile2, "r"); string2 = f2.read(); f2.close()
+
+    lines = matchProcessedLines(string1, string2)
     file1Lines = lines[0]
     file2Lines = lines[1]
 
@@ -107,4 +114,9 @@ def getHighlightLines(file1, file2, processedFile1, processedFile2, strippedFile
     newLines1.sort(key=lambda a : a[0])
     newLines2.sort(key=lambda a : a[0])
 
+    print(newLines1)
+    print(newLines2)
+
     return (newLines1, newLines2)
+
+#getHighlightLines("test.py", "test2.py", "test.py_Processed", "test2.py_Processed", "test.py_Stripped", "test2.py_Stripped")
