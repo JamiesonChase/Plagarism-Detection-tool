@@ -122,14 +122,7 @@ void F(FILE *V) {
 First pyminifer needs to be installed. Verify using version 2.2, might have to install directly from github [repo](https://github.com/liftoff/pyminifier).
 
 ```
-pip install pyminifer
-```
-
-## Running
-download files into same directory and run the program with:
-
-```
-python process.py test.py
+pip install pygments
 ```
 
 Two new files will be created and directory will contain:
