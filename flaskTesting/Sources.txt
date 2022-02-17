@@ -2,3 +2,8 @@ https://blog.miguelgrinberg.com/post/dynamically-update-your-flask-web-pages-usi
 https://www.youtube.com/watch?v=fQrq207zXzU
 https://www.w3schools.com/python/python_variables_global.asp
 
+https://stackoverflow.com/questions/50426137/flask-get-clicked-link-info-and-display-on-rendered-page
+https://stackoverflow.com/questions/34671217/in-flask-what-is-request-args-and-how-is-it-used
+https://www.kameronjenkins.com/seo/url-parameters-query-strings
+https://www.geeksforgeeks.org/how-to-insert-a-javascript-variable-inside-href-attribute/amp/
+https://www.digitalocean.com/community/tutorials/processing-incoming-request-data-in-flask

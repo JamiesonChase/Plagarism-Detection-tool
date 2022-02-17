@@ -100,29 +100,25 @@ def main():
         currentName = row[0]
         #print(currentName)
 
-        splitNames = currentName.split(" - ")
-        createIFramePage(i)
-        file1 = splitNames[0]; file2 = splitNames[1]
+        splitNames = currentName.split(" - ") #Split the names so there are no spaces
+        createIFramePage(i) # Create the page that will hold all the iframes
+        file1 = splitNames[0]; file2 = splitNames[1] #Assign the names of the files
 
         highlightLines = comparisonAndHighlighting.highlightLines.getHighlightLines(file1, file2, file1 + "_Processed", file2 + "_Processed", file1 + "_Stripped", file2 + "_Stripped")
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
         #print(file1Lines)
         #print(file2Lines)
-        createJumpTable(i, file1Lines, file2Lines)
-        createHTMLFiles(file1, file1Lines, 2,i)
-        createHTMLFiles(file2, file2Lines, 3,i)
-        i = i + 1
+        createJumpTable(i, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
+        createHTMLFiles(file1, file1Lines, 2,i) # Create the 2 HTML files that will appear side by side
+        createHTMLFiles(file2, file2Lines, 3,i) 
+        i = i + 1 # Increment the i that shows the row number of the comparison table.
         
         #print(row.get_string(fields=["doc pairs"]).strip())  # Column 1
         #print(row.get_string(fields=["Pair Similarity"]).strip())  # Column 1
    
-    
-
-    
-
-
-def createMainTableHTML(Rows):
-    f = open('index.html', 'w')
+def createMainTableHTML(Rows): #Will create the HTML file with all the comparison.
+    f = open('HTMLFiles/index.html', 'w') # Create the index.html file.
+    # Header part of the HTML file, will write this variable to the file.
     html_template = """<!DOCTYPE html>
     <html>
     <head>
@@ -146,42 +142,44 @@ def createMainTableHTML(Rows):
     </tr>
     """
     i = 0
-    for row in Rows:
-        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html\">{name}</A></th>\n".format(currentNumber=i,name=row[0])
+    for row in Rows: # Add each entry of the table to the file.
+        currentName = row[0]
+        splitNames = currentName.split(" - ") #Split the names so there are no spaces
+        file1 = splitNames[0]; file2 = splitNames[1] #Assign the names of the files
+        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html?file1={firstFile}&file2={secondFile}\">{name}</A></th>\n".format(currentNumber=i,name=row[0], firstFile=file1, secondFile=file2)
         html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row[1])   
         i = i + 1
         
-
-        
-
-    html_template = html_template + "</table></body>\n</html>"
-    f.write(html_template)
+    html_template = html_template + "</table></body>\n</html>" #Add the ending parts of the html file.
+    f.write(html_template) # Write everything to the file and close it.
     f.close()
     return 
 
-def createIFramePage(currentRowNumber):
-    htmlFileName = "{number}-1.html".format(number=currentRowNumber)
+def createIFramePage(currentRowNumber): #Create the HTML page that will display the table and the 2 comparison files.
+    htmlFileName = "HTMLFiles/{number}-1.html".format(number=currentRowNumber) #Th file name that will be used.
 
-    f = open(htmlFileName, 'w')
-    html_template = """<!DOCTYPE html>
+    f = open(htmlFileName, 'w') # Open the file.
+    # Beginning part of the HTML file.
+    html_template = """<!DOCTYPE html> 
     <html>
     <head>
     <title>Side by side Comparison</title>
     
     </head>
     """
-    html_template = html_template + "<iframe src=\"{number}-4.html\" height=\"150\" width=\"100%\" title=\"TableFile\"></iframe>\n".format(number=currentRowNumber)
+    html_template = html_template + "<iframe src=\"{number}-4.html\" height=\"150\" width=\"100%\" title=\"TableFile\"></iframe>\n".format(number=currentRowNumber) # Add the correct links.
     html_template = html_template + "<iframe src=\"{number}-2.html\" height=\"450\" width=\"47%\" name=\"LeftFile\"></iframe>\n".format(number=currentRowNumber)
     html_template = html_template + "<iframe src=\"{number}-3.html\" height=\"450\" width=\"47%\" name=\"RightFile\"></iframe>\n".format(number=currentRowNumber)
-    html_template = html_template + "</body>\n</html>"
-    f.write(html_template)
+    html_template = html_template + "</body>\n</html>" #Ending parts of the HTML file.
+    f.write(html_template) # Write everything to the file and close it.
     f.close()
     return 
 
-def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight):
-    htmlFileName = "{number}-4.html".format(number=currentRowNumber)
+def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight): #Create the table at the top of the 2 files being compared.
+    htmlFileName = "HTMLFiles/{number}-4.html".format(number=currentRowNumber) #File name that will be used 
 
-    f = open(htmlFileName, 'w')
+    f = open(htmlFileName, 'w') #Open the file
+    # header information
     html_template = """<!DOCTYPE html>
     <html>
     <head>
@@ -204,86 +202,69 @@ def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight):
             <th>File2</th>
         </tr>
     """
-    if (len(arrayOfNamesLeft) >= len(arrayOfNamesRight)):
-        for var in list(range(len(arrayOfNamesLeft))):
-            html_template = html_template + "<tr>"
-            if (var < len(arrayOfNamesLeft)):
+
+    if (len(arrayOfNamesLeft) >= len(arrayOfNamesRight)): #If the length of the array on the left side is bigger than on the right side
+        for var in list(range(len(arrayOfNamesLeft))): # for each entry in the left array
+            html_template = html_template + "<tr>" # Start a new tale row.
+            if (var < len(arrayOfNamesLeft)): #If the left side needs to be added, add the corresponding html code.
                 html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][0],r=arrayOfNamesLeft[var][1])
             else:
                 pass
 
-            if (var < len(arrayOfNamesRight)):
+            if (var < len(arrayOfNamesRight)): # If the right side needs to be added, add the corresponding HTML coe
                 html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][0],r=arrayOfNamesRight[var][1])
             else:
                 pass
 
-            html_template = html_template + "</tr>\n"
-    else:
-        
-        for var in list(range(len(arrayOfNamesRight))):
+            html_template = html_template + "</tr>\n" # End the table row.
+    else: # Else if the length of the array on the right side is bigger than on the left side. 
+        for var in list(range(len(arrayOfNamesRight))): # For each entry in the right array
             
-            html_template = html_template + "<tr>"
-            if (var < len(arrayOfNamesLeft)):
+            html_template = html_template + "<tr>" # Start a table row
+            if (var < len(arrayOfNamesLeft)): #If we need to add an entry to the left table, add the HTML code
                 html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][0],r=arrayOfNamesLeft[var][1])
-            else:
+            else: # Else put an empty slot for left side
                 html_template = html_template + "<th></th>\n"
 
-            if (var < len(arrayOfNamesRight)):
-                
-                
+            if (var < len(arrayOfNamesRight)): # If the right side needs to be added, add it
                 html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][0],r=arrayOfNamesRight[var][1])
             else:
                 pass
 
-            html_template = html_template + "</tr>\n"
+            html_template = html_template + "</tr>\n" # End the row
     
-    html_template = html_template + "</table>\n</body>\n</html>"
-    f.write(html_template)
+    html_template = html_template + "</table>\n</body>\n</html>" # Add the ending information
+    f.write(html_template) # Write to the file and close it.
     f.close()
     return 
 
-def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber):
-    a_file = open(fileName)
+def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber): #Creat the HTML files that will contain the the source code.
+    a_file = open(fileName) #Open the file
     
-    lines = a_file.readlines()
+    lines = a_file.readlines() # Read all the lines
+    htmlFileName = "HTMLFiles/{number}-{side}.html".format(number=currentRowNumber,side=LeftOrRight) #Nam eof the html file.
 
+    f = open(htmlFileName, 'w') # Create the html file.
+    html_template = """<!DOCTYPE html><html><head><title>{nameOfFile}</title></head><body BGCOLOR=white><HR>{nameOfFile}<p><PRE>\n""".format(nameOfFile=fileName) #Header information.
+    f.write(html_template) # Write to the html file.
+    a_file.close() #Close the source file.
 
-
-
-
-
-    htmlFileName = "{number}-{side}.html".format(number=currentRowNumber,side=LeftOrRight)
-
-    f = open(htmlFileName, 'w')
-    html_template = """<!DOCTYPE html><html><head><title>{nameOfFile}</title></head><body BGCOLOR=white><HR>{nameOfFile}<p><PRE>\n""".format(nameOfFile=fileName)
-    f.write(html_template)
-    a_file.close()
-    i = 0
+    i = 0 #Variables to determine what values are written to the HTML file
     blockNumber = 0
     jumpPoint = 0
-    for line in lines:
+
+    for line in lines: #For each line in the source document.
+        if (blockNumber < len(blocks) and i == blocks[blockNumber][0]): #If the block number is still inside the number of blocks and i equal to the start of the block
+            f.write("<A NAME=\"{j}\"></A><FONT color = #FF0000>".format(j=jumpPoint)) #Start of the text that will be highlighted in and jump point can be referenced to go to this specific line
+            jumpPoint = jumpPoint + 1 # Increase the jum point
         
+        f.write(line) # Write the text to the html file.
+        if (blockNumber < len(blocks) and i == blocks[blockNumber][1]): #If it is the end of the block
+            f.write("</FONT>") # End the text that will be highlighted in red
+            blockNumber = blockNumber + 1 # Increase the block number counter
+        i = i + 1 # Increase the line number counter.
         
-
-        if (blockNumber < len(blocks) and i == blocks[blockNumber][0]):
-            f.write("<A NAME=\"{j}\"></A><FONT color = #FF0000>".format(j=jumpPoint))
-            jumpPoint = jumpPoint + 1
-        
-        f.write(line)
-        if (blockNumber < len(blocks) and i == blocks[blockNumber][1]):
-            f.write("</FONT>")
-            blockNumber = blockNumber + 1
-
-        i = i + 1
-        
-    
-    f.write("</PRE></PRE></Body></HTML>")
-    f.close()
-
-    
-
-    
-
-
+    f.write("</PRE></PRE></Body></HTML>") # Write the ending parts of the HTML file
+    f.close() # Close the file.
 
 main()

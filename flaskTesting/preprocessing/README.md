@@ -1,49 +1,128 @@
-First Draft for preprocessing tool, comments and newline will be stripped. Variables and functions will be renamed.
+Preprocessing tool, comments and newline will be stripped. Variables and functions will be renamed.
 
 ## Example
 
 ### Before
-```py
+```c
 
-# This is a test function with junk comments
+/*Group: Antonio Maniscalco, Chase Jamieson, Josh Sedig
+* CS460 Assignment_1
+* Instructor: Dr. Xuechen Zhang
+* my-uniq.c file
+* */
 
-def main():
- a = addNum(1,2)  #addition
- b = addNum(3,4)  #more addition
- c = a + b
- print(a," + ", b, " = ", c)
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdlib.h>
 
- #bala blah blah
+void parse(FILE *fp);
 
-def addNum(x,y): #function
- return x+y
+int main(int argc, char **argv) {
+    FILE *fp;
+    int i;
+    if (argc == 1) {
+        parse(stdin); //read through stdin
+        return 1;
+    }
+    for (i = 1;i<argc;i++) { //iterate through each command line argument
+     if ((fp = fopen(argv[i],"r")) != NULL) {
+        parse(fp);
+        fclose(fp);
+     }
+     else { //error if file cannot be opened
+        printf("my-uniq: cannot open file\n");
+        exit(1);
+    }
+  }
+}
+//parse through for adjecent duplicate lines
+void parse(FILE *fp) {
+    char current[500];
+    char next[500];
 
-main()
+    while(fgets(next, 500, fp) != NULL) {
+        if (strcmp(current, next) != 0) {
+            printf("%s",next); //if different
+            strcpy(current,next); //current line checking updated
+        }
+
+    }
+  current[0]='\0'; //reset current so doens't filter next files
+}
 ```
-### After
-```python
-def fun1():
- var1 = fun2(1,2) 
- var2 = fun2(3,4) 
- var3 = var1 + var2
- print(var1," + ", var2, " = ", var3)
-def fun2(var4,var5): 
- return var4+var5
-fun1()
+### Stripped
+```c
+void parse(FILE *fp);
+int main(int argc, char **argv) {
+    FILE *fp;
+    int i;
+    if (argc == 1) {
+        parse(stdin); 
+        return 1;
+    }
+    for (i = 1;i<argc;i++) { 
+     if ((fp = fopen(argv[i],"r")) != NULL) {
+        parse(fp);
+        fclose(fp);
+     }
+     else { 
+        printf("my-uniq: cannot open file\n");
+        exit(1);
+    }
+  }
+}
+void parse(FILE *fp) {
+    char current[500];
+    char next[500];
+    while(fgets(next, 500, fp) != NULL) {
+        if (strcmp(current, next) != 0) {
+            printf("%s",next); 
+            strcpy(current,next); 
+        }
+    }
+  current[0]='\0'; 
+}
+```
+### Processed
+```c
+void F(FILE *V);
+int F(int V, char **V) {
+    FILE *V;
+    int V;
+    if (V == 1) {
+        V(V); 
+        return 1;
+    }
+    for (V = 1;V<V;V++) { 
+     if ((V = V(V[V],SSS)) != NULL) {
+        V(V);
+        V(V);
+     }
+     else { 
+        V(SSSS);
+        V(1);
+    }
+  }
+}
+void F(FILE *V) {
+    char V[500];
+    char V[500];
+    while(V(V, 500, V) != NULL) {
+        if (V(V, V) != 0) {
+            V(SSS,V); 
+            V(V,V); 
+        }
+    }
+  V[0]=SSS; 
+}
 ```
 
 ## Installation:
 First pyminifer needs to be installed. Verify using version 2.2, might have to install directly from github [repo](https://github.com/liftoff/pyminifier).
 
 ```
-pip install pyminifer
-```
-
-## Running
-download files into same directory and run the program with:
-
-```
-python process.py test.py
+pip install pygments
 ```
 
 Two new files will be created and directory will contain:
