@@ -27,6 +27,7 @@ irow = 0
 
 
 
+
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 
 eachCorpusFileTotalHashes = {}
@@ -158,7 +159,7 @@ def createMainTableHTML(Rows): #Will create the HTML file with all the compariso
         currentName = row[0]
         splitNames = currentName.split(" - ") #Split the names so there are no spaces
         file1 = splitNames[0]; file2 = splitNames[1] #Assign the names of the files
-        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html?file1={firstFile}&file2={secondFile}\">{name}</A></th>\n".format(currentNumber=i,name=row[0], firstFile=file1, secondFile=file2)
+        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html?file1={firstFile}&file2={secondFile}&rowNumber={rowNumber}\">{name}</A></th>\n".format(currentNumber=i,name=row[0], firstFile=file1, secondFile=file2,rowNumber=currentNumber)
         html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row[1])   
         i = i + 1
         
@@ -168,7 +169,7 @@ def createMainTableHTML(Rows): #Will create the HTML file with all the compariso
     return 
 
 def createIFramePage(currentRowNumber): #Create the HTML page that will display the table and the 2 comparison files.
-    htmlFileName = "HTMLFiles/{number}-1.html".format(number=currentRowNumber) #Th file name that will be used.
+    htmlFileName = "templates/HTMLFiles/baseFiles/{number}-1.html".format(number=currentRowNumber) #Th file name that will be used.
 
     f = open(htmlFileName, 'w') # Open the file.
     # Beginning part of the HTML file.
@@ -179,16 +180,16 @@ def createIFramePage(currentRowNumber): #Create the HTML page that will display 
     
     </head>
     """
-    html_template = html_template + "<iframe src=\"{number}-4.html\" height=\"150\" width=\"100%\" title=\"TableFile\"></iframe>\n".format(number=currentRowNumber) # Add the correct links.
-    html_template = html_template + "<iframe src=\"{number}-2.html\" height=\"450\" width=\"47%\" name=\"LeftFile\"></iframe>\n".format(number=currentRowNumber)
-    html_template = html_template + "<iframe src=\"{number}-3.html\" height=\"450\" width=\"47%\" name=\"RightFile\"></iframe>\n".format(number=currentRowNumber)
+    html_template = html_template + "<iframe src=\"../contentFiles/{number}-4.html\" height=\"150\" width=\"100%\" title=\"TableFile\"></iframe>\n".format(number=currentRowNumber) # Add the correct links.
+    html_template = html_template + "<iframe src=\"../contentFiles/{number}-2.html\" height=\"450\" width=\"47%\" name=\"LeftFile\"></iframe>\n".format(number=currentRowNumber)
+    html_template = html_template + "<iframe src=\"../contentFiles/{number}-3.html\" height=\"450\" width=\"47%\" name=\"RightFile\"></iframe>\n".format(number=currentRowNumber)
     html_template = html_template + "</body>\n</html>" #Ending parts of the HTML file.
     f.write(html_template) # Write everything to the file and close it.
     f.close()
     return 
 
 def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight): #Create the table at the top of the 2 files being compared.
-    htmlFileName = "HTMLFiles/{number}-4.html".format(number=currentRowNumber) #File name that will be used 
+    htmlFileName = "templates/HTMLFiles/contentFiles/{number}-4.html".format(number=currentRowNumber) #File name that will be used 
 
     f = open(htmlFileName, 'w') #Open the file
     # header information
@@ -254,7 +255,7 @@ def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber): #Creat the 
     a_file = open(fileName) #Open the file
     
     lines = a_file.readlines() # Read all the lines
-    htmlFileName = "HTMLFiles/{number}-{side}.html".format(number=currentRowNumber,side=LeftOrRight) #Nam eof the html file.
+    htmlFileName = "templates/HTMLFiles/contentFiles/{number}-{side}.html".format(number=currentRowNumber,side=LeftOrRight) #Nam eof the html file.
 
     f = open(htmlFileName, 'w') # Create the html file.
     html_template = """<!DOCTYPE html><html><head><title>{nameOfFile}</title></head><body BGCOLOR=white><HR>{nameOfFile}<p><PRE>\n""".format(nameOfFile=fileName) #Header information.
@@ -315,16 +316,30 @@ def page2():
 
     return render_template('page2.html')
 
-@app.route('/HTMLFiles/<files>')
+@app.route('/HTMLFiles/baseFiles/<files>')
 def testing(files):
     print("Working")
     file1 = request.args.get('file1')
     file2 = request.args.get('file2')
-    stringFile = '/HTMLFiles/' + files 
-    print(stringFile)
-    print(file1)
-    print(file2)
+    rowNumber = request.args.get('rowNumber')
+    stringFile = '/HTMLFiles/baseFiles/' + files 
+
+    createIFramePage(rowNumber) # Create the page that will hold all the iframes
+
+    highlightLines = comparisonAndHighlighting.highlightLines.getHighlightLines(file1, file2, file1 + "_Processed", file2 + "_Processed", file1 + "_Stripped", file2 + "_Stripped")
+    file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
+
+    createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
+    createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
+    createHTMLFiles(file2, file2Lines, 3,rowNumber) 
+
     return render_template(stringFile)
+
+@app.route('/HTMLFiles/contentFiles/<files>')
+def loadingFiles(files):
+    stringFile = '/HTMLFiles/contentFiles/' + files 
+    return render_template(stringFile)
+
 
 @app.context_processor
 def inject_load():
