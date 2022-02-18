@@ -48,6 +48,7 @@ def corpus_add_index(corpus,doc_id, s):
     return corpus
 
 def query(corpus,documents, s):
+    global irow
     percentages = 0
     inputfile = s
 
@@ -63,8 +64,20 @@ def query(corpus,documents, s):
                     percentages = percentages+1
         if (len(s) <= eachCorpusFileTotalHashes[doc_id]):
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100)])
+
+
+
+            html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100), documents[doc_id], inputfile])
+            
+            irow = irow + 1
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
+
         else:
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
+            html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100), documents[doc_id], inputfile])
+            
+            irow = irow + 1
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
         percentages = 0
     return t
 
@@ -374,17 +387,9 @@ def update_load():
         print(table)
         Rows = table.rows
         Rows.sort(key=lambda x: x[1], reverse=True)
-        #createMainTableHTML(Rows)
-        for row in Rows:
-            time.sleep(1)
-            currentName = row[0]
-            splitNames = currentName.split(" - ") #Split the names so there are no spaces
-            file1 = splitNames[0]; file2 = splitNames[1] #Assign the names of the files
-            html_template.append([irow, row[0],row[1], file1, file2])
-            
-            irow = irow + 1
-            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
         while(1):
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
+
+
         
             
