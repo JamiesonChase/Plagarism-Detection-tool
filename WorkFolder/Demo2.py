@@ -146,7 +146,7 @@ def createMainTableHTML(Rows): #Will create the HTML file with all the compariso
         currentName = row[0]
         splitNames = currentName.split(" - ") #Split the names so there are no spaces
         file1 = splitNames[0]; file2 = splitNames[1] #Assign the names of the files
-        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html?file1={firstFile}&file2={secondFile}\">{name}</A></th>\n".format(currentNumber=i,name=row[0], firstFile=file1, secondFile=file2)
+        html_template = html_template + "<tr>\n<th><A HREF=\"{currentNumber}-1.html?file1={firstFile}&file2={secondFile}&rowNumber={rowNumber}\">{name}</A></th>\n".format(currentNumber=i,name=row[0], firstFile=file1, secondFile=file2,rowNumber=i)
         html_template = html_template + "<th>{percentScore}</th>\n</tr>\n".format(percentScore=row[1])   
         i = i + 1
         

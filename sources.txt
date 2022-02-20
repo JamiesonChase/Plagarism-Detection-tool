@@ -88,3 +88,17 @@ https://www.w3schools.com/howto/howto_css_table_center.asp
 https://www.w3docs.com/tools/code-editor/1093
 https://www.w3docs.com/snippets/html/how-to-add-border-to-html-table.html
 
+https://www.geeksforgeeks.org/python-sort-list-according-second-element-sublist/amp/
+
+https://www.geeksforgeeks.org/python-dictionary/
+
+https://txwes.libguides.com/c.php?g=978475&p=7075536
+
+https://www.geeksforgeeks.org/python-program-to-convert-decimal-to-hexadecimal/
+
+https://stackoverflow.com/questions/7186648/how-to-remove-first-10-characters-from-a-string
+
+https://www.kite.com/python/answers/how-to-remove-first-n-characters-from-a-string-in-python
+
+https://thehelloworldprogram.com/python/python-string-methods/
+

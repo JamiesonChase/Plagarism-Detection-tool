@@ -49,6 +49,7 @@ def corpus_add_index(corpus,doc_id, s):
 
 def query(corpus,documents, s):
     global irow
+    global html_template
     percentages = 0
     inputfile = s
 
@@ -68,14 +69,14 @@ def query(corpus,documents, s):
 
 
             html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100), documents[doc_id], inputfile])
-            
+            html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
 
         else:
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
             html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100), documents[doc_id], inputfile])
-            
+            html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
         percentages = 0
