@@ -26,8 +26,8 @@ def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber): #Creat the 
             f.write("</FONT>") # End the text that will be highlighted in red
             blockNumber = blockNumber + 1 # Increase the block number counter
             colorNumber = colorNumber + 1
-            if (colorNumber > 15):
-                colorNumber = colorNumber + 15
+            if (colorNumber > 8):
+                colorNumber = 0
         i = i + 1 # Increase the line number counter.
         
         
