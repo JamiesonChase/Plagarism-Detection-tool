@@ -58,14 +58,14 @@ def query(corpus,documents, s):
 
 
 
-            html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100), documents[doc_id], inputfile])
+            html_template.append([irow, documents[doc_id] + " - " + inputfile,  float( "{:05.2f}".format(percentages / len(s) * 100)  ), documents[doc_id], inputfile])
             html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
 
         else:
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
-            html_template.append([irow, documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100), documents[doc_id], inputfile])
+            html_template.append([irow, documents[doc_id] + " - " + inputfile,float( "{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100) ), documents[doc_id], inputfile])
             html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
             turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
@@ -159,7 +159,7 @@ def before_first_request():
 def update_load():
     with app.app_context():
         global irow 
-        directory = "database/" # directory for testfiles
+        directory = "largeFileTesting/" # directory for testfiles
         documents = load_documents(directory) # find documents inside testfiles directory
         corpus = create_corpus(documents) # create a corpus of those documents
         for i in range(1,len(documents)):
