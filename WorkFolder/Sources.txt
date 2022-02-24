@@ -1,0 +1,32 @@
+https://www.programiz.com/python-programming/string-interpolation
+https://www.w3schools.com/python/gloss_python_array_length.asp
+Framework for formatting the html file containing the python code came from MOSS output.
+https://www.tutorialspoint.com/python3/python_for_loop.htm
+https://www.w3schools.com/python/gloss_python_array_length.asp
+https://pypi.org/project/prettytable/
+https://www.geeksforgeeks.org/python-string-split/
+
+createIFramePage(0)
+    createJumpTable(0, [[0, 5], [7,11], [18, 19]], [[25, 26]])
+    createHTMLFiles("Compare.py", [[0, 5], [7,11], [18, 19]], 2,0)
+    createHTMLFiles("Student1.py", [[25, 25]], 3,0)
+
+    createIFramePage(1)
+    createJumpTable(1, [[21, 24]], [[6, 10], [21,25]])
+    createHTMLFiles("Compare.py", [[21, 24]], 2,1)
+    createHTMLFiles("databaseFile1.py", [[6, 10], [21,25]], 3,1)
+
+    createIFramePage(2)
+    createJumpTable(2, [[7, 8], [32,35]], [[6, 10], [21,25]])
+    createHTMLFiles("Student1.py", [[7, 8], [32,35]], 2,2)
+    createHTMLFiles("databaseFile1.py", [[6, 10], [21,25]], 3,2)
+
+    createIFramePage(3)
+    createJumpTable(3, [[0, 4], [21,24]], [[6, 10], [20,22]])
+    createHTMLFiles("Compare.py", [[0, 4], [21,24]], 2,3)
+    createHTMLFiles("databaseFile2.py", [[6, 10], [20,22]], 3,3)
+
+    createIFramePage(4)
+    createJumpTable(4, [[7, 8], [32,35]], [[6, 10], [20,22]])
+    createHTMLFiles("Student1.py", [[7, 8], [32,35]], 2,4)
+    createHTMLFiles("databaseFile2.py", [[6, 10], [20,22]], 3,4)

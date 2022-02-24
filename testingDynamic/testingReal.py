@@ -2,15 +2,15 @@ import random
 import sys
 import os
 import threading
-from threading import Lock
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
 from modules.comparison.comparison import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
-from flask import Flask, render_template, request, render_template_string
+from flask import Flask, render_template, request
 from turbo_flask import Turbo
 from prettytable import PrettyTable
+import time 
 
 app = Flask(__name__)
 turbo = Turbo(app)
@@ -18,8 +18,8 @@ global html_template
 html_template = []
 global irow
 irow = 0
-global lock
-lock = Lock()
+global checkEnd 
+checkEnd = 0
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 
@@ -43,7 +43,6 @@ def corpus_add_index(corpus,doc_id, s):
 def query(corpus,documents, s):
     global irow
     global html_template
-    global lock
     percentages = 0
     inputfile = s
 
@@ -57,7 +56,6 @@ def query(corpus,documents, s):
             if key in corpus.keys():
                 if doc_id in corpus[key]:
                     percentages = percentages+1
-        lock.acquire()
         if (len(s) <= eachCorpusFileTotalHashes[doc_id]):
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100)])
 
@@ -66,14 +64,15 @@ def query(corpus,documents, s):
             html_template.append([irow, documents[doc_id] + " - " + inputfile,  float( "{:05.2f}".format(percentages / len(s) * 100)  ), documents[doc_id], inputfile])
             html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
 
         else:
             t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
             html_template.append([irow, documents[doc_id] + " - " + inputfile,float( "{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100) ), documents[doc_id], inputfile])
             html_template.sort(key = lambda x: x[2], reverse=True)
             irow = irow + 1
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
         percentages = 0
-        lock.release()
     return t
 
 def load_documents(d):
@@ -113,42 +112,15 @@ def file_setup(document):
 
 @app.route('/')
 def index():
-    lock.acquire()
-    newList = html_template.copy()
-    lock.release()
-    
-    return render_template_string("""<!DOC html>
-    <html>
-    <head>
-     <meta http-equiv="refresh" content="3">
-    
-    <meta charset="utf-8" />
-    <title>Test</title>
-    
-    <style>
-      table, th, td {
-          border: 1px solid black;
-          border-collapse: collapse;
-      }
-      table.center {
-          margin-left: auto;
-          margin-right: auto;
-      }
-    </style>
-    </head>
-    <body>
-    <table class="center">
-      <tr>
-        <th>doc Pairs</th>
-        <th>Pair Similarity</th>
-      </tr>
-      {% for i in newEntry %}
-        <tr><th><A HREF="HTMLFiles/baseFiles/{{i[0]}}-1.html?file1={{i[3]}}&file2={{i[4]}}&rowNumber={{i[0]}}">{{i[1]}}</A></th><th>{{i[2]}}</th></tr>
-    {% endfor %}
-    </table>
-    </body>
-    </html>""", newEntry=newList)
+    return render_template('index.html')
 
+@app.route('/page2')
+def page2():
+
+    return render_template('page2.html')
+
+
+app.run(host="0.0.0.0", port=5000, threaded=True)
 
 @app.route('/HTMLFiles/baseFiles/<files>')
 def testing(files):
@@ -175,14 +147,23 @@ def loadingFiles(files):
     return render_template(stringFile)
 
 
+@app.context_processor
+def inject_load():
+    
+
+    print("Testing")
+    
+    return {'newEntry': html_template }
 
 @app.before_first_request
 def before_first_request():
     threading.Thread(target=update_load).start()
+    threading.Thread(target=continuous_update).start()
 
 def update_load():
     with app.app_context():
         global irow 
+        global checkEnd
         directory = "database/" # directory for testfiles
         documents = load_documents(directory) # find documents inside testfiles directory
         corpus = create_corpus(documents) # create a corpus of those documents
@@ -196,8 +177,12 @@ def update_load():
         print(table)
         Rows = table.rows
         Rows.sort(key=lambda x: x[1], reverse=True)
+        checkEnd = 1
+            
+
+
+def continuous_update():
+    with app.app_context():
+        while(1):
+            turbo.push(turbo.replace(render_template('loadavg.html'), 'load'))
         
-        
-if __name__ == "__main__":
-    
-    app.run(debug=True)
