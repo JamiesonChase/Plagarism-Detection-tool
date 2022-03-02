@@ -20,4 +20,6 @@ https://www.pythontutorial.net/advanced-python/python-threading-lock/
 
 https://www.programiz.com/python-programming/methods/list/copy
 
+https://www.pythontutorial.net/python-basics/python-check-if-file-exists/
 
+General format of visual came from MOSS.

@@ -20,6 +20,10 @@ global irow
 irow = 0
 global lock
 lock = Lock()
+global refreshLock
+refreshLock = Lock()
+global checkRefresh
+checkRefresh = 0
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 
@@ -116,8 +120,44 @@ def index():
     lock.acquire()
     newList = html_template.copy()
     lock.release()
+
+    refreshLock.acquire()
+    if (checkRefresh == 1):
+        refreshLock.release()
+        return render_template_string("""<!DOC html>
+    <html>
+    <head>
+
     
-    return render_template_string("""<!DOC html>
+    <meta charset="utf-8" />
+    <title>Test</title>
+    
+    <style>
+      table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+      table.center {
+          margin-left: auto;
+          margin-right: auto;
+      }
+    </style>
+    </head>
+    <body>
+    <table class="center">
+      <tr>
+        <th>doc Pairs</th>
+        <th>Pair Similarity</th>
+      </tr>
+      {% for i in newEntry %}
+        <tr><th><A HREF="HTMLFiles/baseFiles/{{i[0]}}-1.html?file1={{i[3]}}&file2={{i[4]}}&rowNumber={{i[0]}}">{{i[1]}}</A></th><th>{{i[2]}}</th></tr>
+    {% endfor %}
+    </table>
+    </body>
+        </html>""", newEntry=newList)
+    else:
+        refreshLock.release()
+        return render_template_string("""<!DOC html>
     <html>
     <head>
      <meta http-equiv="refresh" content="3">
@@ -147,7 +187,9 @@ def index():
     {% endfor %}
     </table>
     </body>
-    </html>""", newEntry=newList)
+        </html>""", newEntry=newList)
+    
+    
 
 
 @app.route('/HTMLFiles/baseFiles/<files>')
@@ -183,6 +225,7 @@ def before_first_request():
 def update_load():
     with app.app_context():
         global irow 
+        global checkRefresh
         directory = "database/" # directory for testfiles
         documents = load_documents(directory) # find documents inside testfiles directory
         corpus = create_corpus(documents) # create a corpus of those documents
@@ -196,6 +239,9 @@ def update_load():
         print(table)
         Rows = table.rows
         Rows.sort(key=lambda x: x[1], reverse=True)
+        refreshLock.acquire()
+        checkRefresh = 1
+        refreshLock.release()
         
         
 if __name__ == "__main__":

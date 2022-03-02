@@ -1,0 +1,1 @@
+To ensure all affected customers are aware of the authentication change, during two scheduled brownouts, we will temporarily disable support for password authentication, and Git operations made using a password will temporarily fail. The brownouts are scheduled for the following dates and times
