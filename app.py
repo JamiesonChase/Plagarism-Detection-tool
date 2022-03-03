@@ -1,6 +1,7 @@
 import random
 import sys
-import os
+import os, glob
+import os.path
 import threading
 from threading import Lock
 from modules.preprocessing.process import process
@@ -230,17 +231,21 @@ def testing(files):
     file2 = request.args.get('file2')
     rowNumber = request.args.get('rowNumber')
     stringFile = '/HTMLFiles/baseFiles/' + files 
+    if ( os.path.exists(stringFile) == True):
+        return render_template(stringFile)
+    else:
+        createIFramePage(rowNumber) # Create the page that will hold all the iframes
 
-    createIFramePage(rowNumber) # Create the page that will hold all the iframes
+        highlightLines = highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2)
+        file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
 
-    highlightLines = highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2)
-    file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
+        createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
+        createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
+        createHTMLFiles(file2, file2Lines, 3,rowNumber) 
 
-    createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
-    createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
-    createHTMLFiles(file2, file2Lines, 3,rowNumber) 
+        return render_template(stringFile)
 
-    return render_template(stringFile)
+    
 
 @app.route('/HTMLFiles/contentFiles/<files>')
 def loadingFiles(files):
@@ -275,6 +280,16 @@ def update_load():
             checkRefresh = 1
             refreshLock.release()
         else:
+            dir = 'templates/HTMLFiles/baseFiles/'
+            dir2 = 'templates/HTMLFiles/contentFiles/'
+            for file in os.scandir(dir):
+                os.remove(file.path)
+            
+            for file in os.scandir(dir2):
+                os.remove(file.path)
+            
+
+
             directory = "database/" # directory for testfiles
             documents = load_documents(directory) # find documents inside testfiles directory
             corpus = create_corpus(documents) # create a corpus of those documents

@@ -14,6 +14,8 @@ https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversin
 
 https://stackoverflow.com/questions/61639807/manipulate-html-table-rendered-from-flask-in-javascript
 
+https://www.pythontutorial.net/python-basics/python-check-if-file-exists/
+
 https://www.w3schools.com/html/html_basic.asp
 
 https://stackoverflow.com/questions/2906582/how-to-create-an-html-button-that-acts-like-a-link
@@ -23,6 +25,8 @@ https://stackoverflow.com/questions/48148131/how-can-we-call-one-route-from-anot
 https://stackoverflow.com/questions/17256602/assertionerror-view-function-mapping-is-overwriting-an-existing-endpoint-functi
 
 https://flask.palletsprojects.com/en/0.12.x/quickstart/#redirects-and-errors
+
+https://stackoverflow.com/questions/10840533/most-pythonic-way-to-delete-a-file-which-may-not-exist
 
 https://www.pythontutorial.net/advanced-python/python-threading-lock/
 
