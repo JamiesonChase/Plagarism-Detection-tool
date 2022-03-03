@@ -10,12 +10,10 @@ from modules.winnowing.winnowing import winnow
 from modules.comparison.comparison import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
 from flask import Flask, render_template, request, render_template_string, redirect, url_for
-from turbo_flask import Turbo
 from prettytable import PrettyTable
 import pickle
 
 app = Flask(__name__)
-turbo = Turbo(app)
 global html_template
 html_template = []
 global irow

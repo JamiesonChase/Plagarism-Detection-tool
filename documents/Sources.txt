@@ -1,9 +1,7 @@
-https://blog.miguelgrinberg.com/post/dynamically-update-your-flask-web-pages-using-turbo-flask
-https://www.youtube.com/watch?v=fQrq207zXzU
-https://www.w3schools.com/python/python_variables_global.asp
-
-https://stackoverflow.com/questions/50426137/flask-get-clicked-link-info-and-display-on-rendered-page
-https://stackoverflow.com/questions/34671217/in-flask-what-is-request-args-and-how-is-it-used
-https://www.kameronjenkins.com/seo/url-parameters-query-strings
-https://www.geeksforgeeks.org/how-to-insert-a-javascript-variable-inside-href-attribute/amp/
-https://www.digitalocean.com/community/tutorials/processing-incoming-request-data-in-flask
+https://www.programiz.com/python-programming/string-interpolation
+https://www.w3schools.com/python/gloss_python_array_length.asp
+Framework for formatting the html file containing the python code came from MOSS output.
+https://www.tutorialspoint.com/python3/python_for_loop.htm
+https://www.w3schools.com/python/gloss_python_array_length.asp
+https://pypi.org/project/prettytable/
+https://www.geeksforgeeks.org/python-string-split/
