@@ -8,9 +8,10 @@ from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
 from modules.comparison.comparison import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
-from flask import Flask, render_template, request, render_template_string
+from flask import Flask, render_template, request, render_template_string, redirect, url_for
 from turbo_flask import Turbo
 from prettytable import PrettyTable
+import pickle
 
 app = Flask(__name__)
 turbo = Turbo(app)
@@ -24,6 +25,10 @@ global refreshLock
 refreshLock = Lock()
 global checkRefresh
 checkRefresh = 0
+global loadOrNew
+loadOrNew = 0
+global lNLock
+lNLock = Lock()
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 
@@ -117,6 +122,32 @@ def file_setup(document):
 
 @app.route('/')
 def index():
+    return render_template("index.html")
+
+@app.route('/loadFile')
+def loadFile():
+    global lNLock
+    global loadOrNew
+    lNLock.acquire()
+    loadOrNew = 1
+    lNLock.release()
+    return redirect(url_for('comparisonTable'))
+
+@app.route('/newStart')
+def newStart():
+    global lNLock
+    global loadOrNew
+    lNLock.acquire()
+    loadOrNew = 2
+    lNLock.release()
+    return redirect(url_for('comparisonTable'))
+
+
+@app.route('/comparisonTable')
+def comparisonTable():
+    global irow 
+    global checkRefresh
+    global html_template
     lock.acquire()
     newList = html_template.copy()
     lock.release()
@@ -226,6 +257,49 @@ def update_load():
     with app.app_context():
         global irow 
         global checkRefresh
+        global html_template
+        global lNLock
+        global loadOrNew
+        while(1):
+            lNLock.acquire()
+            if (loadOrNew != 0):
+                lNLock.release()
+                break
+            lNLock.release()
+
+        if loadOrNew == 1:
+            open_file = open("last_save.pkl", "rb")
+            html_template = pickle.load(open_file)
+            open_file.close()
+            refreshLock.acquire()
+            checkRefresh = 1
+            refreshLock.release()
+        else:
+            directory = "database/" # directory for testfiles
+            documents = load_documents(directory) # find documents inside testfiles directory
+            corpus = create_corpus(documents) # create a corpus of those documents
+            for i in range(1,len(documents)):
+                file = documents["doc" + str(i)]
+                documents.pop("doc" + str(i))
+                table = query(corpus,documents,file)
+
+            table.sortby = 'Pair Similarity'
+            table.reversesort = True
+            print(table)
+            Rows = table.rows
+            Rows.sort(key=lambda x: x[1], reverse=True)
+            lock.acquire()
+            open_file = open("last_save.pkl", "wb")
+            pickle.dump(html_template, open_file)
+            open_file.close()
+            lock.release()
+            #print(html_template)
+            refreshLock.acquire()
+            checkRefresh = 1
+            refreshLock.release()
+        
+        
+        """
         directory = "database/" # directory for testfiles
         documents = load_documents(directory) # find documents inside testfiles directory
         corpus = create_corpus(documents) # create a corpus of those documents
@@ -239,9 +313,11 @@ def update_load():
         print(table)
         Rows = table.rows
         Rows.sort(key=lambda x: x[1], reverse=True)
+        print(html_template)
         refreshLock.acquire()
         checkRefresh = 1
         refreshLock.release()
+        """
         
         
 if __name__ == "__main__":

@@ -14,6 +14,15 @@ https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Traversin
 
 https://stackoverflow.com/questions/61639807/manipulate-html-table-rendered-from-flask-in-javascript
 
+https://www.w3schools.com/html/html_basic.asp
+
+https://stackoverflow.com/questions/2906582/how-to-create-an-html-button-that-acts-like-a-link
+
+https://stackoverflow.com/questions/48148131/how-can-we-call-one-route-from-another-route-with-parameters-in-flask
+
+https://stackoverflow.com/questions/17256602/assertionerror-view-function-mapping-is-overwriting-an-existing-endpoint-functi
+
+https://flask.palletsprojects.com/en/0.12.x/quickstart/#redirects-and-errors
 
 https://www.pythontutorial.net/advanced-python/python-threading-lock/
 
@@ -23,3 +32,12 @@ https://www.programiz.com/python-programming/methods/list/copy
 https://www.pythontutorial.net/python-basics/python-check-if-file-exists/
 
 General format of visual came from MOSS.
+
+https://www.w3schools.com/python/python_for_loops.asp
+
+https://www.kite.com/python/docs/pickle.dump
+
+https://www.kite.com/python/answers/how-to-save-and-read-a-list-in-python
+
+https://appdividend.com/2021/02/23/python-comment-block-how-to-write-multi-line-comments/
+
