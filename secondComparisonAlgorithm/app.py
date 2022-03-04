@@ -7,7 +7,7 @@ from threading import Lock
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
-from modules.comparison.comparison import highlightedBlocks
+from modules.comparison.comparison2 import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
 from flask import Flask, render_template, request, render_template_string, redirect, url_for
 from prettytable import PrettyTable
@@ -234,8 +234,12 @@ def testing(files):
     else:
         createIFramePage(rowNumber) # Create the page that will hold all the iframes
 
-        highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2)
+        highlightLines = highlightedBlocks(file1, file2)
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
+        print("-----------------")
+        print(file1Lines)
+        print(file2Lines)
+        print("-------------------")
 
         createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
         createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side

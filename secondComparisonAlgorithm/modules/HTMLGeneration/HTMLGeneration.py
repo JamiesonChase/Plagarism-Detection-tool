@@ -89,12 +89,12 @@ def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight): #Cre
         for var in list(range(len(arrayOfNamesLeft))): # for each entry in the left array
             html_template = html_template + "<tr>" # Start a new tale row.
             if (var < len(arrayOfNamesLeft)): #If the left side needs to be added, add the corresponding html code.
-                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][0],r=arrayOfNamesLeft[var][1])
+                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][1][0],r=arrayOfNamesLeft[var][1][1])
             else:
                 pass
 
             if (var < len(arrayOfNamesRight)): # If the right side needs to be added, add the corresponding HTML coe
-                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][0],r=arrayOfNamesRight[var][1])
+                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][1][0],r=arrayOfNamesRight[var][1][1])
             else:
                 pass
 
@@ -104,12 +104,12 @@ def createJumpTable(currentRowNumber, arrayOfNamesLeft, arrayOfNamesRight): #Cre
             
             html_template = html_template + "<tr>" # Start a table row
             if (var < len(arrayOfNamesLeft)): #If we need to add an entry to the left table, add the HTML code
-                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][0],r=arrayOfNamesLeft[var][1])
+                html_template = html_template + "<th><A HREF=\"{number}-2.html#{jumpPoint}\" TARGET=\"LeftFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesLeft[var][1][0],r=arrayOfNamesLeft[var][1][1])
             else: # Else put an empty slot for left side
                 html_template = html_template + "<th></th>\n"
 
             if (var < len(arrayOfNamesRight)): # If the right side needs to be added, add it
-                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][0],r=arrayOfNamesRight[var][1])
+                html_template = html_template + "<th><A HREF=\"{number}-3.html#{jumpPoint}\" TARGET=\"RightFile\">{l}-{r}</A></th>\n".format(number=currentRowNumber,jumpPoint=var,l=arrayOfNamesRight[var][1][0],r=arrayOfNamesRight[var][1][1])
             else:
                 pass
 
@@ -132,23 +132,21 @@ def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber): #Creat the 
     f.write(html_template) # Write to the html file.
     a_file.close() #Close the source file.
 
-    i = 1 #Variables to determine what values are written to the HTML file
+    i = 0 #Variables to determine what values are written to the HTML file
     blockNumber = 0
     jumpPoint = 0
-    colorNumber = 0
 
     for line in lines: #For each line in the source document.
-        if (blockNumber < len(blocks) and i == blocks[blockNumber][0]): #If the block number is still inside the number of blocks and i equal to the start of the block
+        if (blockNumber < len(blocks) and i == blocks[blockNumber][1][0]): #If the block number is still inside the number of blocks and i equal to the start of the block
+            colorNumber = blocks[blockNumber][0] % 10
             f.write("<A NAME=\"{j}\"></A><FONT color = #{colorValue}>".format(j=jumpPoint, colorValue=colorCode[colorNumber])) #Start of the text that will be highlighted in and jump point can be referenced to go to this specific line
             jumpPoint = jumpPoint + 1 # Increase the jum point
         
         f.write(line) # Write the text to the html file.
-        if (blockNumber < len(blocks) and i == blocks[blockNumber][1]): #If it is the end of the block
+        if (blockNumber < len(blocks) and i == blocks[blockNumber][1][1]): #If it is the end of the block
             f.write("</FONT>") # End the text that will be highlighted in red
             blockNumber = blockNumber + 1 # Increase the block number counter
             colorNumber = colorNumber + 1
-            if (colorNumber > 15):
-                colorNumber = colorNumber + 15
         i = i + 1 # Increase the line number counter.
         
     f.write("</PRE></PRE></Body></HTML>") # Write the ending parts of the HTML file
