@@ -224,7 +224,6 @@ def comparisonTable():
 
 @app.route('/HTMLFiles/baseFiles/<files>')
 def testing(files):
-    print("Working")
     file1 = request.args.get('file1')
     file2 = request.args.get('file2')
     rowNumber = request.args.get('rowNumber')

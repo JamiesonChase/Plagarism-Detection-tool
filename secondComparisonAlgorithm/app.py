@@ -224,7 +224,6 @@ def comparisonTable():
 
 @app.route('/HTMLFiles/baseFiles/<files>')
 def testing(files):
-    print("Working")
     file1 = request.args.get('file1')
     file2 = request.args.get('file2')
     rowNumber = request.args.get('rowNumber')
@@ -236,10 +235,6 @@ def testing(files):
 
         highlightLines = highlightedBlocks(file1, file2)
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
-        print("-----------------")
-        print(file1Lines)
-        print(file2Lines)
-        print("-------------------")
 
         createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
         createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
