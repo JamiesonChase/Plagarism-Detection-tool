@@ -132,7 +132,7 @@ def createHTMLFiles(fileName, blocks ,LeftOrRight,currentRowNumber): #Creat the 
     f.write(html_template) # Write to the html file.
     a_file.close() #Close the source file.
 
-    i = 0 #Variables to determine what values are written to the HTML file
+    i = 1 #Variables to determine what values are written to the HTML file
     blockNumber = 0
     jumpPoint = 0
 

@@ -3,7 +3,7 @@ from itertools import groupby, count
 from ..preprocessing.process import process
 from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
-MIN_HASH_THRESHOLD = 0.8
+MIN_HASH_THRESHOLD = 0.6
 
 def inverted_index_create(s):
     inverted = {}
@@ -91,14 +91,14 @@ def translateLines(OldLines, SourceFile, StrippedFile):
     content = file.readlines()  # Get all lines from stripped file
     newlines = []
     i = 0
-    lookup = content[OldLines[0]].strip()  # initialize first line
+    lookup = content[OldLines[0]-1].strip()  # initialize first line
     with open(SourceFile) as myFile:  # iterate through source file
         for num, line in enumerate(myFile, 1):
             if lookup in line:  # if processed line is in source line
-                newlines.append(num - 1)  # append source line value
+                newlines.append(num)  # append source line value
                 if i < len(OldLines)-1:
                     i = i+1  # iterate through each suspect old line
-                lookup = content[OldLines[i]].strip() #
+                lookup = content[OldLines[i]-1].strip() #
     return newlines  # return list of translated lines
 
 def highlightedBlocks(file1, file2):
@@ -154,6 +154,8 @@ def highlightedBlocks(file1, file2):
             corLines1to2[line].append(file2MatchedHashes[hash])
         corLines1to2[line] = list(set.intersection(*map(set, corLines1to2[line])))
 
+    #print(corLines1to2)
+
     corLines2to1 = {}
     for line in loi2:
         hashes = ii2[line]
@@ -161,6 +163,8 @@ def highlightedBlocks(file1, file2):
         for hash in hashes:
             corLines2to1[line].append(file1MatchedHashes[hash])
         corLines2to1[line] = list(set.intersection(*map(set, corLines2to1[line])))       
+
+    #print(corLines2to1)
 
     # now try to match the line blocks, this is for colored block highlighting
     # use the corresponding line values to figure what block a line from file1 belongs to in file2
@@ -174,6 +178,8 @@ def highlightedBlocks(file1, file2):
             if corLine >= lineBlocks2[i][0] and corLine <= lineBlocks2[i][1]:
                 uniqueBlocks1to2[i].append(line)
 
+    #print(uniqueBlocks1to2)
+
     uniqueBlocks2to1 = {}
     for i in range(len(lineBlocks1)):
         uniqueBlocks2to1[i] = []
@@ -182,7 +188,9 @@ def highlightedBlocks(file1, file2):
             corLine = corLines2to1[line][0]
             if corLine >= lineBlocks1[i][0] and corLine <= lineBlocks1[i][1]:
                 uniqueBlocks2to1[i].append(line)
-            
+
+    #print(uniqueBlocks2to1)
+    
     # finally, map the lines of interest to the lines of the original file,
     # keeping track of which matched block they belong to.
     # This is what we will output to the html generation/highlighting.
