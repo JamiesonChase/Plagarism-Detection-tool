@@ -40,8 +40,8 @@ def process(filename):
         text_file.write(stripped)
         text_file.close()
 
-    with open(filename + '_Processed', "w") as text_file:
-        text_file.write(processed)
-        text_file.close()
+    #with open(filename + '_Processed', "w") as text_file:
+    #    text_file.write(processed)
+    #    text_file.close()
 
     return processed
