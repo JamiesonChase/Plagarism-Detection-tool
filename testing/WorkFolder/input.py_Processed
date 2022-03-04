@@ -1,0 +1,21 @@
+def F():
+    V = 1 + 2
+    V = V + V
+    V = V + 1
+    return V
+def F(V, V):
+    V = SSS
+    V = SSS
+    V = V + V
+    return V
+def F():
+    print(SSSS)
+def F(V):
+    V = 1 -1
+def F(V, V):
+    V = SSS
+    V = SSS
+    V = V + V
+    return V
+V()
+V([SSS,SSS])

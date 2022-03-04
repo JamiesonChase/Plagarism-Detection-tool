@@ -1,90 +1,20 @@
-from collections import Iterable
+from collections.abc import Iterable
 
-
-def hashList(arr):
-    # function to get the single list of hashes
-    HL = []
-    for i in arr:
-        HL.append(i[1])
-
-    return HL
-
-
-def flatten(lis):
+def flatten(l):
     # function to flatten a list
-    for item in lis:
+    for item in l:
         if isinstance(item, Iterable) and not isinstance(item, str):
             for x in flatten(item):
                 yield x
         else:
             yield item
 
-
-def getTransLines(fileLineMatchedList, StrippedFile, fileName):
-    transLineList = []
-    for i in fileLineMatchedList:
-        l = TranslateLineBlocks(StrippedFile, i, fileName)
-        transLineList.append(l)
-
-    t = list(flatten(transLineList))
-    return t
-
-
-def Dict(countList):
+def createDict(countList):
     # creates a dictionary of keys being line numbers and items being the amount of matches to that key
     countDict = {}
     for i in countList:
         countDict[i] = countList.count(i)
     return countDict
-
-
-def getHighlightedLines(sortedLineMatches, dict):
-    # Get blocks of text to be highlighted from the sorted list of line matches
-    tempBlock = []
-    hsBlocks = []
-    count = 0
-    sblocks = []
-    values = dict.values()
-    keys = dict.keys()
-    res = [dict[i] for i in sortedLineMatches]
-    for i in range(0, len(sortedLineMatches)):
-        if res[i] != 0:
-            tempBlock.append(sortedLineMatches[i])
-            if (count != 3):
-                count += 1
-                continue
-            else:
-                count = 0
-                hsBlocks.append(tempBlock)
-                tempBlock = []
-        else:
-            if len(tempBlock) != 0:
-                hsBlocks.append(tempBlock)
-                count = 0
-                tempBlock = []
-            else:
-                pass
-    hsBlocks.append(tempBlock)
-    for i in hsBlocks:
-        if len(i) == 0: continue
-        sblocks.append([i[0], i[-1]])
-
-    return sblocks
-
-
-def getTransHighLightLines(StrippedFile, highlightedList, origFile):
-    # function to get the highlighted blocks of original code
-    appHLs = []
-    currentSourceLine = 0
-    for i in range(len(highlightedList)):
-        first = highlightedList[i][0]
-        last = highlightedList[i][1]
-        returnValue = TranslateLineBlocks(StrippedFile, origFile, first, last, currentSourceLine)
-        line = [returnValue[0], returnValue[1]]
-        currentSourceLine = returnValue[2]
-        appHLs.append(line)
-
-    return appHLs
 
 def fillInDict(sortedLines, dict):
     # fill in matching line gaps with line number key and 0 value
@@ -104,7 +34,50 @@ def fillInDict(sortedLines, dict):
 
     return dict
 
+def determineHBlocks(sortedLineMatches, dict):
+    # Get blocks of text to be highlighted from the sorted list of line matches
+    tempBlock = []
+    hBlocks = []
+    count = 0
+    blocks = []
+
+    # values and keys are for testing to watch dict_values and keys
+    values = dict.values()
+    keys = dict.keys()
+    # since values is not subscriptable create a list of the sorted lines number of matches
+    res = [dict[i] for i in sortedLineMatches]
+    # res takes the amount of all the matches and puts them in a list relevent to the values location in the sortedLineMatches
+    for i in range(0, len(sortedLineMatches)):
+        if res[i] != 0:   # if i is not a gap line
+            tempBlock.append(sortedLineMatches[i])   # append ith element of sortedLineMatches to tempBlock
+            if (count != 20):       # high number will shorten the blocks
+                # count sets the blocksize to count + 1
+                    # ie. count = 3 will produce blocks like [1,4],[5,8]
+                count += 1
+                continue
+            else:
+                # when block size is reached clear the count and append the block to tempBlock
+                count = 0
+                hBlocks.append(tempBlock) # end the block, append tempBlock to highlightBlocks variable: hBlocks
+                tempBlock = [] # clear tempBlock
+        else:  # if there is a gap
+            if len(tempBlock) != 0:  # if tempBlock is not already empty
+                hBlocks.append(tempBlock)   # ends the block by appending tempBlock to hBlocks
+                count = 0
+                tempBlock = []
+    # out of lines, end the block
+    hBlocks.append(tempBlock) # completes list of blocks ie. ([1,2,3,4],[5,6,7,8],[11,12,13,14],[16,17])
+    for i in hBlocks:
+        if len(i) == 0: continue        # if hBlocks is empty continue to return
+        blocks.append([i[0], i[-1]])    # append first and last element of each ith hBlock
+
+    return blocks
+    # blocks is a list of flagged blocks of lines to highlight ie. [1,4],[5,8],[9,12],[14,17],[18,19]
+
+
 def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
+    # takes blocks of flagged lines from processed document and translates them to the original source file lines
+    # returns the first and last line of the original source file
     file = open(StrippedFile)
     content = file.readlines()  # Get all lines from stripped file
     lookupFirstLine = content[first - 1].strip()  # string of first line
@@ -117,11 +90,12 @@ def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
         for num, line in enumerate(myFile, 1):
             if num < currentSourceLine:
                 pass
-
-            if lookupFirstLine in line:
-                sourceLineFirst = num
-                currentSourceLine = num + 1
-                break
+            else:
+                # should not be updating num if the line number is less than the currentSourceLine
+                if lookupFirstLine in line:
+                    sourceLineFirst = num
+                    currentSourceLine = num + 1
+                    break
 
     if first == last:  # if they are the same, ie [5,5], we can return here
         return [sourceLineFirst, sourceLineFirst, currentSourceLine]
@@ -130,15 +104,34 @@ def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
         for num, line in enumerate(myFile, 1):
             if num < currentSourceLine:
                 pass
+            else:
+                # should not be updating num if the line number is less than the currentSourceLine
+                if lookupLastLine in line:
+                    sourceLineLast = num
+                    currentSourceLine = num + 1
+                    break
 
-            if lookupLastLine in line:
-                sourceLineLast = num
-                currentSourceLine = num + 1
-                break
 
     return [sourceLineFirst, sourceLineLast, currentSourceLine]
 
-def calculateSim(inputFileLen, matches):  # Needs fixed
+def getTransHighLightLines(StrippedFile, highlightedList, origFile):
+    # function to create a list of blocks from the original code to highlight
+    appHLs = []
+    currentSourceLine = 0       # variable to keep track of original source line
+    for i in range(len(highlightedList)):   # iterate through blocks returned from determineHBlocks
+        first = highlightedList[i][0] # take the first element of ith block
+        last = highlightedList[i][1]    # take the second element of ith block
+        returnValue = TranslateLineBlocks(StrippedFile, origFile, first, last, currentSourceLine)  # gets first and last lines of block and currentSourceLine value
+        line = [returnValue[0], returnValue[1]] # take first and second elements of returnValue for line block to be highlighted
+        currentSourceLine = returnValue[2]      # take 3rd element as current source line
+        appHLs.append(line)
+
+    return appHLs
+
+def calculateSim(inputFileLen, matches):  # Needs fixed? Not sure this is correct
+    # calculate the similarity score between input document and compared document
+    # matches is the sum of number of matches found on each line
+    # inputFileLen is the number of lines in the document
     res = (matches / inputFileLen) * 100
     return res
 
@@ -162,13 +155,13 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
     #print("flatsl: ", flatsL)
     flataL = list(flatten(aL))
     # creates a dictionary of keys being line numbers and items being the amount of matches to that key
-    sCount = Dict(flatsL)
+    sCount = createDict(flatsL)
     #print("sCount: ", sCount)
 
     # sCount:  {1: 6, 15: 1, 11: 5, 2: 8, 12: 5, 16: 6, 3: 11, 13: 6, 4: 9, 14: 1, 5: 7, 10: 6, 6: 8, 7: 7, 8: 7, 9: 10, 18: 1}
     # here is an opportunity to sort this data into blocks based on higher density of matches
 
-    aCount = Dict(flataL)
+    aCount = createDict(flataL)
     #print("aCount: ", aCount)
     sortedLineMatchess = sorted(sCount)
     #print("s sorted line numbers: ", sortedLineMatchess)
@@ -179,8 +172,8 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
         aCount = fillInDict(sortedLineMatchesa, aCount)
         sortedLineMatchess = sorted(sCount)
         sortedLineMatchesa = sorted(aCount)
-        HLs = getHighlightedLines(sortedLineMatchess, sCount)
-        HLa = getHighlightedLines(sortedLineMatchesa, aCount)
+        HLs = determineHBlocks(sortedLineMatchess, sCount)
+        HLa = determineHBlocks(sortedLineMatchesa, aCount)
         print("inputFile processed blocks: ", HLs)
         print("compared document processed blocks: ", HLa)
         transBlockss = getTransHighLightLines(StrippedFile1, HLs, file1)
@@ -210,10 +203,9 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
         print("inputFile original code blocks: ", transBlockss)
         print("compared document original code blocks: ", transBlocksa)
 
-        print("similarity percentage: ", calculateSim(len(s), match))
+        print("similarity percentage: ", calculateSim(len(s), match), "\n")
         return transBlockss, transBlocksa
     else:
-        print("similarity percentage: ", calculateSim(len(s), match))
         pass
 
 
