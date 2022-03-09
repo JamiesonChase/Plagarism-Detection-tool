@@ -1,0 +1,91 @@
+Programs used:
+Flask
+Python3
+
+Interfaces:
+To build the HTML files it takes the name from the comparison table and splits it into the file names. A row number that is the unique ID of each entry. This was done to ensure that all the HTML file names would be unique and not contain any special characters like spaces and slashes. And an argument showing if the file will be on the left or right side.
+Creating the html files will also take the highlighted lines information.
+To get through the problem of flask sometimes crashing the web browser will refresh every 3 seconds and it takes the most up to date information. 
+As long as Flask is running and the main page is clicked on once, the calculation for the web page comparison table will keep happening in the background and you can go back to it at any time.
+When the link is clicked on it will calculate the run the code to create the HTML files and display the comparison.
+
+Group discussion:
+To help keep github organized we should create a pull request and not commit directly to the main branch until it has been reviewed. Please make a branch on git when you want to test something rather than creating a new testing directory. Keep personal files out of the group repository (looking at you, ‘sources.txt’).
+Wallace’s grading question
+
+Team on Radar for discussion/to do:
+Comparisons with the flask are currently comparing all files in the testing directory, not just the input file. Is this something we plan on changing later?
+
+Suggested idea - have two options, one to compare a single input file to all the files in a directory, or be able to compare all the files in a directory against each other
+
+Team To Do List:
+More flexibility on the input to do the comparison of the inputs to the corpus that the professor was talking about. Like the 60 inputs to each other and the 60 - 60 or 60 - 1000 that Wallace was talking about.
+Having a usable program to do further testing
+Show which blocks are similar to each other by alternating colors in the comparison highlighting.
+Block comparison algorithm. Need to determine if we will move forward with Trevor or Tracy’s 
+See if we can recreate the environment on another machine for use.
+
+
+
+
+
+Individual tasks
+
+Vinh Duong:
+
+
+Done this week:
+TBD
+
+To Do next week: 
+List paragraph description and bullet points for the process of how the flask application I am doing works.
+Do timing test for the different components of the app.py
+Look for code examples. 60 files with 100- 500 lines of code.
+Clean up and comment on the app.py code.
+Recreate the environment on a new virtual machine.
+
+On Radar for following week:
+TBD
+
+Tracy Hotchkiss:
+
+Done this week:
+Created pull request proposed-cleanup-merge
+tested app.py and comparisonDemo.py
+all modules and test files are accessible
+removed multiple duplicate instances of folders and files (oldDirectory: 162 Files, 51 Folders, newDirectory: 103 Files, 25 Folders) can also remove the sources.txt in the main Winnowing/ as this is also in documents
+Fixed the following bugs in the comparison.py
+When a matched code is found in multiple spots of the compare file it would cause  inconsistent highlighting and out of place lines
+When a matched code block has a gap, was not correctly creating blocks
+When a matched code block only had one line it would not correctly create a block
+To Do next week: 
+modify comparison to take only two input files
+Try to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
+individual flowchart, paragraph description, timing and unit testing for comparison.py as support for this method
+Further github cleanup
+On Radar for following week:
+PDF pipeline update with current pipeline
+Continue adding more test files to fish out additional edge cases with comparisons.py
+(minor) correct percentage similarities that print out with comparisonDemo.py
+README documentation update
+
+
+Trevor Holland
+Done this week:
+Implemented comparison2.py which essentially does the same thing as comparison.py, but it also attempts to categorize matching block sections for the purpose of coloring them in html. I made my own version rather than modifying the original because it would have needed to be modified heavily to make my method of block matching work.
+
+To Do next week:
+Optimize comparison2.py, it has a lot of sections that are probably redundant which might matter for large files. It also hasn’t been tested thoroughly so there are likely bugs.
+Find more python and c files to test with
+Go back and optimize some semantics of our older code (winnowing, hashFingerprinting, maybe some stuff in the main app.py too)
+
+
+Chase Jamieson
+Done this week:
+TBD
+
+To Do next week:
+Tbd
+
+
+Past Week

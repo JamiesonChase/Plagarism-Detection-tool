@@ -14,18 +14,20 @@ from prettytable import PrettyTable
 import pickle
 
 app = Flask(__name__)
-global html_template
-html_template = []
-global irow
+global html_template # Global variable used by the browser to display the comparison data
+html_template = [] 
+
+global irow # Global variable to give each comparison a unique ID and to be used as part of the name of HTML files
 irow = 0
-global lock
+global checkRefresh # To check if we should stop Refreshing or not
+checkRefresh = 0
+global loadOrNew # Check if we should do a new run or load previous data
+loadOrNew = 0
+
+global lock # Locks to make variables thread 
 lock = Lock()
 global refreshLock
 refreshLock = Lock()
-global checkRefresh
-checkRefresh = 0
-global loadOrNew
-loadOrNew = 0
 global lNLock
 lNLock = Lock()
 
@@ -287,7 +289,7 @@ def update_load():
             
 
 
-            directory = "database/" # directory for testfiles
+            directory = "database/Regular/" # directory for testfiles
             documents = load_documents(directory) # find documents inside testfiles directory
             corpus = create_corpus(documents) # create a corpus of those documents
             for i in range(1,len(documents)):
