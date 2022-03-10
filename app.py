@@ -271,7 +271,7 @@ def update_load():
                 break
             lNLock.release()
 
-        if (loadOrNew == 1 and os.path.exists("last_save.pkl") == True: # If the user choose to load comparison and the file exists.
+        if (loadOrNew == 1 and os.path.exists("last_save.pkl") == True): # If the user choose to load comparison and the file exists.
             open_file = open("last_save.pkl", "rb") #Open the file 
             html_template = pickle.load(open_file) #Load content into html_template
             open_file.close() #Close the file
@@ -289,7 +289,7 @@ def update_load():
             
 
 
-            directory = "database/Regular/" # directory for testfiles
+            directory = "database/largeFileTesting/" # directory for testfiles
             documents = load_documents(directory) # find documents inside testfiles directory
             corpus = create_corpus(documents) # create a corpus of those documents
             for i in range(1,len(documents)):
