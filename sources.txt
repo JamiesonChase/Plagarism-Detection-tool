@@ -1,3 +1,5 @@
+Before March 8
+
 https://stackoverflow.com/questions/58996870/update-flask-web-page-with-python-script
 
 https://www.w3schools.com/jsref/met_table_insertrow.asp
@@ -44,4 +46,20 @@ https://www.kite.com/python/docs/pickle.dump
 https://www.kite.com/python/answers/how-to-save-and-read-a-list-in-python
 
 https://appdividend.com/2021/02/23/python-comment-block-how-to-write-multi-line-comments/
+
+https://www.programiz.com/python-programming/string-interpolation
+https://www.w3schools.com/python/gloss_python_array_length.asp
+Framework for formatting the html file containing the python code came from MOSS output.
+https://www.tutorialspoint.com/python3/python_for_loop.htm
+https://www.w3schools.com/python/gloss_python_array_length.asp
+https://pypi.org/project/prettytable/
+https://www.geeksforgeeks.org/python-string-split/
+
+https://www.programiz.com/python-programming/string-interpolation
+https://www.w3schools.com/python/gloss_python_array_length.asp
+Framework for formatting the html file containing the python code came from MOSS output.
+https://www.tutorialspoint.com/python3/python_for_loop.htm
+https://www.w3schools.com/python/gloss_python_array_length.asp
+https://pypi.org/project/prettytable/
+https://www.geeksforgeeks.org/python-string-split/
 

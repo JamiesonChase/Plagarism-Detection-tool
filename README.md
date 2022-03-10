@@ -5,6 +5,10 @@ Hashing/Fingerprinting & Visual - Tracy Hotchkiss & Vinh Duong
 
 Winnowing - Trevor Holland 
 
+### To run the flask application
+On the command line do "flask run" in the main directory
+
+
 ### Steps to run main file:
 
 Run demo.py and verify part output like this:
