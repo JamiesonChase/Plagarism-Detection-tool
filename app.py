@@ -143,18 +143,18 @@ def newStart():
     return redirect(url_for('comparisonTable')) # Load the page for the main comparison table.
 
 
-@app.route('/comparisonTable')
+@app.route('/comparisonTable') # Main page of the comparison table.
 def comparisonTable():
-    global irow 
+    global irow  # Global Variables.
     global checkRefresh
     global html_template
-    lock.acquire()
+    lock.acquire() # Copy the arrays to prevent race condition.
     newList = html_template.copy()
     lock.release()
 
     refreshLock.acquire()
-    if (checkRefresh == 1):
-        refreshLock.release()
+    if (checkRefresh == 1): # If the table is not done updating load the HTML page that will refresh every 3 seconds
+        refreshLock.release() 
         return render_template_string("""<!DOC html>
     <html>
     <head>
@@ -186,7 +186,7 @@ def comparisonTable():
     </table>
     </body>
         </html>""", newEntry=newList)
-    else:
+    else: #If the array is done updating then load the HTML page that won't update.
         refreshLock.release()
         return render_template_string("""<!DOC html>
     <html>
@@ -221,62 +221,65 @@ def comparisonTable():
         </html>""", newEntry=newList)
     
 
-@app.route('/HTMLFiles/baseFiles/<files>')
+@app.route('/HTMLFiles/baseFiles/<files>') #If the link to the file is clicked
 def testing(files):
-    file1 = request.args.get('file1')
+    file1 = request.args.get('file1') #Get the variables passed into the URL
     file2 = request.args.get('file2')
     rowNumber = request.args.get('rowNumber')
-    stringFile = '/HTMLFiles/baseFiles/' + files 
-    if ( os.path.exists(stringFile) == True):
+
+    stringFile = '/HTMLFiles/baseFiles/' + files #To get the path to the html files in baseFiles
+
+    if ( os.path.exists(stringFile) == True): #If they already exist just render the file already there.
         return render_template(stringFile)
     else:
         createIFramePage(rowNumber) # Create the page that will hold all the iframes
 
-        highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2)
+        highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2) #To get the highlighting information between files.
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
 
         createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
         createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
         createHTMLFiles(file2, file2Lines, 3,rowNumber) 
 
-        return render_template(stringFile)
+        return render_template(stringFile) # Render the file.
 
     
 
-@app.route('/HTMLFiles/contentFiles/<files>')
+@app.route('/HTMLFiles/contentFiles/<files>') #If the html files from contentFiles are called then render it
 def loadingFiles(files):
     stringFile = '/HTMLFiles/contentFiles/' + files 
     return render_template(stringFile)
 
 
 
-@app.before_first_request
+@app.before_first_request #This will run before the first request.
 def before_first_request():
-    threading.Thread(target=update_load).start()
+    threading.Thread(target=update_load).start() #Start a new thread
 
 def update_load():
     with app.app_context():
-        global irow 
+        global irow  #Global variables.
         global checkRefresh
         global html_template
         global lNLock
         global loadOrNew
-        while(1):
-            lNLock.acquire()
+
+        while(1): #Keep looping until the user makes the choice of either loading saved file or start new comparison.
+            lNLock.acquire() 
             if (loadOrNew != 0):
                 lNLock.release()
                 break
             lNLock.release()
 
-        if loadOrNew == 1:
-            open_file = open("last_save.pkl", "rb")
-            html_template = pickle.load(open_file)
-            open_file.close()
+        if (loadOrNew == 1 and os.path.exists("last_save.pkl") == True: # If the user choose to load comparison and the file exists.
+            open_file = open("last_save.pkl", "rb") #Open the file 
+            html_template = pickle.load(open_file) #Load content into html_template
+            open_file.close() #Close the file
             refreshLock.acquire()
-            checkRefresh = 1
+            checkRefresh = 1 #Tell the main compairson page it can stop updating.
             refreshLock.release()
         else:
-            dir = 'templates/HTMLFiles/baseFiles/'
+            dir = 'templates/HTMLFiles/baseFiles/' #For the new run delete old html files.
             dir2 = 'templates/HTMLFiles/contentFiles/'
             for file in os.scandir(dir):
                 os.remove(file.path)
@@ -299,13 +302,14 @@ def update_load():
             print(table)
             Rows = table.rows
             Rows.sort(key=lambda x: x[1], reverse=True)
+
             lock.acquire()
-            open_file = open("last_save.pkl", "wb")
+            open_file = open("last_save.pkl", "wb") #Save content of the comparison
             pickle.dump(html_template, open_file)
             open_file.close()
             lock.release()
             refreshLock.acquire()
-            checkRefresh = 1
+            checkRefresh = 1 #Tell the main comparison page it can stop updating.
             refreshLock.release()
         
 if __name__ == "__main__":
