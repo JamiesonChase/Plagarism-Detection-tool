@@ -228,8 +228,7 @@ def testing(files):
     rowNumber = request.args.get('rowNumber')
 
     stringFile = '/HTMLFiles/baseFiles/' + files #To get the path to the html files in baseFiles
-
-    if ( os.path.exists(stringFile) == True): #If they already exist just render the file already there.
+    if ( os.path.exists("templates/" + stringFile) == True): #If they already exist just render the file already there.
         return render_template(stringFile)
     else:
         createIFramePage(rowNumber) # Create the page that will hold all the iframes
