@@ -1,0 +1,197 @@
+# The below visual for comparison.py is using the following two python documents below
+input document: testing/Workfolder/input.py
+compared document:  testing/WorkFolder/testfiles/Compare.py
+
+# current output:
+inputFile original code blocks:  [[1, 5], [7, 11], [13, 14], [17, 22], [23, 23]]
+compared document original code blocks:  [[1, 5], [7, 11], [13, 16], [19, 19]]
+
+highlightedBlocks(s, a, StrippedFile1, StrippedFile2, origFile1, origFile2):
+# takes the dictionary of matched hashes, stripped file, and original file of the input document and the file being compared to.
+# These stripped file names and original file names are not global, so they need to be passed to the function.
+# Plan on adding functions to comparison.py to pull these file names as needed so that only the input and compare hash dictionaries need to be passed
+
+# dictionary of matched hashes and their line numbers
+s: {11921: [1], 11100: [1], 9304: [1, 11], 5584: [1, 11], 5280: [1, 11], 4309: [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], 4554: [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], 5061: [2, 14], 5150: [2], 4732: [2], 4560: [2], 5098: [3, 4, 9, 18], 5446: [3, 4, 9, 18], 4848: [3, 9, 18], 4552: [4], 4614: [5, 10, 19], 5249: [5, 10, 19], 6516: [5, 10, 19], 9046: [5, 10, 19], 13550: [5, 10, 19], 12720: [5, 10], 10880: [5, 10], 7750: [6, 11], 9456: [6], 5942: [6, 15], 5872: [6, 15], 5526: [7, 14, 16], 5095: [7, 8, 16, 17], 5706: [7, 8, 16, 17], 6920: [7, 8, 16, 17], 4621: [12], 5256: [12], 6532: [12], 9008: [12], 12637: [12], 11235: [12], 7722: [12], 9574: [13], 8564: [13], 5928: [13], 5171: [14], 4985: [14], 5712: [14], 7398: [15], 9076: [15], 12481: [19], 10456: [19], 6872: [20], 6181: [21], 7325: [21], 7967: [21], 9271: [21]}
+
+a {11921: [1], 11100: [1], 9304: [1], 5584: [1, 11], 5280: [1, 11], 4309: [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], 4554: [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], 5061: [2, 12], 5150: [2], 4732: [2], 4560: [2], 5098: [3, 4, 9, 16], 5446: [3, 4, 9, 16], 4848: [3, 9], 4552: [4], 4614: [5, 10], 5249: [5, 10], 6516: [5, 10], 9046: [5, 10], 13550: [5, 10], 12720: [5], 10880: [5], 7750: [6], 9456: [6], 5942: [6], 5872: [6], 5526: [7, 16], 5095: [7, 8, 13], 5706: [7, 8, 13], 6920: [7, 8, 13], 12445: [10], 10400: [10], 6752: [10], 7988: [11], 5128: [12], 4662: [13], 5096: [14], 5975: [14], 7954: [14], 8201: [14], 12404: [15], 11966: [15], 11173: [15], 9476: [15], 5928: [15], 5132: [16], 6208: [16], 6953: [16], 8184: [17], 6149: [18], 7222: [18], 7633: [18], 7840: [18], 6859: [19], 6080: [20], 6998: [20], 6331: [20]}
+
+# stripped counterparts to the original source files
+StrippedFile1: testing/WorkFolder/input.py_Stripped
+StrippedFile2: testing/WorkFolder/testfiles/Compare.py_Stripped
+
+# original source files
+originalSourceFile1: testing/WorkFolder/input.py
+originalSourceFile2: testing/WorkFolder/testfiles/Compare.py
+
+# loop through both sets of keys, append hashes and lines to their own list and track count of matches
+
+# A list of lines with matched hashes is created
+sLineMatched: [[1], [1], [1, 11], [1, 11], [1, 11], [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], [2, 14], [2], [2], [2], [3, 4, 9, 18], [3, 4, 9, 18], [3, 9, 18], [4], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10], [5, 10], [6, 11], [6], [6, 15], [6, 15], [7, 14, 16], [7, 8, 16, 17], [7, 8, 16, 17], [7, 8, 16, 17], [12], [12], [12], [12], [12], [12], [12], [13], [13], [13], [14], [14], [14], [15], [15], [19], [19], [20], [21], [21], [21], [21]]
+aLineMatched: [[1], [1], [1], [1, 11], [1, 11], [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], [2, 12], [2], [2], [2], [3, 4, 9, 16], [3, 4, 9, 16], [3, 9], [4], [5, 10], [5, 10], [5, 10], [5, 10], [5, 10], [5], [5], [6], [6], [6], [6], [7, 16], [7, 8, 13], [7, 8, 13], [7, 8, 13], [10], [10], [10], [11], [12], [13], [14], [14], [14], [14], [15], [15], [15], [15], [15], [16], [16], [16], [17], [18], [18], [18], [18], [19], [20], [20], [20]]
+
+# A list of matched hashes is created for use with similarity tracking
+sHashMatched append(j): [11921, 11100, 9304, 5584, 5280, 4309, 4554, 5061, 5150, 5098, 5446, 4848, 4552, 4614, 5249, 6516, 9046, 13550, 12720, 10880, 7750, 9456, 5942, 5872, 5526, 5095, 5706, 6920, 5928]
+aHashMatched append(j): [11921, 11100, 9304, 5584, 5280, 4309, 4554, 5061, 5150, 5098, 5446, 4848, 4552, 4614, 5249, 6516, 9046, 13550, 12720, 10880, 7750, 9456, 5942, 5872, 5526, 5095, 5706, 6920, 5928]
+
+# I need a list I can manipulate, pull matched hash lines for flattening
+sL append: [[1], [1], [1, 11], [1, 11], [1, 11], [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], [2, 3, 4, 7, 8, 9, 14, 16, 17, 18], [2, 14], [2], [2], [2], [3, 4, 9, 18], [3, 4, 9, 18], [3, 9, 18], [4], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10, 19], [5, 10], [5, 10], [6, 11], [6], [6, 15], [6, 15], [7, 14, 16], [7, 8, 16, 17], [7, 8, 16, 17]]
+aL append: [[1], [1], [1, 11], [1, 11], [1, 11], [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], [2, 3, 4, 7, 8, 9, 12, 13, 14, 16], [2, 12], [2], [2], [2], [3, 9, 16], [3, 9, 16], [3], [4], [4], [4], [4], [5, 10], [5, 10], [5, 10], [5, 10], [5, 10], [5, 10], [5, 10], [6, 11], [6], [6], [6]]
+match: 29
+
+# flattened matched line list
+flatsl: [1, 1, 1, 11, 1, 11, 1, 11, 2, 3, 4, 7, 8, 9, 14, 16, 17, 18, 2, 3, 4, 7, 8, 9, 14, 16, 17, 18, 2, 14, 2, 2, 2, 3, 4, 9, 18, 3, 4, 9, 18, 3, 9, 18, 4, 5, 10, 19, 5, 10, 19, 5, 10, 19, 5, 10, 19, 5, 10, 19, 5, 10, 5, 10, 6, 11, 6, 6, 15, 6, 15, 7, 14, 16, 7, 8, 16, 17, 7, 8, 16, 17, 7, 8, 16, 17, 12]
+flataL: [1, 1, 1, 1, 11, 1, 11, 2, 3, 4, 7, 8, 9, 12, 13, 14, 16, 2, 3, 4, 7, 8, 9, 12, 13, 14, 16, 2, 12, 2, 2, 2, 3, 4, 9, 16, 3, 4, 9, 16, 3, 9, 4, 5, 10, 5, 10, 5, 10, 5, 10, 5, 10, 5, 5, 6, 6, 6, 6, 7, 16, 7, 8, 13, 7, 8, 13, 7, 8, 13, 10]
+
+# create a dictionary of keys being line numbers and items being the amount of matches to that key
+sCount:  {1: 5, 11: 4, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 14: 4, 16: 6, 17: 5, 18: 5, 5: 7, 10: 7, 19: 5, 6: 4, 15: 2, 12: 1}
+aCount:  {1: 5, 11: 2, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 12: 3, 13: 5, 14: 2, 16: 5, 5: 7, 10: 6, 6: 4}
+# The above is an opportunity to add a threshold of this data's matches to create the blocks.
+# Currently comparison.py flags a line if it has at least one matching hash.
+
+## flagged ## this seems redundant
+# trim down the list of matched lines and sort them sequentially
+s sorted line numbers:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16, 17, 18, 19]
+a sorted line numbers:  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16]
+
+# Recreate line count dictionaries with gap lines filled in (gap line is a line with 0 matches)
+sCount: {1: 5, 11: 4, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 14: 4, 16: 6, 17: 5, 18: 5, 5: 7, 10: 7, 19: 5, 6: 4, 15: 2, 12: 1, 13: 0}
+aCount: {1: 5, 11: 2, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 12: 3, 13: 5, 14: 2, 16: 5, 5: 7, 10: 6, 6: 4, 15: 0}
+
+# trim down the list of matched lines and sort them sequentially
+s sorted line numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+a sorted line numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
+# call determineHBlocks to get flagged blocks of lines to highlight.
+inputFile processed blocks:  [[1, 5], [6, 10], [11, 12], [14, 18], [19, 19]]
+compared document processed blocks:  [[1, 5], [6, 10], [11, 14], [16, 16]]
+
+# call getTransHighLightLines to translate processed line matches to original
+transBlockss: [[1, 5], [7, 11], [13, 14], [17, 22], [23, 23]]
+transBlocksa: [[1, 5], [7, 11], [13, 16], [19, 19]]
+
+# Functions List
+flatten(list)
+    # takes a list and flattens it
+
+createDict(countList):
+    # creates a dictionary of keys being line numbers and items being the amount of matches to that key
+
+fillInDict(sortedLines, dict):
+    # fill in matching line gaps with line number key and 0 value
+
+determineHBlocks(sortedLineMatches, dict):
+    # Get blocks of text to be highlighted from the sorted list of line matches
+    # takes in a sorted list of line matches and a dictionary of keys: matched hashes and values: lines matched hash are on
+
+    # s
+    sortedLineMatches: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
+    Dictionary: {1: 5, 11: 4, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 14: 4, 16: 6, 17: 5, 18: 5, 5: 7, 10: 7, 19: 5, 6: 4, 15: 2, 12: 1, 13: 0}
+    # a
+    sortedLineMatches: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    Dictionary: {1: 5, 11: 2, 2: 6, 3: 5, 4: 5, 7: 6, 8: 5, 9: 5, 12: 3, 13: 5, 14: 2, 16: 5, 5: 7, 10: 6, 6: 4, 15: 0}
+
+    # since values is not sub-scriptable, create a list of the lines number of matches
+    # s
+    list: [5, 6, 5, 5, 7, 4, 6, 5, 5, 7, 4, 1, 0, 4, 2, 6, 5, 5, 5]
+    # a
+    list: [5, 6, 5, 5, 7, 4, 6, 5, 5, 6, 2, 3, 5, 2, 0, 5]
+
+    #take the amount of all the matches and puts them in a list relevant to the values location in the sortedLineMatches
+        # uses a condition to control the size of the blocks, a higher number will increase the blocks range and only creates new blocks when gaps are encountered
+
+        # if this value = 4
+        # s
+        highlighted blocks: [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12], [14, 15, 16, 17, 18], [19]]
+        # a
+        highlighted blocks: [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14], [16]]
+
+        # if this value is a high number = 100
+        # s
+        highlighted blocks: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [14, 15, 16, 17, 18, 19]]
+        # a
+        highlighted blocks: [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], [16]]
+
+    # append first and last element of each ith hBlock
+    blocks: [[1, 5], [6, 10], [11, 14]]
+    blocks: [[1, 5], [6, 10], [11, 14], [16, 16]]
+
+    # returns blocks to highlightedBlocks()
+
+getTransHighLightLines(StrippedFile, highlightedList, origFile):
+    # function to create a list of blocks from the original code to highlight
+    # called by highlightedBlocks()
+
+    # takes the stripped file, highlighted list, and original file as input
+    # s
+    strippedFile: testing/WorkFolder/input.py_Stripped
+    highlightedList: [[1, 5], [6, 10], [11, 12], [14, 18], [19, 19]]
+    origFile: testing/WorkFolder/input.py
+    # a
+    strippedFile: testing/WorkFolder/testfiles/Compare.py_Stripped
+    highlightedList: [[1, 5], [6, 10], [11, 14], [16, 16]]
+    origFile: testing/WorkFolder/testfiles/Compare.py
+
+    # calls TranslateLineBlocks()  to get first and last lines of block and currentSourceLine value
+    # this is using a blocksize value of 4
+
+    # gets first and last lines of block and currentSourceLine value
+    # take first and second elements of returnValue for line block to be highlighted
+    # take 3rd element as current source line
+
+    returnValue: [1, 5, 6]
+    appended highlighted lines: [[1, 5]]
+    returnValue: [7, 11, 12]
+    appended highlighted lines: [[1, 5], [7, 11]]
+    returnValue: [13, 14, 15]
+    appended highlighted lines: [[1, 5], [7, 11], [13, 14]]
+    returnValue: [17, 22, 23]
+    appended highlighted lines: [[1, 5], [7, 11], [13, 14], [17, 22]]
+    returnValue: [23, 23, 24]
+    appended highlighted lines: [[1, 5], [7, 11], [13, 14], [17, 22], [23, 23]]
+    returnValue: [1, 5, 6]
+    appended highlighted lines: [[1, 5]]
+    returnValue: [7, 11, 12]
+    appended highlighted lines: [[1, 5], [7, 11]]
+    returnValue: [13, 16, 17]
+    appended highlighted lines: [[1, 5], [7, 11], [13, 16]]
+    returnValue: [19, 19, 20]
+    appended highlighted lines: [[1, 5], [7, 11], [13, 16], [19, 19]]
+
+TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
+    # takes blocks of flagged lines from processed document and translates them to the original source file lines
+    # returns the first and last line of the original source file to getTransHighLightLines()
+
+    # Get all lines from stripped file
+    # string of first line and last lines
+    # iterate through source file
+
+    lookupFirstLine: def numberFunction():
+    lookupLastLine: return c
+    lookupFirstLine: def stringFunction(input1, input2):
+    lookupLastLine: return string2
+    lookupFirstLine: def newFunction():
+    lookupLastLine: print("New things!\n")
+    lookupFirstLine: t = 1 -1
+    lookupLastLine: string3 = string1 + string2
+    lookupFirstLine: return string2
+    lookupLastLine: return string2
+    lookupFirstLine: def numberFunction():
+    lookupLastLine: return c
+    lookupFirstLine: def stringFunction(input1, input2):
+    lookupLastLine: return string2
+    lookupFirstLine: def doesNothing():
+    lookupLastLine: c = True
+    lookupFirstLine: a = a + [1]
+    lookupLastLine: a = a + [1]
+
+    # currently using one to one and comparison.py should not be updating num if the line number is less than the currentSourceLine
+    # if there is time over spring break, I want to take out the one to one functionality.
+    # this is to allow all matched lines to be highlighted more precisely: currently taking this out is causing many bugs
+    # this happens when hashes match in multiple instances/locations of a document
+
+     # check if first line matches the last line
+     # if first line is equal to the last line, they are the same, ie [5,5], we can return here
+        # returns [sourceLineFirst, sourceLineFirst, currentSourceLine] to getTransHighLightLines()
+     # otherwise, should not be updating num if the line number is less than the currentSourceLine, keeps it one to one
+        # returns [sourceLineFirst, sourceLineFirst, currentSourceLine] to getTransHighLightLines()
