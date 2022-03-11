@@ -12,6 +12,7 @@ from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTab
 from flask import Flask, render_template, request, render_template_string, redirect, url_for
 from prettytable import PrettyTable
 import pickle
+import time 
 
 app = Flask(__name__)
 global html_template # Global variable used by the browser to display the comparison data
@@ -226,19 +227,30 @@ def testing(files):
     file1 = request.args.get('file1') #Get the variables passed into the URL
     file2 = request.args.get('file2')
     rowNumber = request.args.get('rowNumber')
+    print(file1)
+    print(file2)
+
 
     stringFile = '/HTMLFiles/baseFiles/' + files #To get the path to the html files in baseFiles
     if ( os.path.exists("templates/" + stringFile) == True): #If they already exist just render the file already there.
         return render_template(stringFile)
     else:
+        start = time.time()
         createIFramePage(rowNumber) # Create the page that will hold all the iframes
 
         highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2) #To get the highlighting information between files.
         file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
 
         createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
+
+        mainStart = time.time()
         createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side
         createHTMLFiles(file2, file2Lines, 3,rowNumber) 
+        mainEnd = time.time()
+        end = time.time()
+        print("Main Part = " + str(mainEnd - mainStart))
+        print("Total Part = " + str(end - start))
+
 
         return render_template(stringFile) # Render the file.
 
