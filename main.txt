@@ -34,17 +34,13 @@ Individual tasks
 Vinh Duong:
 
 
-Done this week:
-TBD
-
-To Do next week: 
+Worked on this week:
 List paragraph description and bullet points for the process of how the flask application I am doing works.
 Do timing test for the different components of the app.py
 Look for code examples. 60 files with 100- 500 lines of code.
 Clean up and comment on the app.py code.
 Recreate the environment on a new virtual machine.
 
-On Radar for following week:
 
 
 Tracy Hotchkiss:
