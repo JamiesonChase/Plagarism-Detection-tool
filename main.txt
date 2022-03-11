@@ -45,28 +45,24 @@ Clean up and comment on the app.py code.
 Recreate the environment on a new virtual machine.
 
 On Radar for following week:
-TBD
+
 
 Tracy Hotchkiss:
 
-Done this week:
-Created pull request proposed-cleanup-merge
-tested app.py and comparisonDemo.py
-all modules and test files are accessible
-removed multiple duplicate instances of folders and files (oldDirectory: 162 Files, 51 Folders, newDirectory: 103 Files, 25 Folders) can also remove the sources.txt in the main Winnowing/ as this is also in documents
-Fixed the following bugs in the comparison.py
-When a matched code is found in multiple spots of the compare file it would cause  inconsistent highlighting and out of place lines
-When a matched code block has a gap, was not correctly creating blocks
-When a matched code block only had one line it would not correctly create a block
-To Do next week: 
+Done this week 3/7/2022:
+Additional cleanup of the testing folder and github repository, combined effort with Vihn and Trevor
+comparison.py code cleanup and commenting
+document with detailed description of comparison.py
+
+To Do next week 3/14/2022:
 modify comparison to take only two input files
 Try to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
-individual flowchart, paragraph description, timing and unit testing for comparison.py as support for this method
-Further github cleanup
-On Radar for following week:
-PDF pipeline update with current pipeline
-Continue adding more test files to fish out additional edge cases with comparisons.py
+individual flowchart, timing and unit testing for comparison.py as support for this method
 (minor) correct percentage similarities that print out with comparisonDemo.py
+
+On Radar for following week 3/21/2022:
+PDF pipeline update with current pipeline including new flowcharts for each module
+Continue adding more test files to fish out additional edge cases with comparisons.py or comparisons2.py depending on which one we move forward with for our final presentation
 README documentation update
 
 
@@ -89,3 +85,12 @@ Tbd
 
 
 Past Week
+Tracy Hotchkiss:
+Created pull request proposed-cleanup-merge
+tested app.py and comparisonDemo.py
+all modules and test files are accessible
+removed multiple duplicate instances of folders and files (oldDirectory: 162 Files, 51 Folders, newDirectory: 103 Files, 25 Folders) can also remove the sources.txt in the main Winnowing/ as this is also in documents
+Fixed the following bugs in the comparison.py
+When a matched code is found in multiple spots of the compare file it would cause  inconsistent highlighting and out of place lines
+When a matched code block has a gap, was not correctly creating blocks
+When a matched code block only had one line it would not correctly create a block
