@@ -1,0 +1,40 @@
+Timing Testing for largeFileTesting folder inside of documents.
+This folder has 7 documents that are the same with 6322 lines of code:
+
+Using flask get requests to time roughly how long it takes to load main 
+comparison table page:
+127.0.0.1 - - [09/Mar/2022 22:22:35] "GET /comparisonTable HTTP/1.1" 200 -
+127.0.0.1 - - [09/Mar/2022 22:28:15] "GET /comparisonTable HTTP/1.1" 200 -
+Rough takes 5 minutes and 40 seconds to load 
+
+When clicking on the link for 2 of these files using time.time() to measure how much time has passed:
+
+time should be in seconds
+Time for the 2 createHTML funciton = 0.012777566909790039
+Total time = 626.3070435523987
+
+
+Just using the methods to generate the html pages when the linked is clicked on:
+Timer unit: 1e-06 s
+
+Total time: 410.213 s
+File: testingSpeed.py
+Function: testTime at line 124
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   124                                           @profile
+   125                                           def testTime():
+   126         1          2.0      2.0      0.0      rowNumber = 3
+   127         1          0.0      0.0      0.0      file1 = "database/largeFileTesting/database2.py"
+   128         1          0.0      0.0      0.0      file2 = "database/largeFileTesting/database1.py"
+   129         1        257.0    257.0      0.0      createIFramePage(rowNumber) # Create the page that will hold all the iframes
+   130                                           
+   131         1  410176265.0 410176265.0    100.0      highlightLines = highlightedBlocks(file_setup(file1), file_setup(file2), getStripped(file1), getStripped(file2), file1, file2) #To get the highlighting information between files. (410 seconds)
+   132         1          2.0      2.0      0.0      file1Lines = highlightLines[0]; file2Lines = highlightLines[1]
+   133                                           
+   134         1       3737.0   3737.0      0.0      createJumpTable(rowNumber, file1Lines, file2Lines) #Create the table that appears on top of the comparison files.
+   135                                           
+   136         1      17144.0  17144.0      0.0      createHTMLFiles(file1, file1Lines, 2,rowNumber) # Create the 2 HTML files that will appear side by side  (0.017144 seconds)
+   137         1      16015.0  16015.0      0.0      createHTMLFiles(file2, file2Lines, 3,rowNumber) (0.016015 seconds)
+

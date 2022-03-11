@@ -5,6 +5,14 @@ Hashing/Fingerprinting & Visual - Tracy Hotchkiss & Vinh Duong
 
 Winnowing - Trevor Holland 
 
+### To set up the environment
+Using Current Ubuntu long term support:
+sudo apt install git
+sudo apt install python3-pip
+sudo apt install python3-flask
+pip3 install -r frozen-requirements.txt
+
+
 ### To run the flask application
 On the command line do "flask run" in the main directory
 
