@@ -44,12 +44,14 @@ def determineHBlocks(sortedLineMatches, dict):
     # values and keys are for testing to watch dict_values and keys
     values = dict.values()
     keys = dict.keys()
+
     # since values is not subscriptable create a list of the sorted lines number of matches
     res = [dict[i] for i in sortedLineMatches]
     # res takes the amount of all the matches and puts them in a list relevent to the values location in the sortedLineMatches
     for i in range(0, len(sortedLineMatches)):
         if res[i] != 0:   # if i is not a gap line
             tempBlock.append(sortedLineMatches[i])   # append ith element of sortedLineMatches to tempBlock
+            # condition to control the size of the blocks
             if (count != 4):       # high number will shorten the blocks
                 # count sets the blocksize to count + 1
                     # ie. count = 3 will produce blocks like [1,4],[5,8]
@@ -77,12 +79,12 @@ def determineHBlocks(sortedLineMatches, dict):
 
 def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
     # takes blocks of flagged lines from processed document and translates them to the original source file lines
+
     # returns the first and last line of the original source file
     file = open(StrippedFile)
     content = file.readlines()  # Get all lines from stripped file
     lookupFirstLine = content[first - 1].strip()  # string of first line
     lookupLastLine = content[last - 1].strip()  # string of last line
-
     sourceLineFirst = 0
     sourceLineLast = 0
 
@@ -96,7 +98,7 @@ def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
                     sourceLineFirst = num
                     currentSourceLine = num + 1
                     break
-
+    # check if first line matches the last line
     if first == last:  # if they are the same, ie [5,5], we can return here
         return [sourceLineFirst, sourceLineFirst, currentSourceLine]
 
@@ -116,6 +118,7 @@ def TranslateLineBlocks(StrippedFile,SourceFile,first, last, currentSourceLine):
 
 def getTransHighLightLines(StrippedFile, highlightedList, origFile):
     # function to create a list of blocks from the original code to highlight
+    # takes the stripped file, highlighted list, and original file as input
     appHLs = []
     currentSourceLine = 0       # variable to keep track of original source line
     for i in range(len(highlightedList)):   # iterate through blocks returned from determineHBlocks
@@ -136,6 +139,8 @@ def calculateSim(inputFileLen, matches):  # Needs fixed? Not sure this is correc
     return res
 
 def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
+    # put the flagged lines for highlighting into blocks for the HTML module
+    # a list of all the matched lines are created
     sLineMatched = list(s.values())
     aLineMatched = list(a.values())
     sHashMatched = []
@@ -143,6 +148,7 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
     aHashMatched = []
     aL = []
     match = 0
+    # loop through both sets of keys append to list and track count of matches
     for i in s.keys():
         for j in a.keys():
             if i == j:
@@ -151,54 +157,24 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
                 sL.append(sLineMatched[match])
                 aL.append(aLineMatched[match])
                 match += 1
+    #flatten list of keys
     flatsL = list(flatten(sL))
-    #print("flatsl: ", flatsL)
     flataL = list(flatten(aL))
     # creates a dictionary of keys being line numbers and items being the amount of matches to that key
     sCount = createDict(flatsL)
-    #print("sCount: ", sCount)
-
-    # sCount:  {1: 6, 15: 1, 11: 5, 2: 8, 12: 5, 16: 6, 3: 11, 13: 6, 4: 9, 14: 1, 5: 7, 10: 6, 6: 8, 7: 7, 8: 7, 9: 10, 18: 1}
-    # here is an opportunity to sort this data into blocks based on higher density of matches
-
     aCount = createDict(flataL)
-    #print("aCount: ", aCount)
     sortedLineMatchess = sorted(sCount)
-    #print("s sorted line numbers: ", sortedLineMatchess)
     sortedLineMatchesa = sorted(aCount)
-    #print("a sorted line numbers: ", sortedLineMatchesa)
     if len(sCount) != 0:
         sCount = fillInDict(sortedLineMatchess, sCount) # line dictionary with empty lines added
         aCount = fillInDict(sortedLineMatchesa, aCount)
-        sortedLineMatchess = sorted(sCount)
+        sortedLineMatchess = sorted(sCount) # sort matches by line number
         sortedLineMatchesa = sorted(aCount)
-        HLs = determineHBlocks(sortedLineMatchess, sCount)
+        HLs = determineHBlocks(sortedLineMatchess, sCount) # highlighted Lines
         HLa = determineHBlocks(sortedLineMatchesa, aCount)
-        print("inputFile processed blocks: ", HLs)
-        print("compared document processed blocks: ", HLa)
+        # translate processed line matches to original
         transBlockss = getTransHighLightLines(StrippedFile1, HLs, file1)
-        if len(transBlockss[-1]) == 1:
-            temp = transBlockss[-1]
-            for i in temp:
-                pass
-            transBlockss[-1].append(i)
-            # need to add the same element
-
         transBlocksa = getTransHighLightLines(StrippedFile2, HLa, file2)
-        # found an edge case where if there is more than one instance of the lookup string, it will add the additional line/lines to the highlighted blocks
-        # for instance, the loop finds the first line 5, then the new lookup value changes to "string2="cda"\n". line 9 contains the lookup string. It finds the line and places it in newlines.
-        # the function then continues looking for lines until it finishes looping or finding additional matching lines. In this case, line number 21 contained the same lookup value
-        # this returns the highlighted block of lines [5, 9, 21]
-        # propose a change to translate so when lookup is found, it recognizes and moves to the next lookup values and then stops when it has found 1 of each the start and the end value
-        # found another edge case, where the lookup line matches a previous line as well as the actual translated line
-        # for instance, processed line 19 shows a lookup value of 'return string2'
-        # it finds a matching string at line 11 when the actual translated line should be line 23
-        # it then continues and adds line 23 also. the only line added should be 23.
-        # need a first and last reference to check the current i val with
-        # added edge case for documents with 0 matches
-
-        # created a new translate method for when a translation is needed specifically for the highlighted blocks of text only
-
 
         print("inputFile original code blocks: ", transBlockss)
         print("compared document original code blocks: ", transBlocksa)
@@ -207,14 +183,3 @@ def highlightedBlocks(s, a, StrippedFile1, StrippedFile2, file1, file2):
         return transBlockss, transBlocksa
     else:
         pass
-
-
-
-
-
-# need to add edge cases for spaces in the lines with matches
-
-# processBlockss:  [[1, 3], [4, 6], [7, 9], [10, 12], [13, 15]]
-# processBlocksa:  [[1, 3], [4, 6], [7, 9], [10, 12]]
-# transBlockss:  [[1, 3], [4, 7], [8, 10], [11, 14], [15, 18]]
-# transBlocksa:  [[1, 3], [4, 7], [8, 10], [11, 14]]
