@@ -1,0 +1,7 @@
+Vinh:
+To build the HTML files the entry in the comparison table is split to get the filenames of both files.
+
+From the highlight comparison lines tracy output is standard list [ [1, 5], [9, 10]] while Trevor is something like 
+{0: [0, [1, 5]], 1: [5, [9, 15]]} to get the coloring information to match on both sides. For both of them the line number
+should start at 1. Probably need some way to standarize the output to get what lines to highlight and what color it should 
+be to match on both sides. I have an array with 9-10 colors to cycle through to highlight the lines. 
