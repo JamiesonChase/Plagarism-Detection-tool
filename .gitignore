@@ -3,3 +3,5 @@
 *.py_Stripped
 *.pkl
 *.html
+timeInfor.py
+timeInfor.py.lprof

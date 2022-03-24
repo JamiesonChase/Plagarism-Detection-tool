@@ -1,0 +1,326 @@
+Using the folder from the database/Regular/ folder 
+
+Timer unit: 1e-06 s
+
+Total time: 0.004395 s
+File: timeInfor.py
+Function: winnow at line 25
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    25                                           @profile
+    26                                           def winnow(windowSize, hashes):
+    27                                               """
+    28                                               Obtains fingerprints from the list 'hashes' using windows of size 'windowSize'.
+    29                                               'hashes' should be a list of tuples in the format (index, hash)
+    30                                               Returns the fingerprints in a list of tuples of the format (index, hash)
+    31                                               """
+    32                                           
+    33         9          2.0      0.2      0.0      window = []
+    34                                               # initialize window buffer
+    35        45         19.0      0.4      0.4      for i in range(0, windowSize):
+    36        36         18.0      0.5      0.4          window.append((i, sys.maxsize))
+    37                                               
+    38         9          3.0      0.3      0.1      right = 0 # window's rightmost index
+    39         9          2.0      0.2      0.0      minHash = 0 # index of the minimum hash
+    40                                           
+    41         9          2.0      0.2      0.0      fingerPrints = []
+    42                                           
+    43                                               # iterate over all hash values in 'hashes'
+    44      1462        406.0      0.3      9.2      for i in range(0, len(hashes)):
+    45                                                   
+    46      1453        435.0      0.3      9.9          right = (right + 1) % windowSize # shift window
+    47      1453        442.0      0.3     10.1          window[right] = hashes[i] # add new hash to window
+    48                                           
+    49                                                   # min hash is already at rightmost index, need to find new min hash
+    50      1453        513.0      0.4     11.7          if minHash == right:
+    51                                                       # iterate through window to find index of rightmost minimum hash
+    52                                                       # this iteration looks weird because we're iterating through a circular buffer
+    53       475        146.0      0.3      3.3              j = (right - 1) % windowSize
+    54      1900        586.0      0.3     13.3              while j != right:
+    55      1425        535.0      0.4     12.2                  if window[j][1] < window[minHash][1]:
+    56       550        148.0      0.3      3.4                      minHash = j
+    57      1425        476.0      0.3     10.8                  j = (j - 1 + windowSize) % windowSize
+    58                                                       # fingerprint the min hash
+    59       475        165.0      0.3      3.8              fingerPrints.append(window[minHash])
+    60                                                   # otherwise, check if newest hash is less than previous min hash
+    61                                                   else:
+    62       978        337.0      0.3      7.7              if window[right][1] <= window[minHash][1]:
+    63                                                           # newest hash is new min, fingerprint it
+    64       211         63.0      0.3      1.4                  minHash = right
+    65       211         96.0      0.5      2.2                  fingerPrints.append(window[minHash])
+    66                                           
+    67         9          1.0      0.1      0.0      return fingerPrints
+
+Total time: 1.5368 s
+File: timeInfor.py
+Function: process at line 69
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    69                                           @profile
+    70                                           def process(filename):
+    71         9        357.0     39.7      0.0      file = open(filename, "r")
+    72         9        125.0     13.9      0.0      lines = file.read()
+    73         9         46.0      5.1      0.0      file.close()
+    74         9    1442033.0 160225.9     93.8      lexer = pygments.lexers.guess_lexer_for_filename(filename, lines)
+    75         9        139.0     15.4      0.0      tokens = lexer.get_tokens(lines)
+    76         9      31966.0   3551.8      2.1      tokens = list(tokens)
+    77                                           
+    78         9         11.0      1.2      0.0      processed = []
+    79         9          5.0      0.6      0.0      stripped = []
+    80      1330        918.0      0.7      0.1      for token in tokens:
+    81      1321       1012.0      0.8      0.1          if token[0] == pygments.token.Name:
+    82       182        135.0      0.7      0.0              processed.append("V")
+    83       182        129.0      0.7      0.0              stripped.append(token[1])
+    84      1139       1877.0      1.6      0.1          elif token[0] in pygments.token.Literal.String:
+    85       110         71.0      0.6      0.0              processed.append("S")
+    86       110         87.0      0.8      0.0              stripped.append(token[1])
+    87      1029       1622.0      1.6      0.1          elif token[0] in pygments.token.Name.Function:
+    88        31         23.0      0.7      0.0              processed.append("F")
+    89        31         23.0      0.7      0.0              stripped.append(token[1])
+    90       998       1376.0      1.4      0.1          elif token[0] in pygments.token.Comment:
+    91        16         12.0      0.8      0.0              processed.append('\n')
+    92        16          8.0      0.5      0.0              stripped.append('\n')
+    93       982        752.0      0.8      0.0          elif tokens[0] == pygments.token.Text:
+    94                                                       pass
+    95                                                   else:
+    96       982        779.0      0.8      0.1              processed.append(token[1])
+    97       982        828.0      0.8      0.1              stripped.append(token[1])
+    98                                           
+    99         9         35.0      3.9      0.0      processed = str("".join(processed)) # join all the tokens
+   100         9         91.0     10.1      0.0      processed = "".join([s for s in processed.strip().splitlines(True) if s.strip()]) # remove blank lines
+   101                                           
+   102         9         22.0      2.4      0.0      stripped = str("".join(stripped))  # join all the tokens
+   103         9         59.0      6.6      0.0      stripped = "".join([s for s in stripped.strip().splitlines(True) if s.strip()])  # remove blank lines
+   104                                           
+   105         9      51019.0   5668.8      3.3      with open(filename + '_Stripped', "w") as text_file:
+   106         9         13.0      1.4      0.0          text_file.write(stripped)
+   107         9       1213.0    134.8      0.1          text_file.close()
+   108                                           
+   109         9         11.0      1.2      0.0      return processed
+
+Total time: 0.003439 s
+File: timeInfor.py
+Function: index_to_lines at line 117
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   117                                           @profile
+   118                                           def index_to_lines(s, index):
+   119                                               """Returns (line_number, col) of `index` in `s`."""
+   120      1453        545.0      0.4     15.8      s = str(s)
+   121      1453        434.0      0.3     12.6      if not len(s):
+   122                                                   return 1
+   123      1453       1641.0      1.1     47.7      a = len(s[:min(index)+4].splitlines())
+   124      1453        819.0      0.6     23.8      return list(range(a,a+1))
+
+Total time: 0.014832 s
+File: timeInfor.py
+Function: hashingFunction at line 126
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   126                                           @profile
+   127                                           def hashingFunction(inputString, ngram):
+   128                                           
+   129         9          7.0      0.8      0.0      ArrayOfTuples = [] # List to be returned
+   130         9          7.0      0.8      0.0      if (len(inputString) < ngram): #End the program if the file size is less than the ngrams.
+   131                                                   print("Size of file is less than ngram")
+   132                                                   exit()
+   133                                           
+   134                                           
+   135         9          6.0      0.7      0.0      currentIndex = 0 #Current index
+   136         9          3.0      0.3      0.0      beginningString = "" # beginning String
+   137         9         20.0      2.2      0.1      ArrayOfIndex = [] #Arrays of the index for the ngrams.
+   138        72        153.0      2.1      1.0      while (len(beginningString) != ngram): #Build the beginning string excluding new lines
+   139        63         34.0      0.5      0.2          if (inputString[currentIndex] != '\n'):
+   140        63         45.0      0.7      0.3              beginningString = beginningString + inputString[currentIndex]
+   141        63         48.0      0.8      0.3              ArrayOfIndex.append(currentIndex)
+   142                                           
+   143        63         31.0      0.5      0.2          currentIndex = currentIndex + 1
+   144                                           
+   145                                           
+   146                                           
+   147         9          0.0      0.0      0.0      firstHashValue = 0 #Hash values will be stored here.
+   148         9          3.0      0.3      0.0      i = 1
+   149        72        139.0      1.9      0.9      for var in beginningString: #Initial part of the Karp Rabin algorithm
+   150        63        172.0      2.7      1.2          firstHashValue = firstHashValue + ord(var)*(2**(ngram - i))
+   151        63         23.0      0.4      0.2          i = i + 1
+   152                                           
+   153         9        174.0     19.3      1.2      firstArrayOfIndex = index_to_lines(inputString, ArrayOfIndex) #Add the first tupele
+   154         9          5.0      0.6      0.0      tupleVariable = (firstArrayOfIndex, firstHashValue)
+   155         9          7.0      0.8      0.0      ArrayOfTuples.append(tupleVariable)
+   156                                           
+   157      1582        670.0      0.4      4.5      while (currentIndex <= (len(inputString) - 1) ): #To get all the other tuples.
+   158      1573        601.0      0.4      4.1          if (inputString[currentIndex] !=  '\n'): #Exlude new line
+   159                                           
+   160                                                       #Another version of getting the next hash
+   161                                                       #firstHashValue = ( (firstHashValue - ord(beginningString[0]) *2**ngram) + ord(inputString[currentIndex]) ) * 2
+   162      1444       1126.0      0.8      7.6              firstHashValue = ( firstHashValue - ord(beginningString[0]) *2**(ngram - 1) )*2 +  ord(inputString[currentIndex]) # Get the next hash
+   163      1444        578.0      0.4      3.9              del ArrayOfIndex[0] #Remove the index no longer in use
+   164      1444        536.0      0.4      3.6              ArrayOfIndex.append(currentIndex) #Append the new index
+   165      1444       7249.0      5.0     48.9              localArrayOfIndex = index_to_lines(inputString, ArrayOfIndex)
+   166                                           
+   167      1444        759.0      0.5      5.1              beginningString = beginningString[1:] #Adjust the next ngrams
+   168      1444        643.0      0.4      4.3              beginningString += inputString[currentIndex]
+   169      1444        481.0      0.3      3.2              tupleVariable = (localArrayOfIndex, firstHashValue) #Add the next tuple.
+   170      1444        727.0      0.5      4.9              ArrayOfTuples.append(tupleVariable)
+   171                                           
+   172                                           
+   173                                           
+   174      1573        581.0      0.4      3.9          currentIndex = currentIndex + 1 #Increment the index.
+   175                                           
+   176         9          4.0      0.4      0.0      return ArrayOfTuples
+
+Total time: 0.001103 s
+File: timeInfor.py
+Function: inverted_index_create at line 218
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   218                                           @profile
+   219                                           def inverted_index_create(s):
+   220         9          4.0      0.4      0.4      inverted = {}
+   221       695        178.0      0.3     16.1      for index, hash in s:
+   222       686        219.0      0.3     19.9          locations = inverted.setdefault(hash, [])
+   223      1372        344.0      0.3     31.2          for i in index:
+   224       686        167.0      0.2     15.1              if i not in locations:
+   225       686        190.0      0.3     17.2                  locations.append(i)
+   226         9          1.0      0.1      0.1      return inverted
+
+Total time: 0.000238 s
+File: timeInfor.py
+Function: corpus_add_index at line 228
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   228                                           @profile
+   229                                           def corpus_add_index(corpus,doc_id, s):
+   230       256         72.0      0.3     30.3      for word, locations in s.items():
+   231       251         94.0      0.4     39.5          indices = corpus.setdefault(word, {})
+   232       251         71.0      0.3     29.8          indices[doc_id] = locations
+   233         5          1.0      0.2      0.4      return corpus
+
+Total time: 0.072969 s
+File: timeInfor.py
+Function: query at line 234
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   234                                           @profile
+   235                                           def query(corpus,documents, s):
+   236                                               global irow
+   237                                               global html_template
+   238                                               global lock
+   239         4          2.0      0.5      0.0      percentages = 0
+   240         4          1.0      0.2      0.0      inputfile = s
+   241                                           
+   242         4      58140.0  14535.0     79.7      s = process(s)
+   243         4       9435.0   2358.8     12.9      s = hashingFunction(s,7)
+   244         4       3697.0    924.2      5.1      s = winnow(4,s)
+   245         4        890.0    222.5      1.2      s = inverted_index_create(s)
+   246                                           
+   247        14          8.0      0.6      0.0      for doc_id,path in documents.items():
+   248       545        185.0      0.3      0.3          for key,val in s.items():
+   249       535        218.0      0.4      0.3              if key in corpus.keys():
+   250       535        231.0      0.4      0.3                  if doc_id in corpus[key]:
+   251       215         74.0      0.3      0.1                      percentages = percentages+1
+   252                                           
+   253        10          8.0      0.8      0.0          if (len(s) <= eachCorpusFileTotalHashes[doc_id]):
+   254         3         29.0      9.7      0.0              t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / len(s) * 100)])
+   255                                           
+   256                                           
+   257                                                   else:
+   258         7         45.0      6.4      0.1              t.add_row([documents[doc_id] + " - " + inputfile,"{:05.2f}".format(percentages / eachCorpusFileTotalHashes[doc_id] * 100)])
+   259        10          3.0      0.3      0.0          percentages = 0
+   260         4          3.0      0.8      0.0      return t
+
+Total time: 0.00057 s
+File: timeInfor.py
+Function: load_documents at line 262
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   262                                           @profile
+   263                                           def load_documents(d):
+   264         1        530.0    530.0     93.0      k = os.listdir(d)
+   265         1          4.0      4.0      0.7      k.sort()
+   266         1          1.0      1.0      0.2      i=1
+   267         1          1.0      1.0      0.2      docs = {}
+   268        34         10.0      0.3      1.8      for file in k:
+   269        33         15.0      0.5      2.6          if file.endswith(".py") or file.endswith(".c"):
+   270         5          6.0      1.2      1.1              item = docs.setdefault("doc" + str(i),""+d+file)
+   271         5          2.0      0.4      0.4              i = i + 1
+   272         1          1.0      1.0      0.2      return docs
+
+Total time: 1.50411 s
+File: timeInfor.py
+Function: create_corpus at line 274
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   274                                           @profile
+   275                                           def create_corpus(documents):
+   276         1          0.0      0.0      0.0      corpus = {}
+   277         6          7.0      1.2      0.0      for doc_id,path in documents.items():
+   278         5    1486788.0 297357.6     98.8          s = process(path)
+   279         5      11430.0   2286.0      0.8          s = hashingFunction(s, 7)
+   280         5       4429.0    885.8      0.3          s = winnow(4, s)
+   281         5       1062.0    212.4      0.1          s = inverted_index_create(s)
+   282         5          5.0      1.0      0.0          eachCorpusFileTotalHashes[doc_id] = len(s)
+   283         5        392.0     78.4      0.0          corpus = corpus_add_index(corpus,doc_id,s)
+   284         1          0.0      0.0      0.0      return corpus
+
+Total time: 0 s
+File: timeInfor.py
+Function: getStripped at line 286
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   286                                           @profile
+   287                                           def getStripped(fileName):
+   288                                               strippedFileName = fileName + "_Stripped"
+   289                                               return strippedFileName
+
+Total time: 0 s
+File: timeInfor.py
+Function: file_setup at line 291
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   291                                           @profile
+   292                                           def file_setup(document):
+   293                                           
+   294                                               # function to do the initial setup of the file
+   295                                               s = process(document)
+   296                                               s = hashingFunction(s, 7)
+   297                                               ws = winnow(4, s)
+   298                                               ws = inverted_index_create(ws)
+   299                                               return ws
+
+Total time: 1.58159 s
+File: timeInfor.py
+Function: mainPart at line 301
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   301                                           @profile
+   302                                           def mainPart():
+   303         1          1.0      1.0      0.0      directory = "database/Regular/" # directory for testfiles
+   304         1        600.0    600.0      0.0      documents = load_documents(directory) # find documents inside testfiles directory
+   305         1    1504145.0 1504145.0     95.1      corpus = create_corpus(documents) # create a corpus of those documents
+   306         5          5.0      1.0      0.0      for i in range(1,len(documents)):
+   307         4          8.0      2.0      0.0          file = documents["doc" + str(i)]
+   308         4          4.0      1.0      0.0          documents.pop("doc" + str(i))
+   309         4      73729.0  18432.2      4.7          table = query(corpus,documents,file)
+   310                                           
+   311         1          9.0      9.0      0.0      table.sortby = 'Pair Similarity'
+   312         1          6.0      6.0      0.0      table.reversesort = True
+   313         1       3074.0   3074.0      0.2      print(table)
+   314         1          4.0      4.0      0.0      Rows = table.rows
+   315         1          5.0      5.0      0.0      Rows.sort(key=lambda x: x[1], reverse=True)
+
+
+From this it seems that the majority of the time is being done in the lexer function call.
+
