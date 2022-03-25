@@ -1,0 +1,18 @@
+The first thing that happens is that the directory is path is loaded. It checks for 
+.py or .c files and add it to a dictionary and returns that.
+
+Next the corpus will be built. For each path in the previous dictionary, the first thing 
+that happens is the path is processed. In this step the file is opened and it's content 
+is sent through the pygments lexer function to get it's tokens. For each token, it adds to 
+the process list a replacement if it's a name, string, function or comment, or keep the same 
+thing, and append to the token if the regular token unless it's a comment than it replaces it 
+with a new line. All the tokens in the process list and the stripped list is joined together and the 
+stripped list is written out to a file while the processed part is returned.
+
+The next step to creating the corpus is to pass it to the hashing function. The hashing function will 
+go through each substring of a certain size and turn it to a numeric value and keep track of the index 
+of each hash. It returns the the index of each hash and the hash as a list of tuples.
+
+The next step to creating the corpus is do the winnowing algorithm on the hashes.
+This function returns a subset of the hashes.
+

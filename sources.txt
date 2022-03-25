@@ -146,4 +146,4 @@ Ask Ben Mccamish about places to find multiple submission of a coding problem
 
 -------------------------------
 March 24:
-Got user submitted solution to the matrix-scrpt problem from hacker rank: https://www.hackerrank.com/challenges/matrix-script/leaderboard?limit=10&page=1
+Got user submitted solution to the matrix-scrpt problem from hacker rank around 5:04 pm : https://www.hackerrank.com/challenges/matrix-script/leaderboard?limit=10&page=1
