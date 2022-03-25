@@ -139,3 +139,11 @@ https://github.com/explosion/spaCy
 March 19 2022:
 For java files: https://github.com/deepakjaiswal2018/Empolyee-Management-System.git
 For c files: https://github.com/curl/curl
+
+-------------------------------
+March 23:
+Ask Ben Mccamish about places to find multiple submission of a coding problem
+
+-------------------------------
+March 24:
+Got user submitted solution to the matrix-scrpt problem from hacker rank: https://www.hackerrank.com/challenges/matrix-script/leaderboard?limit=10&page=1
