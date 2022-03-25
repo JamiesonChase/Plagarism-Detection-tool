@@ -11,12 +11,8 @@ When the link is clicked on it will calculate the run the code to create the HTM
 
 Group discussion:
 To help keep github organized we should create a pull request and not commit directly to the main branch until it has been reviewed. Please make a branch on git when you want to test something rather than creating a new testing directory. Keep personal files out of the group repository (looking at you, ‘sources.txt’).
-Wallace’s grading question
 
-Team on Radar for discussion/to do:
-Comparisons with the flask are currently comparing all files in the testing directory, not just the input file. Is this something we plan on changing later?
 
-Suggested idea - have two options, one to compare a single input file to all the files in a directory, or be able to compare all the files in a directory against each other
 
 Team To Do List:
 More flexibility on the input to do the comparison of the inputs to the corpus that the professor was talking about. Like the 60 inputs to each other and the 60 - 60 or 60 - 1000 that Wallace was talking about.
@@ -24,9 +20,6 @@ Having a usable program to do further testing
 Show which blocks are similar to each other by alternating colors in the comparison highlighting.
 Block comparison algorithm. Need to determine if we will move forward with Trevor or Tracy’s 
 See if we can recreate the environment on another machine for use.
-
-
-
 
 
 Individual tasks
@@ -49,20 +42,19 @@ Create some simple python files for unit testing.
 
 Tracy Hotchkiss:
 
-Done this week 3/7/2022:
-Additional cleanup of the testing folder and github repository, combined effort with Vihn and Trevor
-comparison.py code cleanup and commenting
-document with detailed description of comparison.py
+Done this week 3/21/2022:
+planning to modify comparison to take only the two dictionaries for each input file (pending app.py changes)
+Trying to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
+individual flowchart, timing for comparison.py as support for this method
 
-To Do next week 3/14/2022:
-modify comparison to take only two input files
-Try to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
-individual flowchart, timing and unit testing for comparison.py as support for this method
+To Do next week 3/28/2022:
+set up unit testing module for compare.py
 (minor) correct percentage similarities that print out with comparisonDemo.py
+analyzing code to improve speed when doing comparisons on large documents
+continue adding additional test files to fish out edge cases
 
-On Radar for following week 3/21/2022:
-PDF pipeline update with current pipeline including new flowcharts for each module
-Continue adding more test files to fish out additional edge cases with comparisons.py or comparisons2.py depending on which one we move forward with for our final presentation
+On Radar for following week 4/4/2022:
+PDF pipeline update with current pipeline including new flowcharts for each module if needed in prep for final presentation
 README documentation update
 
 
@@ -84,8 +76,9 @@ To Do next week:
 Tbd
 
 
-Past Week
+Past Weeks
 Tracy Hotchkiss:
+Past week 2/28/2022:
 Created pull request proposed-cleanup-merge
 tested app.py and comparisonDemo.py
 all modules and test files are accessible
@@ -94,3 +87,9 @@ Fixed the following bugs in the comparison.py
 When a matched code is found in multiple spots of the compare file it would cause  inconsistent highlighting and out of place lines
 When a matched code block has a gap, was not correctly creating blocks
 When a matched code block only had one line it would not correctly create a block
+Past week 3/7/2022:
+Additional cleanup of the testing folder and github repository, combined effort with Vihn and Trevor
+comparison.py code cleanup and commenting
+document with detailed description of comparison.py
+Past week 3/14/2022:
+Spring Break
