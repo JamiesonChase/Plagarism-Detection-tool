@@ -38,6 +38,9 @@ Worked on this week:
 Start on interface document.
 Find some java and c files. 
 Create some simple python files for unit testing.
+Do documentation on the main comparison code.
+Do timing tests on the main comaprison code.
+Found python code submission on hackerrank.
 
 
 Tracy Hotchkiss:
