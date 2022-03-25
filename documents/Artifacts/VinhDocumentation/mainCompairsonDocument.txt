@@ -16,3 +16,13 @@ of each hash. It returns the the index of each hash and the hash as a list of tu
 The next step to creating the corpus is do the winnowing algorithm on the hashes.
 This function returns a subset of the hashes.
 
+Next an inverted index is created from the winnowed fingerprints where the hash 
+is the key. The index is then added to the corpus.
+
+Each file in the directory is then queried. The document goes through the same process
+of being processed, hashed, winnowed, and creating a inverted index. Then it checks 
+for the key and values in the corpus and if it matches it increment a variable and use
+that to calculate the percentages. The results are added to a table and printed out.
+
+
+
