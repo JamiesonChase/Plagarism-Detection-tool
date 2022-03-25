@@ -34,36 +34,36 @@ Individual tasks
 Vinh Duong:
 
 
-Previously worked on:
+Done this week:
+TBD
+
+To Do next week: 
 List paragraph description and bullet points for the process of how the flask application I am doing works.
 Do timing test for the different components of the app.py
-Look for code examples.
+Look for code examples. 60 files with 100- 500 lines of code.
 Clean up and comment on the app.py code.
 Recreate the environment on a new virtual machine.
 
-Worked on this week:
-Start on interface document.
-Find some java and c files. 
-Create some simple python files for unit testing.
+On Radar for following week:
 
 
 Tracy Hotchkiss:
 
-Done this week 3/7/2022:
-Additional cleanup of the testing folder and github repository, combined effort with Vihn and Trevor
-comparison.py code cleanup and commenting
-document with detailed description of comparison.py
+Done this week 3/21/2022:
+planning to modify comparison to take only the two dictionaries for each input file (pending app.py changes)
+Trying to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
+individual flowchart, timing for comparison.py as support for this method
 
-To Do next week 3/14/2022:
-modify comparison to take only two input files
-Try to find source of bug that is causing some comments or lines that shouldn’t be highlighted in the source code to be highlighted
-individual flowchart, timing and unit testing for comparison.py as support for this method
+To Do next week 3/28/2022:
+set up unit testing module for compare.py
 (minor) correct percentage similarities that print out with comparisonDemo.py
+analyzing code to improve speed when doing comparisons on large documents
+continue adding additional test files to fish out edge cases
 
-On Radar for following week 3/21/2022:
-PDF pipeline update with current pipeline including new flowcharts for each module
-Continue adding more test files to fish out additional edge cases with comparisons.py or comparisons2.py depending on which one we move forward with for our final presentation
+On Radar for following week 4/4/2022:
+PDF pipeline update with current pipeline including new flowcharts for each module if needed in prep for final presentation
 README documentation update
+
 
 
 Trevor Holland
@@ -84,8 +84,9 @@ To Do next week:
 Tbd
 
 
-Past Week
+Past Weeks
 Tracy Hotchkiss:
+Past week 2/28/2022:
 Created pull request proposed-cleanup-merge
 tested app.py and comparisonDemo.py
 all modules and test files are accessible
@@ -94,3 +95,9 @@ Fixed the following bugs in the comparison.py
 When a matched code is found in multiple spots of the compare file it would cause  inconsistent highlighting and out of place lines
 When a matched code block has a gap, was not correctly creating blocks
 When a matched code block only had one line it would not correctly create a block
+Past week 3/7/2022:
+Additional cleanup of the testing folder and github repository, combined effort with Vihn and Trevor
+comparison.py code cleanup and commenting
+document with detailed description of comparison.py
+Past week 3/14/2022:
+Spring Break
