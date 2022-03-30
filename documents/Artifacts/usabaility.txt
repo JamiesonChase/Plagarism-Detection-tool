@@ -1,0 +1,1 @@
+User should be able to upload input and corpus files. Be able to save corpus information so that the user can use it again. 
