@@ -147,3 +147,10 @@ Ask Ben Mccamish about places to find multiple submission of a coding problem
 -------------------------------
 March 24:
 Got user submitted solution to the matrix-scrpt problem from hacker rank around 5:04 pm : https://www.hackerrank.com/challenges/matrix-script/leaderboard?limit=10&page=1
+
+March 30:
+To upload multiple files with flask: https://blog.devgenius.io/get-started-with-multiple-files-upload-using-flask-e8a2f5402e20
+
+
+March 31:
+To combine dictionaries: https://www.geeksforgeeks.org/python-merging-two-dictionaries/
