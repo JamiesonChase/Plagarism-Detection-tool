@@ -36,7 +36,7 @@ global docIDNumber
 docIDNumber = 1
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
-
+global eachCorpusFileTotalHashes
 eachCorpusFileTotalHashes = {}
 
 
@@ -131,8 +131,7 @@ def load_documents(d):
             docIDNumber = docIDNumber + 1
     return docs
 
-def create_corpus(documents):
-    corpus = {}
+def create_corpus(documents,corpus):
     for doc_id,path in documents.items():
         s = process(path)
         s = hashingFunction(s, 7)
@@ -331,7 +330,23 @@ def loadingFiles(files):
     stringFile = '/HTMLFiles/contentFiles/' + files 
     return render_template(stringFile)
 
+@app.route('/loadComparisonTable')
+def loadComparisonTable():
+    global lNLock
+    global loadOrNew
+    lNLock.acquire() # Get the lock 
+    loadOrNew = 2 # Set this variable to 1 which will be used in the other thread to say it needs to load from the file.
+    lNLock.release() #Release the lock
+    return redirect(url_for('comparisonTable')) # Load the page that will show the main comparison table.
 
+@app.route('/loadCorpus')
+def loadCorpus():
+    global lNLock
+    global loadOrNew
+    lNLock.acquire() # Get the lock 
+    loadOrNew = 3 # Set this variable to 1 which will be used in the other thread to say it needs to load from the file.
+    lNLock.release() #Release the lock
+    return redirect(url_for('comparisonTable')) # Load the page that will show the main comparison table.
 
 @app.before_first_request #This will run before the first request.
 def before_first_request():
@@ -344,6 +359,8 @@ def update_load():
         global html_template
         global lNLock
         global loadOrNew
+        global eachCorpusFileTotalHashes
+        global docIDNumber
 
         while(1): #Keep looping until the user makes the choice of either loading saved file or start new comparison.
             lNLock.acquire() 
@@ -352,44 +369,129 @@ def update_load():
                 break
             lNLock.release()
 
-        
-        dir = 'templates/HTMLFiles/baseFiles/' #For the new run delete old html files.
-        dir2 = 'templates/HTMLFiles/contentFiles/'
-        for file in os.scandir(dir):
-            os.remove(file.path)
+        if (loadOrNew == 1):
+            dir = 'templates/HTMLFiles/baseFiles/' #For the new run delete old html files.
+            dir2 = 'templates/HTMLFiles/contentFiles/'
+            for file in os.scandir(dir):
+                os.remove(file.path)
+                
+            for file in os.scandir(dir2):
+                os.remove(file.path)
+            corpus = {}
+            directory = "templates/corpusFiles/" # directory for testfiles
+            documents = load_documents(directory) # find documents inside testfiles directory
             
-        for file in os.scandir(dir2):
-            os.remove(file.path)
+            corpusLength = len(documents) + 1
+            
+            
+            corpus = create_corpus(documents,corpus) # create a corpus of those documents
+            open_file = open("templates/corpusSave/corpus.pkl", "wb") #Save content of the comparison
+            pickle.dump(corpus, open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/nextIdLength.pkl", "wb") #Save content of the comparison
+            pickle.dump(corpusLength, open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/fileCorpusLength.pkl", "wb") #Save content of the comparison
+            pickle.dump(eachCorpusFileTotalHashes, open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/documents.pkl", "wb") #Save content of the comparison
+            pickle.dump(documents, open_file)
+            open_file.close()
 
-        directoryInput = "templates/Input/" # directory for testfiles
-        documentsInput = load_documents(directoryInput) # find documents inside testfiles directory
-        originalInputLength = len(documentsInput) + 1
-        directory = "templates/corpusFiles/" # directory for testfiles
-        documents = load_documents(directory) # find documents inside testfiles directory
-        documents.update(documentsInput)
-        corpus = create_corpus(documents) # create a corpus of those documents
+            directoryInput = "templates/Input/" # directory for testfiles
+            documentsInput = load_documents(directoryInput) # find documents inside testfiles directory
+            originalInputLength = len(documentsInput) + corpusLength
+            corpus = create_corpus(documentsInput,corpus) # create a corpus of those documents
+            documents.update(documentsInput)
+            
+            
+
+
+            
+            for i in range(corpusLength,originalInputLength):
+                file = documents["doc" + str(i)]
+                documents.pop("doc" + str(i))
+                table = query(corpus,documents,file)
+
+            table.sortby = 'Pair Similarity'
+            table.reversesort = True
+            print(table)
+            Rows = table.rows
+            Rows.sort(key=lambda x: x[1], reverse=True)
+
+            lock.acquire()
+            open_file = open("templates/mainComparisonSave/last_save.pkl", "wb") #Save content of the comparison
+            pickle.dump(html_template, open_file)
+            open_file.close()
+            lock.release()
+            refreshLock.acquire()
+            checkRefresh = 1 #Tell the main comparison page it can stop updating.
+            refreshLock.release()
+        elif (loadOrNew == 2):
+            open_file = open("templates/mainComparisonSave/last_save.pkl", "rb") #Open the file 
+            html_template = pickle.load(open_file) #Load content into html_template
+            open_file.close() #Close the file
+            refreshLock.acquire()
+            checkRefresh = 1 #Tell the main compairson page it can stop updating.
+            refreshLock.release()
+        elif(loadOrNew == 3):
+            dir = 'templates/HTMLFiles/baseFiles/' #For the new run delete old html files.
+            dir2 = 'templates/HTMLFiles/contentFiles/'
+            for file in os.scandir(dir):
+                os.remove(file.path)
+                
+            for file in os.scandir(dir2):
+                os.remove(file.path)
+
+            open_file = open("templates/corpusSave/corpus.pkl", "rb") #Save content of the comparison
+            corpus = pickle.load(open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/nextIdLength.pkl", "rb") #Save content of the comparison
+            corpusLength = pickle.load(open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/fileCorpusLength.pkl", "rb") #Save content of the comparison
+            eachCorpusFileTotalHashes = pickle.load(open_file)
+            open_file.close()
+            open_file = open("templates/corpusSave/documents.pkl", "rb") #Save content of the comparison
+            documents = pickle.load(open_file)
+            open_file.close()
+            docIDNumber = corpusLength
+            
+
+            directoryInput = "templates/Input/" # directory for testfiles
+            documentsInput = load_documents(directoryInput) # find documents inside testfiles directory
+            originalInputLength = len(documentsInput) + corpusLength
+            corpus = create_corpus(documentsInput,corpus) # create a corpus of those documents
+            documents.update(documentsInput)
+            
+            
+
+
+            
+            for i in range(corpusLength,originalInputLength):
+                file = documents["doc" + str(i)]
+                documents.pop("doc" + str(i))
+                table = query(corpus,documents,file)
+
+            table.sortby = 'Pair Similarity'
+            table.reversesort = True
+            print(table)
+            Rows = table.rows
+            Rows.sort(key=lambda x: x[1], reverse=True)
+
+            lock.acquire()
+            open_file = open("templates/mainComparisonSave/last_save.pkl", "wb") #Save content of the comparison
+            pickle.dump(html_template, open_file)
+            open_file.close()
+            lock.release()
+            refreshLock.acquire()
+            checkRefresh = 1 #Tell the main comparison page it can stop updating.
+            refreshLock.release()
+
 
 
         
-        for i in range(1,originalInputLength):
-            file = documents["doc" + str(i)]
-            documents.pop("doc" + str(i))
-            table = query(corpus,documents,file)
-
-        table.sortby = 'Pair Similarity'
-        table.reversesort = True
-        print(table)
-        Rows = table.rows
-        Rows.sort(key=lambda x: x[1], reverse=True)
-
-        lock.acquire()
-        open_file = open("last_save.pkl", "wb") #Save content of the comparison
-        pickle.dump(html_template, open_file)
-        open_file.close()
-        lock.release()
-        refreshLock.acquire()
-        checkRefresh = 1 #Tell the main comparison page it can stop updating.
-        refreshLock.release()
+        
         
 if __name__ == "__main__":
     

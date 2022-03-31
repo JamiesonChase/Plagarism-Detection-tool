@@ -154,3 +154,4 @@ To upload multiple files with flask: https://blog.devgenius.io/get-started-with-
 
 March 31:
 To combine dictionaries: https://www.geeksforgeeks.org/python-merging-two-dictionaries/
+elif statement in python: https://www.programiz.com/python-programming/if-elif-else
