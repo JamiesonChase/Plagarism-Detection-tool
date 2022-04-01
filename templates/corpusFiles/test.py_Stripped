@@ -1,0 +1,8 @@
+def main():
+ a = addNum(1,2)  
+ b = addNum(3,4)  
+ c = a + b
+ print(a," + ", b, " = ", c)
+def addNum(x,y): 
+ return x+y
+main()

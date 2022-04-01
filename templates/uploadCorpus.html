@@ -1,0 +1,25 @@
+<!doctype html>
+<title>Upload Corpus files</title>
+<h2>Select corpus files to upload</h2>
+<p>
+    {% with message = get_flashed_messages() %}
+        {% if messages %} 
+            <ul class=flashes>
+                {% for messages in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %} 
+    {% endwith %}
+</p>
+<form method="post" action="/corpus" enctype="multipart/form-data">
+    <dl>
+        <p>
+            <input type="file" name="files[]" multiple="true" autocomplete="off" required>
+        </p>
+    </dl>
+    <p>
+        <input type="submit" value="Submit">
+        <button onclick="location.href='loadCorpus'" type="button">Corpus Table.</button>
+    </p>
+</form>
