@@ -455,11 +455,18 @@ def update_load():
             Rows = table.rows
             Rows.sort(key=lambda x: x[1], reverse=True)
 
-            lock.release()
             refreshLock.acquire()
             checkRefresh = 1 #Tell the main comparison page it can stop updating.
             refreshLock.release()
         elif (loadOrNew == 2):
+            dir = 'templates/HTMLFiles/baseFiles/' #For the new run delete old html files.
+            dir2 = 'templates/HTMLFiles/contentFiles/'
+            for file in os.scandir(dir):
+                os.remove(file.path)
+                
+            for file in os.scandir(dir2):
+                os.remove(file.path)
+
             open_file = open(comparisonName['Save File to load'], "rb") #Open the file 
             html_template = pickle.load(open_file) #Load content into html_template
             open_file.close() #Close the file
