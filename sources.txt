@@ -155,3 +155,5 @@ To upload multiple files with flask: https://blog.devgenius.io/get-started-with-
 March 31:
 To combine dictionaries: https://www.geeksforgeeks.org/python-merging-two-dictionaries/
 elif statement in python: https://www.programiz.com/python-programming/if-elif-else
+How to append to the end of a file in python: https://www.programiz.com/python-programming/methods/list/append
+How to get user string input in flask: https://www.askpython.com/python-modules/flask/flask-forms

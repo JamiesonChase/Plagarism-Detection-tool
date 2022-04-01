@@ -34,6 +34,8 @@ global lNLock
 lNLock = Lock()
 global docIDNumber
 docIDNumber = 1
+global comparisonName 
+comparisonName = ""
 
 t = PrettyTable(['doc pairs', 'Pair Similarity'])
 global eachCorpusFileTotalHashes
@@ -211,6 +213,46 @@ def upload_file_corpus():
         lNLock.release()
         return redirect('/comparisonTable')
 
+@app.route('/showComparisonFiles') # Main page of the comparison table.
+def showComparisonFiles():
+    savedFiles = []
+    dir = 'templates/mainComparisonSave/' #For the new run delete old html files.
+    for file in os.scandir(dir):
+        savedFiles.append(file.path)
+    return render_template("listComparison.html",newEntry=savedFiles)
+
+
+
+@app.route('/loadSpecifiedComparison/', methods = ['POST', 'GET']) # Main page of the comparison table.
+def loadSpecifiedComparison():
+    global comparisonName
+    global lNLock
+    global loadOrNew
+    if request.method == 'POST':
+        comparisonName = request.form.to_dict()
+        lNLock.acquire() 
+        loadOrNew = 2
+        lNLock.release()
+        return redirect("/comparisonTable")
+
+@app.route('/showSaveComparison') # Main page of the comparison table.
+def showSaveComparison():
+    savedFiles = []
+    dir = 'templates/mainComparisonSave/' #For the new run delete old html files.
+    for file in os.scandir(dir):
+        savedFiles.append(file.path)
+    return render_template("saveComparison.html",newEntry=savedFiles)
+
+@app.route('/saveComparison/', methods = ['POST', 'GET']) # Main page of the comparison table.
+def saveComparison():
+    global html_template
+    if request.method == 'POST':
+        saveFileComparisonName = request.form.to_dict()
+        open_file = open(saveFileComparisonName['a'], "wb") #Save content of the comparison
+        pickle.dump(html_template, open_file)
+        open_file.close()
+        return redirect("/comparisonTable")
+
 
 
 @app.route('/comparisonTable') # Main page of the comparison table.
@@ -245,6 +287,7 @@ def comparisonTable():
     </style>
     </head>
     <body>
+    <button onclick="location.href='showSaveComparison'" type="button">Save Comparison</button>
     <table class="center">
       <tr>
         <th>doc Pairs</th>
@@ -330,14 +373,6 @@ def loadingFiles(files):
     stringFile = '/HTMLFiles/contentFiles/' + files 
     return render_template(stringFile)
 
-@app.route('/loadComparisonTable')
-def loadComparisonTable():
-    global lNLock
-    global loadOrNew
-    lNLock.acquire() # Get the lock 
-    loadOrNew = 2 # Set this variable to 1 which will be used in the other thread to say it needs to load from the file.
-    lNLock.release() #Release the lock
-    return redirect(url_for('comparisonTable')) # Load the page that will show the main comparison table.
 
 @app.route('/loadCorpus')
 def loadCorpus():
@@ -361,6 +396,7 @@ def update_load():
         global loadOrNew
         global eachCorpusFileTotalHashes
         global docIDNumber
+        global comparisonName 
 
         while(1): #Keep looping until the user makes the choice of either loading saved file or start new comparison.
             lNLock.acquire() 
@@ -419,16 +455,12 @@ def update_load():
             Rows = table.rows
             Rows.sort(key=lambda x: x[1], reverse=True)
 
-            lock.acquire()
-            open_file = open("templates/mainComparisonSave/last_save.pkl", "wb") #Save content of the comparison
-            pickle.dump(html_template, open_file)
-            open_file.close()
             lock.release()
             refreshLock.acquire()
             checkRefresh = 1 #Tell the main comparison page it can stop updating.
             refreshLock.release()
         elif (loadOrNew == 2):
-            open_file = open("templates/mainComparisonSave/last_save.pkl", "rb") #Open the file 
+            open_file = open(comparisonName['Save File to load'], "rb") #Open the file 
             html_template = pickle.load(open_file) #Load content into html_template
             open_file.close() #Close the file
             refreshLock.acquire()
@@ -465,8 +497,6 @@ def update_load():
             documents.update(documentsInput)
             
             
-
-
             
             for i in range(corpusLength,originalInputLength):
                 file = documents["doc" + str(i)]
@@ -479,11 +509,6 @@ def update_load():
             Rows = table.rows
             Rows.sort(key=lambda x: x[1], reverse=True)
 
-            lock.acquire()
-            open_file = open("templates/mainComparisonSave/last_save.pkl", "wb") #Save content of the comparison
-            pickle.dump(html_template, open_file)
-            open_file.close()
-            lock.release()
             refreshLock.acquire()
             checkRefresh = 1 #Tell the main comparison page it can stop updating.
             refreshLock.release()
