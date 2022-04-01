@@ -33,14 +33,15 @@ Do timing test for the different components of the app.py
 Look for code examples.
 Clean up and comment on the app.py code.
 Recreate the environment on a new virtual machine.
-
-Worked on this week:
 Start on interface document.
 Find some java and c files. 
 Create some simple python files for unit testing.
 Do documentation on the main comparison code.
 Do timing tests on the main comaprison code.
 Found python code submission on hackerrank.
+
+Worked on this week:
+Make the flask application more usable.
 
 
 Tracy Hotchkiss:
