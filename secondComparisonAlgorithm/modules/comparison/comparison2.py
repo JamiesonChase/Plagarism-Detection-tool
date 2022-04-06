@@ -1,14 +1,13 @@
-
 from itertools import groupby, count, chain
-from ..preprocessing.process import process
-from ..hashingFingerprinting.hashFingerprint import hashingFunction
+from preprocessing.process import process
+from hashingFingerprinting.hashFingerprint import hashingFunction
 
 MIN_HASH_THRESHOLD = 0.45 # TODO: test this number more
 DEBUG = True
 
 # some time complexity calculations taken from https://wiki.python.org/moin/TimeComplexity
 
-def inverted_index_create(s):
+def invertedIndexCreate(s):
     """
     Takes the output of hashingFunction as input [(ngram, [line numbers]), ...]
     The input list can have the same ngram appear multiple times in the list on different
@@ -35,7 +34,7 @@ def file_setup(document):
     """
     s = process(document)
     s = hashingFunction(s, 7)
-    s = inverted_index_create(s)
+    s = invertedIndexCreate(s)
     return s
 
 def getMatches(index1, index2):
@@ -156,7 +155,12 @@ def translateLines(OldLines, SourceFile, StrippedFile):
                 if i < len(OldLines)-1:
                     i = i+1  # iterate through each suspect old line
                 lookup = content[OldLines[i]-1].strip() #
+    file.close()
     return newlines  # return list of translated lines
+
+def compareLine(hashes1, hashes2):
+    matches = set.intersection(set(hashes1), set(hashes2))
+    return min(len(matches) / len(hashes1), len(matches) / len(hashes2))
 
 def highlightedBlocks(file1, file2):
     """
@@ -213,6 +217,8 @@ def highlightedBlocks(file1, file2):
     # do the same for original indices
     oi1 = invertDict(index1)
     oi2 = invertDict(index2)   
+
+
 
     # lines of interest are any line containing enough hashes to meet the condition of
     # len(matchedHashes) / len(originalHashes) > 'MIN_HASH_THRESHOLD'
