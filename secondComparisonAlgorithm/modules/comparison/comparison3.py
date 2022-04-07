@@ -1,6 +1,5 @@
-from itertools import groupby, count, chain
-from preprocessing.process import process
-from hashingFingerprinting.hashFingerprint import hashingFunction
+from ..preprocessing.process import process
+from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
 MIN_HASH_THRESHOLD = 0.6 # TODO: test this number more
 DEBUG = True
@@ -139,7 +138,6 @@ def highlightedBlocks(file1, file2):
     scores1 = {}
     for s1 in index1:
         scores1[s1] = getLineScore(s1, index1, index2)
-
     scores2 = {}
     for s2 in index2:
         scores2[s2] = getLineScore(s2, index2, index1)
@@ -150,21 +148,52 @@ def highlightedBlocks(file1, file2):
     for i in range(1, len(scores2)):
         scores2[i][0] -= adjustScores(i, scores2)
 
-    print("scores1:")
-    for key, value in sorted(scores1.items()):
-        print("{} : {}".format(key, value))
-    print("-----------------")
-    print("scores2:")
-    for key, value in sorted(scores2.items()):
-        print("{} : {}".format(key, value))
+    if DEBUG:
+        print("scores1:")
+        for key, value in sorted(scores1.items()):
+            print("{} : {}".format(key, value))
+        print("-----------------")
+        print("scores2:")
+        for key, value in sorted(scores2.items()):
+            print("{} : {}".format(key, value))
 
     blocks1 = getBlocks(scores1)
-    print("blocks1 = " + str(blocks1))
     blocks2 = getBlocks(scores2)
-    print("blocks2 = " + str(blocks2))
-    
+
+    if DEBUG:
+        print("blocks1 = " + str(blocks1))
+        print("blocks2 = " + str(blocks2))
+
+    matchedBlocks1 = []
+    matchedBlocks2 = []
+    for block in blocks1:
+        matchedBlocks1.append([block[0], block])
+        for line in scores1[block[0]][1]:
+            matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
+
+    matchedBlocks1.sort(key = lambda x: x[1][0])
+    matchedBlocks2.sort(key = lambda x: x[1][0])
+
+    if DEBUG:
+        print("matchedBlocks1 = " + str(matchedBlocks1))
+        print("matchedBlocks2 = " + str(matchedBlocks2))
+
+    for block in matchedBlocks1:
+        block[1] = translateLines(block[1], file1, file1 + "_Stripped")
+        if len(block[1]) == 1:
+            block[1].append(block[1][0])
+    for block in matchedBlocks2:
+        block[1] = translateLines(block[1], file2, file2 + "_Stripped")
+        if len(block[1]) == 1:
+            block[1].append(block[1][0])
+
+    if DEBUG:
+        print("matchedBlocks1 after translating = " + str(matchedBlocks1))
+        print("matchedBlocks2 after translating = " + str(matchedBlocks2))
+
+    return(matchedBlocks1, matchedBlocks2)
 
 
-file1 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile.py"
-file2 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile_reordered.py"
-highlightedBlocks(file1, file2)
+#file1 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile.py"
+#file2 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile_rearranged.py"
+#highlightedBlocks(file1, file2)

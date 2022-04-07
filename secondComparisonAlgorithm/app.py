@@ -7,7 +7,7 @@ from threading import Lock
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
-from modules.comparison.comparison2 import highlightedBlocks
+from modules.comparison.comparison3 import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
 from flask import Flask, render_template, request, render_template_string, redirect, url_for
 from prettytable import PrettyTable
