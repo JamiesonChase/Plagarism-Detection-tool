@@ -2,7 +2,7 @@ from itertools import groupby, count, chain
 from preprocessing.process import process
 from hashingFingerprinting.hashFingerprint import hashingFunction
 
-MIN_HASH_THRESHOLD = 0.5 # TODO: test this number more
+MIN_HASH_THRESHOLD = 0.6 # TODO: test this number more
 DEBUG = True
 
 # some time complexity calculations taken from https://wiki.python.org/moin/TimeComplexity
@@ -99,6 +99,35 @@ def adjustScores(startLine, scores):
         return scores[startLine][0] - 1
     return adjustScores(startLine + 1, scores)
 
+def getBlocks(scores):
+    blocks = []
+    block = 1
+    while block < len(scores):
+        score = scores[block][0]
+        if score > 0:
+            blocks.append([block, block + score - 1])
+            block += score
+        else:
+            block += 1
+    return blocks
+    
+
+def translateLines(OldLines, SourceFile, StrippedFile):
+    file = open(StrippedFile)
+    content = file.readlines()  # Get all lines from stripped file
+    newlines = []
+    i = 0
+    lookup = content[OldLines[0]-1].strip()  # initialize first line
+    with open(SourceFile) as myFile:  # iterate through source file
+        for num, line in enumerate(myFile, 1):
+            if lookup in line:  # if processed line is in source line
+                newlines.append(num)  # append source line value
+                if i < len(OldLines)-1:
+                    i = i+1  # iterate through each suspect old line
+                lookup = content[OldLines[i]-1].strip() #
+    file.close()
+    return newlines  # return list of translated lines
+
 def highlightedBlocks(file1, file2):
     index1 = file_setup(file1)
     index2 = file_setup(file2)
@@ -114,14 +143,6 @@ def highlightedBlocks(file1, file2):
     scores2 = {}
     for s2 in index2:
         scores2[s2] = getLineScore(s2, index2, index1)
-    
-    print("scores1:")
-    for key, value in sorted(scores1.items()):
-        print("{} : {}".format(key, value))
-    print("-----------------")
-    print("scores2:")
-    for key, value in sorted(scores2.items()):
-        print("{} : {}".format(key, value))
 
     for i in range(1, len(scores1)):
         scores1[i][0] -= adjustScores(i, scores1)
@@ -137,7 +158,13 @@ def highlightedBlocks(file1, file2):
     for key, value in sorted(scores2.items()):
         print("{} : {}".format(key, value))
 
+    blocks1 = getBlocks(scores1)
+    print("blocks1 = " + str(blocks1))
+    blocks2 = getBlocks(scores2)
+    print("blocks2 = " + str(blocks2))
+    
+
 
 file1 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile.py"
-file2 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile_rearranged.py"
+file2 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile_reordered.py"
 highlightedBlocks(file1, file2)
