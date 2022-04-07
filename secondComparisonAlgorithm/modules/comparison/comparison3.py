@@ -93,19 +93,11 @@ def getLineScore(s1, index1, index2):
     return [maxScore, bestLines]
 
 def adjustScores(startLine, scores):
-    line = startLine
-    score = scores[startLine][0]
-    prevScore = score + 1
-    while score == prevScore - 1:
-        if line >= len(scores):
-            break
-        line += 1
-        temp = score
-        score = scores[line][0]
-        prevScore = temp
-    decrement = prevScore - 1
-    
-    scores[startLine][0] -= decrement
+    if scores[startLine][0] < 2 or startLine + 1 > len(scores):
+        return 0
+    if scores[startLine + 1][0] > scores[startLine][0]:
+        return scores[startLine][0] - 1
+    return adjustScores(startLine + 1, scores)
 
 def highlightedBlocks(file1, file2):
     index1 = file_setup(file1)
@@ -127,23 +119,23 @@ def highlightedBlocks(file1, file2):
     for key, value in sorted(scores1.items()):
         print("{} : {}".format(key, value))
     print("-----------------")
-    #print("scores2:")
-    #for key, value in sorted(scores2.items()):
-    #    print("{} : {}".format(key, value))
+    print("scores2:")
+    for key, value in sorted(scores2.items()):
+        print("{} : {}".format(key, value))
 
-    for i in scores1:
-        adjustScores(i, scores1)
+    for i in range(1, len(scores1)):
+        scores1[i][0] -= adjustScores(i, scores1)
 
-    for i in scores2:
-        adjustScores(i, scores2)
+    for i in range(1, len(scores2)):
+        scores2[i][0] -= adjustScores(i, scores2)
 
     print("scores1:")
     for key, value in sorted(scores1.items()):
         print("{} : {}".format(key, value))
     print("-----------------")
-    #print("scores2:")
-    #for key, value in sorted(scores2.items()):
-    #    print("{} : {}".format(key, value))
+    print("scores2:")
+    for key, value in sorted(scores2.items()):
+        print("{} : {}".format(key, value))
 
 
 file1 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile.py"
