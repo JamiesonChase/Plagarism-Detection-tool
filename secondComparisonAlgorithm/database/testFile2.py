@@ -1,8 +1,8 @@
 def appendFunction():
     a = "x"
-	b = [1, 2, 3]
-	b.append(a)
-	return b
+    b = [1, 2, 3]
+    b.append(a)
+    return b
 
 def stringFunction(input1, input2):
     string1 = "abcd"
@@ -11,10 +11,16 @@ def stringFunction(input1, input2):
     return string2 
 
 def listSum(lis):
-	sum = 0
-	for item in lis:
-		sum += len(item)
-	return sum
+    sum = 0
+    for item in lis:
+        sum += len(item)
+    return sum
+
+def stringFunction(input1, input2):
+    string1 = "abcd"
+    string2 = "cda"
+    string3 = string1 + string2
+    return string2 
     
 def getMatches(index1, index2):
     # get intersection of indices

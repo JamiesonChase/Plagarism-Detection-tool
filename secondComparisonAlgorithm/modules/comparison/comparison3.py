@@ -167,6 +167,8 @@ def highlightedBlocks(file1, file2):
     matchedBlocks1 = []
     matchedBlocks2 = []
     for block in blocks1:
+        if scores1[block[0]][0] == 1:
+            continue
         matchedBlocks1.append([block[0], block])
         for line in scores1[block[0]][1]:
             matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
