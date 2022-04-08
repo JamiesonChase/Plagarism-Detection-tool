@@ -157,3 +157,9 @@ To combine dictionaries: https://www.geeksforgeeks.org/python-merging-two-dictio
 elif statement in python: https://www.programiz.com/python-programming/if-elif-else
 How to append to the end of a file in python: https://www.programiz.com/python-programming/methods/list/append
 How to get user string input in flask: https://www.askpython.com/python-modules/flask/flask-forms
+How to turn a flask request to a dictionary: http://www.seanbehan.com/how-to-get-a-dict-from-flask-request-form/
+https://stackoverflow.com/questions/29091070/how-to-get-data-from-immutablemultidict-in-flask
+
+April 6:
+How to use json dump and load: https://www.bogotobogo.com/python/python-json-dumps-loads-file-read-write.php
+
