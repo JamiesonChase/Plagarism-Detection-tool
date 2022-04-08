@@ -1,7 +1,7 @@
 from ..preprocessing.process import process
 from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
-MIN_HASH_THRESHOLD = 0.6 # TODO: test this number more
+MIN_HASH_THRESHOLD = 0.67 # TODO: test this number more
 DEBUG = True
 
 # some time complexity calculations taken from https://wiki.python.org/moin/TimeComplexity
@@ -103,7 +103,7 @@ def getBlocks(scores):
     block = 1
     while block < len(scores):
         score = scores[block][0]
-        if score > 0:
+        if score > 1:
             blocks.append([block, block + score - 1])
             block += score
         else:
@@ -138,13 +138,12 @@ def highlightedBlocks(file1, file2):
     scores1 = {}
     for s1 in index1:
         scores1[s1] = getLineScore(s1, index1, index2)
+    for i in range(1, len(scores1)):
+        scores1[i][0] -= adjustScores(i, scores1)
+    
     scores2 = {}
     for s2 in index2:
         scores2[s2] = getLineScore(s2, index2, index1)
-
-    for i in range(1, len(scores1)):
-        scores1[i][0] -= adjustScores(i, scores1)
-
     for i in range(1, len(scores2)):
         scores2[i][0] -= adjustScores(i, scores2)
 
@@ -164,11 +163,10 @@ def highlightedBlocks(file1, file2):
         print("blocks1 = " + str(blocks1))
         print("blocks2 = " + str(blocks2))
 
+    # match corresponding blocks
     matchedBlocks1 = []
     matchedBlocks2 = []
     for block in blocks1:
-        if scores1[block[0]][0] == 1:
-            continue
         matchedBlocks1.append([block[0], block])
         for line in scores1[block[0]][1]:
             matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
