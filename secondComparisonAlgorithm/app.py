@@ -56,7 +56,7 @@ def query(corpus,documents, s):
     inputfile = s
 
     s = process(s)
-    s = hashingFunction(s,7)
+    s = hashingFunction(s,4)
     s = winnow(4,s)
     s = inverted_index_create(s)
 
@@ -99,7 +99,7 @@ def create_corpus(documents):
     corpus = {}
     for doc_id,path in documents.items():
         s = process(path)
-        s = hashingFunction(s, 7)
+        s = hashingFunction(s, 4)
         s = winnow(4, s)
         s = inverted_index_create(s)
         eachCorpusFileTotalHashes[doc_id] = len(s)
@@ -114,7 +114,7 @@ def file_setup(document):
 
     # function to do the initial setup of the file
     s = process(document)
-    s = hashingFunction(s, 7)
+    s = hashingFunction(s, 4)
     ws = winnow(4, s)
     ws = inverted_index_create(ws)
     return ws

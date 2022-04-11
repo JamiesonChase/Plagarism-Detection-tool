@@ -1,6 +1,6 @@
 from itertools import groupby, count, chain
-from preprocessing.process import process
-from hashingFingerprinting.hashFingerprint import hashingFunction
+from ..preprocessing.process import process
+from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
 MIN_HASH_THRESHOLD = 0.45 # TODO: test this number more
 DEBUG = True

@@ -1,7 +1,7 @@
 from ..preprocessing.process import process
 from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
-MIN_HASH_THRESHOLD = 0.67 # TODO: test this number more
+MIN_HASH_THRESHOLD = 0.6 # TODO: test this number more
 DEBUG = True
 
 # some time complexity calculations taken from https://wiki.python.org/moin/TimeComplexity
@@ -32,7 +32,7 @@ def file_setup(document):
     Returns the output of 'inverted_index_create'
     """
     s = process(document)
-    s = hashingFunction(s, 7)
+    s = hashingFunction(s, 4)
     s = invertedIndexCreate(s)
     return s
 
@@ -94,7 +94,7 @@ def getLineScore(s1, index1, index2):
 def adjustScores(startLine, scores):
     if scores[startLine][0] < 2 or startLine + 1 > len(scores):
         return 0
-    if scores[startLine + 1][0] > scores[startLine][0]:
+    if scores[startLine + 1][0] >= scores[startLine][0]:
         return scores[startLine][0] - 1
     return adjustScores(startLine + 1, scores)
 
@@ -109,7 +109,6 @@ def getBlocks(scores):
         else:
             block += 1
     return blocks
-    
 
 def translateLines(OldLines, SourceFile, StrippedFile):
     file = open(StrippedFile)
@@ -131,10 +130,15 @@ def highlightedBlocks(file1, file2):
     index1 = file_setup(file1)
     index2 = file_setup(file2)
 
+    print("Index1:\n" + str(index1), end="\n\n")
+    print("Index2:\n" + str(index2), end="\n\n")
+
+
     # swap the index from {hash: [lines]} to {line: [hashes]}
     index1 = invertDict(index1)
     index2 = invertDict(index2)
 
+    
     scores1 = {}
     for s1 in index1:
         scores1[s1] = getLineScore(s1, index1, index2)
@@ -179,21 +183,22 @@ def highlightedBlocks(file1, file2):
         print("matchedBlocks2 = " + str(matchedBlocks2))
 
     for block in matchedBlocks1:
+        
+        #print("translating block " + str(block[1]))
         block[1] = translateLines(block[1], file1, file1 + "_Stripped")
         if len(block[1]) == 1:
             block[1].append(block[1][0])
+        #print("after translation: " + str(block[1]))
     for block in matchedBlocks2:
+        #print("translating block " + str(block[1]))
         block[1] = translateLines(block[1], file2, file2 + "_Stripped")
         if len(block[1]) == 1:
             block[1].append(block[1][0])
+        #print("after translation: " + str(block[1]))
+        
 
     if DEBUG:
         print("matchedBlocks1 after translating = " + str(matchedBlocks1))
         print("matchedBlocks2 after translating = " + str(matchedBlocks2))
 
     return(matchedBlocks1, matchedBlocks2)
-
-
-#file1 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile.py"
-#file2 = "C:/Users/trvrh/Documents/GitHub/Winnowing-/secondComparisonAlgorithm/database/testFile_rearranged.py"
-#highlightedBlocks(file1, file2)
