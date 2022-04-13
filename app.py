@@ -128,7 +128,7 @@ def load_documents(d):
     k.sort()
     docs = {}
     for file in k:
-        if file.endswith(".py") or file.endswith(".c"):
+        if file.endswith(".py") or file.endswith(".c") or file.endswith(".java"):
             item = docs.setdefault("doc" + str(docIDNumber),""+d+file)
             docIDNumber = docIDNumber + 1
     return docs
