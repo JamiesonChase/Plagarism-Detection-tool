@@ -6,3 +6,9 @@
 *.java_Stripped
 timeInfor.py
 timeInfor.py.lprof
+cleanFlask/input/
+secondComparisonAlgorithm/templates/Input/
+secondComparisonAlgorithm/templates/corpusFiles/
+templates/Input/
+templates/corpusFiles/
+
