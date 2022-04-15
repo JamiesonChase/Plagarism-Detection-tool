@@ -1,0 +1,58 @@
+<!doctype html>
+    <html>
+    <head>
+
+    
+    <meta charset="utf-8" />
+    <title>Test</title>
+    
+    <style>
+      table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+      }
+      table.center {
+          margin-left: auto;
+          margin-right: auto;
+      }
+    </style>
+    </head>
+    <body>
+      <p>
+        {% with message = get_flashed_messages() %}
+            {% if messages %} 
+                <ul class=flashes>
+                    {% for messages in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %} 
+        {% endwith %}
+    </p>
+    <form method="post" action="/listCorpus" enctype="multipart/form-data">
+        <dl>
+            <p>
+                <input type="file" name="files[]" multiple="true" autocomplete="off" required>
+            </p>
+        </dl>
+        <p>Name of file to save <input type = "text" name = "a" /></p>
+        <p>
+          
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+
+    
+    <table class="center">
+      <tr>
+        <th>Saved Files</th>
+      </tr>
+      {% for i in newEntry %}
+        <tr><th><A HREF="loadCorpusFile?fileName={{i}}">{{i}}</A></th></tr>
+    {% endfor %}
+    </table>
+    <button onclick="window.location.href = '/noCorpus';">Do not use Corpus</button>
+    <button onclick="window.location.href = '/addToCorpus';">Add to the corpus</button>
+
+    </body>
+</html>

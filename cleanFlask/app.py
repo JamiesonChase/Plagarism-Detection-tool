@@ -16,6 +16,12 @@ app = Flask(__name__)
 global items 
 items = []
 totalhashes = {}
+global r 
+r = []
+global idNumber 
+idNumber = 1
+global lists 
+lists = []
 
 ALLOWED_EXTENSIONS = set(['py', 'c', 'java']) #Only these extensions will be allowed to be uploaded
 app.secret_key = "secret key" #Secret key to make the seure_filename upload work.
@@ -59,6 +65,8 @@ def upload_form():
 
 @app.route('/',methods=['POST']) #If call the root with POST request for the files.
 def upload_file():
+    global lists
+    
     if request.method == 'POST': # If it is the POST request.
         if 'files[]' not in request.files: # If no files were selected display a message on the page.
             flash('No file part')
@@ -78,19 +86,8 @@ def upload_file():
                 file.save(os.path.join("input/", filename))
 
         flash('Files successfully uploaded')
-
-
-
-
-
-
-
-
-
-
-
-
         documents = os.listdir('input/')  # find documents inside testfiles directory
+
         lists = []
 
         for doc in documents:
@@ -98,26 +95,8 @@ def upload_file():
             a=process(doc)
             a=hashingFunction(a,7)
             a=winnow(4,a)
-            lists.append(a) # winnow the hashes and append to lists
+            lists.append([a,doc]) # winnow the hashes and append to lists
 
-        r=[]
-        for i in range(0,len(lists)):
-            a = lists[i]
-            a = [lis[1] for lis in a] # do intersection comparison
-            for j in range(i+1,len(lists)):
-                b = lists[j]
-                b = [lis[1] for lis in b]
-                s = dl.SequenceMatcher(None, a, b) # sequence match a&b
-                sum = 0
-                lines = 0
-                for block in s.get_matching_blocks(): #get matching blocks
-                    sum = sum + block[2] # calculate total matched hashes
-                    if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
-                        lines = lines + -lists[i][block[0]][0] + lists[i][block[0]+block[2]-1][0] + 1
-                r.append([documents[i] + ' - ' + documents[j],100*sum/min(len(a),len(b)),lines]) # append to result
-
-        r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
-        print(r)
 
         return redirect('/listCorpus') # Go to the next page to list the corpus.
 
@@ -130,27 +109,150 @@ def showComparisonFiles():
         savedFiles.append(file.path) #Add the files to the list
     return render_template("listCorpus.html",newEntry=savedFiles) #Load the webpage with the list to display table of filenames.
 
+@app.route('/listCorpus',methods=['POST']) #If call the root with POST request for the files.
+def upload_corpus():
+    global lists 
+    global r 
+    global idNumber
+    if request.method == 'POST': # If it is the POST request.
+        if 'files[]' not in request.files: # If no files were selected display a message on the page.
+            flash('No file part')
+            return redirect(request.url)
+
+        if not os.path.isdir("corpus/OG_Files/"): # If the input directory does not exist then then make it.
+            os.mkdir("corpus/OG_Files/")
+
+        for file in os.scandir("corpus/OG_Files/"): #Remove all the files already in the input directory.
+            os.remove(file.path)
+
+        files = request.files.getlist('files[]') # Get the list of the files uploaded
+
+        for file in files: #Add the appropiate path to the filename to save it
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join("corpus/OG_Files/", filename))
+
+        flash('Files successfully uploaded')
+
+        saveFileName = request.form.to_dict()
+        fullPath = "corpus/" + saveFileName['a'] + ".json"
+
+
+
+        documents = os.listdir('corpus/OG_Files/')  # find documents inside testfiles directory
+        corpusLists = []
+        jsonDictionary = { }
+
+        for doc in documents:
+            doc = 'corpus/OG_Files/' + doc
+            a=process(doc)
+            a=hashingFunction(a,7)
+            a=winnow(4,a)
+            lists.append([a,doc]) # winnow the hashes and append to lists
+            jsonDictionary[doc] = a 
+
+        json.dump(jsonDictionary, open(fullPath,"w"))
+
+        r=[]
+        for i in range(0,len(lists)):
+            a = lists[i][0]
+            a = [lis[1] for lis in a] # do intersection comparison
+            for j in range(i+1,len(lists)):
+                b = lists[j][0]
+                b = [lis[1] for lis in b]
+                s = dl.SequenceMatcher(None, a, b) # sequence match a&b
+                sum = 0
+                lines = 0
+                for block in s.get_matching_blocks(): #get matching blocks
+                    sum = sum + block[2] # calculate total matched hashes
+                    if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
+                        lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
+                r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+                idNUmber = idNumber + 1
+
+        r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
+        print(r)
+
+        
+
+
+    
+
+    return redirect('/mainTable')
+
+
 @app.route('/loadCorpusFile') # When one of the corpus file is clicked.
 def loadCorpusFile():
-    print(os.listdir("input/"))
+    global lists 
+    global r 
+    global idNumber
     corpusName = request.args.get('fileName') #Load the specific corpus and assign it to the dictionary table.
     dictionary = json.load(open(corpusName,"r"))
+    for x in dictionary:
+        lists.append([dictionary[x],x])
+
+    r=[]
+    for i in range(0,len(lists)):
+        a = lists[i][0]
+        a = [lis[1] for lis in a] # do intersection comparison
+        for j in range(i+1,len(lists)):
+            b = lists[j][0]
+            b = [lis[1] for lis in b]
+            s = dl.SequenceMatcher(None, a, b) # sequence match a&b
+            sum = 0
+            lines = 0
+            for block in s.get_matching_blocks(): #get matching blocks
+                sum = sum + block[2] # calculate total matched hashes
+                if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
+                    lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
+            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            idNUmber = idNumber + 1
+
+    r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
+    print(r)
+
     return redirect('/mainTable')
 
 @app.route('/mainTable')
 def mainTable():
     global items
-    items = [(0,'testfiles/file1.py - testfiles/file2.py', 57.2, 20), (1,'testfiles/file1 - testfiles/file2.py', 57.2, 20)]
-    return render_template("mainTable.html",htmlTable = items) # Load the main compairison page.
+    global r 
+
+    items = [(0,'testfiles/file1.py - testfiles/file2.py', 57.2, 20), (1,'testfiles/file1.py - testfiles/file2.py', 57.2, 20)]
+    
+    return render_template("mainTable.html",htmlTable = r) # Load the main compairison page.
 
 @app.route('/noCorpus') # If select not to use corpus.
 def noCorpus():
-    # Code goes here
+    global r
+    global idNumber 
+    global lists 
+
+
+    r=[]
+    for i in range(0,len(lists)):
+        a = lists[i][0]
+        a = [lis[1] for lis in a] # do intersection comparison
+        for j in range(i+1,len(lists)):
+            b = lists[j][0]
+            b = [lis[1] for lis in b]
+            s = dl.SequenceMatcher(None, a, b) # sequence match a&b
+            sum = 0
+            lines = 0
+            for block in s.get_matching_blocks(): #get matching blocks
+                sum = sum + block[2] # calculate total matched hashes
+                if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
+                    lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
+            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            idNUmber = idNumber + 1
+
+    r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
+    print(r)
     return redirect('/mainTable')
 
 @app.route('/addToCorpus') # If decide to add to corpus.
 def addToCorpus():
-    # Code goes here
+    
     return redirect('/mainTable')
 
 
