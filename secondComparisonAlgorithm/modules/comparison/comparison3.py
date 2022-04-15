@@ -81,13 +81,15 @@ def getLineScore(s1, index1, index2):
     maxScore = 0
     bestLines = []
     
-    for s2 in index2:
+    s2 = 1
+    while s2 < len(index2):
         score = findLongestSequence(s1, s2, index1, index2)
         if score > maxScore:
             maxScore = score
             bestLines = [s2]
         elif score == maxScore and score > 0:
             bestLines.append(s2)
+        s2 += max(score, 1)
         
     return [maxScore, bestLines]
 
@@ -104,7 +106,8 @@ def getBlocks(scores):
     while block < len(scores):
         score = scores[block][0]
         if score > 1:
-            blocks.append([block, block + score - 1])
+            # don't forget about the tuple
+            blocks.append((block, block + score - 1))
             block += score
         else:
             block += 1
@@ -118,7 +121,7 @@ def translateLines(OldLines, SourceFile, StrippedFile):
     lookup = content[OldLines[0]-1].strip()  # initialize first line
     with open(SourceFile) as myFile:  # iterate through source file
         for num, line in enumerate(myFile, 1):
-            if lookup in line:  # if processed line is in source line
+            if lookup in line and num >= OldLines[i]:  # if processed line is in source line
                 newlines.append(num)  # append source line value
                 if i < len(OldLines)-1:
                     i = i+1  # iterate through each suspect old line
@@ -126,13 +129,49 @@ def translateLines(OldLines, SourceFile, StrippedFile):
     file.close()
     return newlines  # return list of translated lines
 
+def isInBlock(line, block):
+    return line >= block[0] and line <= block[1]
+
+def getBlockFromLine(line, blocks):
+    for block in blocks: 
+        if isInBlock(line, block):
+            return block
+
+def findMatchingBlocks(block, scores1, scores2, blocks1, blocks2):
+    # store blocks in sets so no duplicates
+    mBlocks1 = set()
+    mBlocks2 = set()
+    # block matches itself
+    mBlocks1.add(block)
+
+    mLines = scores1[block[0]][1]
+    for line in mLines:
+        g = getBlockFromLine(line, blocks2)
+        if g != None:
+            mBlocks2.add(g)
+
+    # find which blocks from the other set map back to 'block'
+    for b in blocks2:
+        start = b[0]
+        mLines = scores2[start][1]
+        doesMatch = False
+        # check if block2 maps at all to block
+        for line in mLines:
+            if isInBlock(line, block):
+                doesMatch = True
+        if doesMatch:
+            mBlocks2.add(b)
+            # get all the blocks that b maps to in blocks1
+            for line in mLines:
+                g = getBlockFromLine(line, blocks1)
+                if g != None:
+                    mBlocks1.add(g)
+
+    return (mBlocks1, mBlocks2)
+
 def highlightedBlocks(file1, file2):
     index1 = file_setup(file1)
     index2 = file_setup(file2)
-
-    print("Index1:\n" + str(index1), end="\n\n")
-    print("Index2:\n" + str(index2), end="\n\n")
-
 
     # swap the index from {hash: [lines]} to {line: [hashes]}
     index1 = invertDict(index1)
@@ -167,13 +206,41 @@ def highlightedBlocks(file1, file2):
         print("blocks1 = " + str(blocks1))
         print("blocks2 = " + str(blocks2))
 
+    matchedBlocks1 = []
+    matchedBlocks2 = []
+    i = 0
+
     # match corresponding blocks
     matchedBlocks1 = []
     matchedBlocks2 = []
-    for block in blocks1:
-        matchedBlocks1.append([block[0], block])
-        for line in scores1[block[0]][1]:
-            matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
+    i = 0
+
+    while len(blocks1) > 0:
+        block = blocks1.pop()
+        res = findMatchingBlocks(block, scores1, scores2, blocks1, blocks2)
+        for b in res[0]:
+            matchedBlocks1.append([i, b])
+            if b in blocks1: blocks1.remove(b)
+        for b in res[1]:
+            matchedBlocks2.append([i, b])
+            if b in blocks2: blocks2.remove(b)
+        i += 1
+
+    while len(blocks2) > 0:
+        block = blocks2.pop()
+        res = findMatchingBlocks(block, scores2, scores1, blocks2, blocks1)
+        for b in res[1]:
+            matchedBlocks1.append([i, b])
+            if b in blocks1: blocks1.remove(b)
+        for b in res[0]:
+            matchedBlocks2.append([i, b])
+            if b in blocks2: blocks2.remove(b)
+        i += 1
+
+    #for block in blocks1:
+    #    matchedBlocks1.append([block[0], block])
+    #    for line in scores1[block[0]][1]:
+    #        matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
 
     matchedBlocks1.sort(key = lambda x: x[1][0])
     matchedBlocks2.sort(key = lambda x: x[1][0])
