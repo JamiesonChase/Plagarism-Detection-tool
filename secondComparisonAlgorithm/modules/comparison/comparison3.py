@@ -113,20 +113,22 @@ def getBlocks(scores):
             block += 1
     return blocks
 
-def translateLines(OldLines, SourceFile, StrippedFile):
+def translateLines(SourceFile, StrippedFile):
     file = open(StrippedFile)
     content = file.readlines()  # Get all lines from stripped file
     newlines = []
     i = 0
-    lookup = content[OldLines[0]-1].strip()  # initialize first line
+    lookup = content[i].strip()
     with open(SourceFile) as myFile:  # iterate through source file
         for num, line in enumerate(myFile, 1):
-            if lookup in line and num >= OldLines[i]:  # if processed line is in source line
+            if lookup in line:  # if processed line is in source line
                 newlines.append(num)  # append source line value
-                if i < len(OldLines)-1:
-                    i = i+1  # iterate through each suspect old line
-                lookup = content[OldLines[i]-1].strip() #
-    file.close()
+                i += 1  # iterate through each suspect old line
+                print(lookup)
+                if i == len(content):
+                    break
+                else:
+                    lookup = content[i].strip() #
     return newlines  # return list of translated lines
 
 def isInBlock(line, block):
@@ -249,19 +251,19 @@ def highlightedBlocks(file1, file2):
         print("matchedBlocks1 = " + str(matchedBlocks1))
         print("matchedBlocks2 = " + str(matchedBlocks2))
 
+    file1Lines = translateLines(file1, file1 + "_Stripped")
+    file2Lines = translateLines(file2, file2 + "_Stripped")
+    print(file1Lines)
+    print(file2Lines)
+
     for block in matchedBlocks1:
-        
-        #print("translating block " + str(block[1]))
-        block[1] = translateLines(block[1], file1, file1 + "_Stripped")
-        if len(block[1]) == 1:
-            block[1].append(block[1][0])
-        #print("after translation: " + str(block[1]))
+        print("translating block " + str(block[1]))
+        block[1] = (file1Lines[block[1][0] - 1], file1Lines[block[1][1] - 1])
+        print("after translation: " + str(block[1]))
     for block in matchedBlocks2:
-        #print("translating block " + str(block[1]))
-        block[1] = translateLines(block[1], file2, file2 + "_Stripped")
-        if len(block[1]) == 1:
-            block[1].append(block[1][0])
-        #print("after translation: " + str(block[1]))
+        print("translating block " + str(block[1]))
+        block[1] = (file2Lines[block[1][0] - 1], file2Lines[block[1][1] - 1])
+        print("after translation: " + str(block[1]))
         
 
     if DEBUG:
@@ -269,3 +271,5 @@ def highlightedBlocks(file1, file2):
         print("matchedBlocks2 after translating = " + str(matchedBlocks2))
 
     return(matchedBlocks1, matchedBlocks2)
+
+    

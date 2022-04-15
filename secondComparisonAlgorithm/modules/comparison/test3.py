@@ -86,39 +86,29 @@ def findMatchingBlocks(block, scores1, scores2, blocks1, blocks2):
 
     return (mBlocks1, mBlocks2)
 
-mBlocks1 = []
-mBlocks2 = []
+matchedBlocks1 = []
+matchedBlocks2 = []
 i = 0
 
 while len(blocks1) > 0:
     block = blocks1.pop()
-    print("working on " + str(block) + " from blocks1")
     res = findMatchingBlocks(block, scores1, scores2, blocks1, blocks2)
     print("res = " + str(res))
     for b in res[0]:
-        print("block added to 1: " + str(b))
-        mBlocks1.append([i, b])
+        matchedBlocks1.append([i, b])
         if b in blocks1: blocks1.remove(b)
     for b in res[1]:
-        print("block added to 2: " + str(b))
-        mBlocks2.append([i, b])
+        matchedBlocks2.append([i, b])
         if b in blocks2: blocks2.remove(b)
     i += 1
 
 while len(blocks2) > 0:
     block = blocks2.pop()
-    print("working on " + str(block) + " from blocks2")
     res = findMatchingBlocks(block, scores2, scores1, blocks2, blocks1)
-    print("res = " + str(res))
     for b in res[1]:
-        print("block added to 1: " + str(b))
-        mBlocks1.append([i, b])
+        matchedBlocks1.append([i, b])
         if b in blocks1: blocks1.remove(b)
     for b in res[0]:
-        print("block added to 2: " + str(b))
-        mBlocks2.append([i, b])
+        matchedBlocks2.append([i, b])
         if b in blocks2: blocks2.remove(b)
     i += 1
-
-print(mBlocks1)
-print(mBlocks2)
