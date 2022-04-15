@@ -163,3 +163,9 @@ https://stackoverflow.com/questions/29091070/how-to-get-data-from-immutablemulti
 April 6:
 How to use json dump and load: https://www.bogotobogo.com/python/python-json-dumps-loads-file-read-write.php
 
+April 14: 
+Click on button to go to a link: https://www.geeksforgeeks.org/how-to-create-an-html-button-that-acts-like-a-link/#:~:text=Using%20onclick%20Event%3A%20The%20onclick,page%20into%20the%20given%20location.&text=Using%20button%20tag%20inside%20%3Ca,a%20button%20inside%20anchor%20tag.
+
+April 15: 
+How to iterate through a dictionary in python: https://www.w3schools.com/python/gloss_python_loop_dictionary_items.asp
+How to copy a list in python: https://www.programiz.com/python-programming/methods/list/copy

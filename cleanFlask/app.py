@@ -140,7 +140,7 @@ def upload_corpus():
 
 
         documents = os.listdir('corpus/OG_Files/')  # find documents inside testfiles directory
-        corpusLists = []
+        corpusLists = lists.copy()
         jsonDictionary = { }
 
         for doc in documents:
@@ -148,7 +148,7 @@ def upload_corpus():
             a=process(doc)
             a=hashingFunction(a,7)
             a=winnow(4,a)
-            lists.append([a,doc]) # winnow the hashes and append to lists
+            corpusLists.append([a,doc]) # winnow the hashes and append to lists
             jsonDictionary[doc] = a 
 
         json.dump(jsonDictionary, open(fullPath,"w"))
@@ -157,8 +157,11 @@ def upload_corpus():
         for i in range(0,len(lists)):
             a = lists[i][0]
             a = [lis[1] for lis in a] # do intersection comparison
-            for j in range(i+1,len(lists)):
-                b = lists[j][0]
+            for j in range(i + 1,len(corpusLists)):
+                if (lists[i][1] == corpusLists[j][1]):
+                    continue
+
+                b = corpusLists[j][0]
                 b = [lis[1] for lis in b]
                 s = dl.SequenceMatcher(None, a, b) # sequence match a&b
                 sum = 0
@@ -167,7 +170,7 @@ def upload_corpus():
                     sum = sum + block[2] # calculate total matched hashes
                     if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                         lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-                r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+                r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
                 idNUmber = idNumber + 1
 
         r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
@@ -188,15 +191,19 @@ def loadCorpusFile():
     global idNumber
     corpusName = request.args.get('fileName') #Load the specific corpus and assign it to the dictionary table.
     dictionary = json.load(open(corpusName,"r"))
+    corpusLists = lists.copy()
     for x in dictionary:
-        lists.append([dictionary[x],x])
+        corpusLists.append([dictionary[x],x])
 
     r=[]
     for i in range(0,len(lists)):
         a = lists[i][0]
         a = [lis[1] for lis in a] # do intersection comparison
-        for j in range(i+1,len(lists)):
-            b = lists[j][0]
+        for j in range(i + 1,len(corpusLists)):
+            if (lists[i][1] == corpusLists[j][1]):
+                continue
+
+            b = corpusLists[j][0]
             b = [lis[1] for lis in b]
             s = dl.SequenceMatcher(None, a, b) # sequence match a&b
             sum = 0
@@ -205,7 +212,7 @@ def loadCorpusFile():
                 sum = sum + block[2] # calculate total matched hashes
                 if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
             idNUmber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
