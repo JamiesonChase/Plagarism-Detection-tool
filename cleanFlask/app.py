@@ -143,8 +143,15 @@ def mainTable():
     items = [(0,'testfiles/file1.py - testfiles/file2.py', 57.2, 20), (1,'testfiles/file1 - testfiles/file2.py', 57.2, 20)]
     return render_template("mainTable.html",htmlTable = items) # Load the main compairison page.
 
+@app.route('/noCorpus') # If select not to use corpus.
+def noCorpus():
+    # Code goes here
+    return redirect('/mainTable')
 
-
+@app.route('/addToCorpus') # If decide to add to corpus.
+def addToCorpus():
+    # Code goes here
+    return redirect('/mainTable')
 
 
 
