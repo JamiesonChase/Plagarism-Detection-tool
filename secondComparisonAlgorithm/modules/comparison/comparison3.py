@@ -2,7 +2,7 @@ from ..preprocessing.process import process
 from ..hashingFingerprinting.hashFingerprint import hashingFunction
 
 MIN_HASH_THRESHOLD = 0.6 # TODO: test this number more
-DEBUG = True
+DEBUG = False
 
 # some time complexity calculations taken from https://wiki.python.org/moin/TimeComplexity
 
@@ -124,7 +124,6 @@ def translateLines(SourceFile, StrippedFile):
             if lookup in line:  # if processed line is in source line
                 newlines.append(num)  # append source line value
                 i += 1  # iterate through each suspect old line
-                print(lookup)
                 if i == len(content):
                     break
                 else:
@@ -139,37 +138,38 @@ def getBlockFromLine(line, blocks):
         if isInBlock(line, block):
             return block
 
-def findMatchingBlocks(block, scores1, scores2, blocks1, blocks2):
-    # store blocks in sets so no duplicates
-    mBlocks1 = set()
-    mBlocks2 = set()
-    # block matches itself
-    mBlocks1.add(block)
+def getBlockMappings(scores, oppBlocks):
+    mappings = {}
+    i = 1
+    while i < len(scores):
+        score = scores[i][0]
+        if score <= 1:
+            i += 1
+            continue
+        lineMaps = scores[i][1]
+        blockMaps = set()
+        for line in lineMaps:
+            blockMaps.add(getBlockFromLine(line, oppBlocks))
+        mappings[(i, i + score - 1)] = list(blockMaps)
+        i += score
+    return mappings
 
-    mLines = scores1[block[0]][1]
-    for line in mLines:
-        g = getBlockFromLine(line, blocks2)
-        if g != None:
-            mBlocks2.add(g)
+def getFullPath(block, oppBm):
+    blocksHere = set()
+    blocksThere = set()
+    q = [block]
+    blocksHere.add(block)
 
-    # find which blocks from the other set map back to 'block'
-    for b in blocks2:
-        start = b[0]
-        mLines = scores2[start][1]
-        doesMatch = False
-        # check if block2 maps at all to block
-        for line in mLines:
-            if isInBlock(line, block):
-                doesMatch = True
-        if doesMatch:
-            mBlocks2.add(b)
-            # get all the blocks that b maps to in blocks1
-            for line in mLines:
-                g = getBlockFromLine(line, blocks1)
-                if g != None:
-                    mBlocks1.add(g)
-
-    return (mBlocks1, mBlocks2)
+    while(len(q) > 0):
+        b = q.pop()
+        for k in oppBm:
+            if b in oppBm[k]:
+                blocksThere.add(k)
+                for i in oppBm[k]:
+                    if i not in blocksHere:
+                        q.append(i)
+                    blocksHere.add(i)
+    return (blocksHere, blocksThere)
 
 def highlightedBlocks(file1, file2):
     index1 = file_setup(file1)
@@ -208,9 +208,12 @@ def highlightedBlocks(file1, file2):
         print("blocks1 = " + str(blocks1))
         print("blocks2 = " + str(blocks2))
 
-    matchedBlocks1 = []
-    matchedBlocks2 = []
-    i = 0
+    blockMappings1 = getBlockMappings(scores1, blocks2)
+    blockMappings2 = getBlockMappings(scores2, blocks1)
+
+    if DEBUG:
+        print("blockMappings1 = " + str(blockMappings1))
+        print("blockMappings2 = " + str(blockMappings2))
 
     # match corresponding blocks
     matchedBlocks1 = []
@@ -219,7 +222,7 @@ def highlightedBlocks(file1, file2):
 
     while len(blocks1) > 0:
         block = blocks1.pop()
-        res = findMatchingBlocks(block, scores1, scores2, blocks1, blocks2)
+        res = getFullPath(block, blockMappings2)
         for b in res[0]:
             matchedBlocks1.append([i, b])
             if b in blocks1: blocks1.remove(b)
@@ -230,7 +233,7 @@ def highlightedBlocks(file1, file2):
 
     while len(blocks2) > 0:
         block = blocks2.pop()
-        res = findMatchingBlocks(block, scores2, scores1, blocks2, blocks1)
+        res = getFullPath(block, blockMappings1)
         for b in res[1]:
             matchedBlocks1.append([i, b])
             if b in blocks1: blocks1.remove(b)
@@ -238,11 +241,6 @@ def highlightedBlocks(file1, file2):
             matchedBlocks2.append([i, b])
             if b in blocks2: blocks2.remove(b)
         i += 1
-
-    #for block in blocks1:
-    #    matchedBlocks1.append([block[0], block])
-    #    for line in scores1[block[0]][1]:
-    #        matchedBlocks2.append([block[0], [line, line + scores2[line][0] - 1]])
 
     matchedBlocks1.sort(key = lambda x: x[1][0])
     matchedBlocks2.sort(key = lambda x: x[1][0])
@@ -253,17 +251,11 @@ def highlightedBlocks(file1, file2):
 
     file1Lines = translateLines(file1, file1 + "_Stripped")
     file2Lines = translateLines(file2, file2 + "_Stripped")
-    print(file1Lines)
-    print(file2Lines)
 
     for block in matchedBlocks1:
-        print("translating block " + str(block[1]))
         block[1] = (file1Lines[block[1][0] - 1], file1Lines[block[1][1] - 1])
-        print("after translation: " + str(block[1]))
     for block in matchedBlocks2:
-        print("translating block " + str(block[1]))
         block[1] = (file2Lines[block[1][0] - 1], file2Lines[block[1][1] - 1])
-        print("after translation: " + str(block[1]))
         
 
     if DEBUG:
