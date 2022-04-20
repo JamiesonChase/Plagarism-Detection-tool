@@ -1,0 +1,69 @@
+public class PirateTranslator {
+    V[] V = {S, S, S, S, S,
+			S, S, S, S,
+			S, S,
+			S, S, S,
+			S, S, S, S};
+    V[] V = {S, S, S, S, S,
+			   S, S, S, S,
+			   S, S,
+			   S, S, S,
+			   S, S,
+			   S, S};
+    V[] V = {S, S, S};
+    V[] V = {S, S, S};
+    V[] V = new V[25];
+    int V = 0;
+    public V F(V V) {
+	V V = V.toLowerCase();
+	for (int V = 0; V < V.length; V++) {
+	    V = V.replace(V[V], V[V]);
+	}
+	int V = 0;
+	for(int V = 0; V < V.length; V++) {
+	    if (V.contains(V[V])) {
+		V = 1;
+		break;
+	    }
+	}
+	for(int V = 0; V < V.length; V++) {
+	    if (V.contains(V[V])) {
+		V -= 1; 
+		break;
+	    }
+	}
+	V V = S;
+	if (V == 1) V = S;
+	if (V == -1) V =  S;
+	V = V + V;
+	return V;
+    }
+    public V F(V V) {
+	V V = new V(V.length()*2);
+	char V = S;
+	V V = V.toUpperCase();
+	for(int V = 0; V < V.length(); V++) {
+	    if (V.charAt(V) == V.charAt(V)) {
+		V.append(V);
+	    }
+	    V.append(V.charAt(V));
+	}
+	V V = V(V.toString());
+	V = new V(20);
+	boolean V = false;
+	for(int V = 0; V < V.length(); V++) {
+	    if (V.charAt(V) == V) {
+		V = true;
+	    } else {
+		if (V) {
+		    V V = S + V.charAt(V);
+		    V.append(V.toUpperCase());
+		    V = false;
+		} else {
+		    V.append(V.charAt(V));
+		}
+	    }
+	}
+	return V.toString();
+    }
+}

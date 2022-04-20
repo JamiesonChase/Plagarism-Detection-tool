@@ -7,7 +7,7 @@ from threading import Lock
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
-from modules.comparison.comparison import highlightedBlocks
+from modules.comparison.comparison3 import highlightedBlocks
 from modules.HTMLGeneration.HTMLGeneration import createHTMLFiles, createJumpTable, createIFramePage
 from flask import Flask, render_template, request, render_template_string, redirect, url_for, flash
 from prettytable import PrettyTable
@@ -95,7 +95,7 @@ def query(corpus,documents, s):
     inputfile = s
 
     s = process(s)
-    s = hashingFunction(s,7)
+    s = hashingFunction(s,4)
     s = winnow(4,s)
     s = inverted_index_create(s)
 
@@ -126,6 +126,7 @@ def load_documents(d):
     global docIDNumber
     k = os.listdir(d)
     k.sort()
+    docIDNumber = 1
     docs = {}
     for file in k:
         if file.endswith(".py") or file.endswith(".c") or file.endswith(".java"):
@@ -136,7 +137,7 @@ def load_documents(d):
 def create_corpus(documents,corpus):
     for doc_id,path in documents.items():
         s = process(path)
-        s = hashingFunction(s, 7)
+        s = hashingFunction(s, 4)
         s = winnow(4, s)
         s = inverted_index_create(s)
         eachCorpusFileTotalHashes[doc_id] = len(s)
@@ -151,7 +152,7 @@ def file_setup(document):
 
     # function to do the initial setup of the file
     s = process(document)
-    s = hashingFunction(s, 7)
+    s = hashingFunction(s, 4)
     ws = winnow(4, s)
     ws = inverted_index_create(ws)
     return ws
