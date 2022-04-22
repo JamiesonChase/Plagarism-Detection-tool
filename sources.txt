@@ -169,3 +169,12 @@ Click on button to go to a link: https://www.geeksforgeeks.org/how-to-create-an-
 April 15: 
 How to iterate through a dictionary in python: https://www.w3schools.com/python/gloss_python_loop_dictionary_items.asp
 How to copy a list in python: https://www.programiz.com/python-programming/methods/list/copy
+
+April 19:
+How to copy a file from one directory to another in python: http://127.0.0.1:5000/mainTable
+
+April 20:
+How to tell if a list is empty in python: https://flexiple.com/check-if-list-is-empty-python
+How to do timing tests between pickle and json: https://www.reddit.com/r/Python/comments/b62s14/pickle_has_a_bad_rep_but_all_comparisons_i_found/
+Get the last n characters of a string: https://thispointer.com/remove-last-n-characters-from-string-in-python/
+Pickle Versus Json information: https://docs.python.org/3/library/pickle.html

@@ -1,0 +1,57 @@
+JSON versus pickle comparison:
+
+Result: Seems pickle is better in terms of time and space.
+
+From a website about pickle: https://docs.python.org/3/library/pickle.html
+
+
+
+    JSON is a text serialization format (it outputs unicode text, although most of the time it is then encoded to utf-8), while pickle is a binary serialization format;
+
+    JSON is human-readable, while pickle is not;
+
+    JSON is interoperable and widely used outside of the Python ecosystem, while pickle is Python-specific;
+
+    JSON, by default, can only represent a subset of the Python built-in types, and no custom classes; pickle can represent an extremely large number of Python types (many of them automatically, by clever usage of Python’s introspection facilities; complex cases can be tackled by implementing specific object APIs);
+
+    Unlike pickle, deserializing untrusted JSON does not in itself create an arbitrary code execution vulnerability.
+
+
+Pickle has a potential security vulnerability and is python specific.
+
+Using miniHash: 
+Json total time for saving is: 0.015642881393432617 pickle total time is: 0.0010650157928466797
+Json total time for saving is: 0.02709174156188965 pickle total time is: 0.0016283988952636719
+Json total time for saving is: 0.01626443862915039 pickle total time is: 0.0013766288757324219
+Space for Json: 87.6 kB (87,604 bytes)
+Space for Pickle: 52.8 kB (52,843 bytes)
+
+Json total time for loading is: 0.0032281875610351562 pickle total time is: 0.00130462646484375
+Json total time for loading is: 0.00507044792175293 pickle total time is: 0.0016372203826904297
+Json total time for loading is: 0.0023283958435058594 pickle total time is: 0.0010204315185546875
+
+
+Using Hashed (second set Wallace gave):
+Json total time for saving is: 0.9231016635894775 pickle total time is: 0.14517998695373535
+Json total time for saving is: 0.9505774974822998 pickle total time is: 0.1470348834991455
+Json total time for saving is: 0.9982352256774902 pickle total time is: 0.16411471366882324
+
+JSON Size: 5.9 MB (5,933,894 bytes)
+Pickle Size: 3.3 MB (3,344,533 bytes)
+
+Json total time for loading is: 0.5874295234680176 pickle total time is: 0.10669302940368652
+Json total time for loading is: 0.5308065414428711 pickle total time is: 0.10457110404968262
+Json total time for loading is: 0.44577527046203613 pickle total time is: 0.07523989677429199
+
+Using Large python files (8 of the same files with 6322 lines)
+Json total time for saving is: 1.3197989463806152 pickle total time is: 0.38756322860717773
+
+JSON file size: 8.1 MB (8,141,857 bytes)
+Pickle Files size: 4.7 MB (4,676,896 bytes)
+
+Json total time for loading is: 0.6100399494171143 pickle total time is: 0.7457795143127441
+Json total time for loading is: 0.6023564338684082 pickle total time is: 0.1906723976135254
+Json total time for loading is: 0.8100268840789795 pickle total time is: 0.18164491653442383
+
+Most of the time pickle seems faster except in one exception but could just be an 
+oulier.
