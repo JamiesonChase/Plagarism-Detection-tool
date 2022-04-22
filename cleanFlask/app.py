@@ -11,6 +11,8 @@ from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
 from modules.comparison.comparison import highlightedBlocks
+# from modules.comparison.comparison3 import highlightedBlocks
+# a,b = highlightedBlocks(file1,file2)
 import shutil 
 import time
 import pickle
@@ -265,6 +267,15 @@ def loadCorpusFile():
 def mainTable():
     global items
     global r 
+
+    i = 0
+    total = 0
+    for x in r:
+        total = total + x[2]
+        i = i + 1
+
+    print(total/i)
+
 
     items = [(0,'testfiles/file1.py - testfiles/file2.py', 57.2, 20), (1,'testfiles/file1.py - testfiles/file2.py', 57.2, 20)]
     
