@@ -18,7 +18,7 @@ import sys
 
 app = Flask(__name__)
 global items 
-items = []
+items = {}
 totalhashes = {}
 global r 
 r = []
@@ -267,8 +267,8 @@ def upload_corpus():
         flash('Files successfully uploaded')
 
         saveFileName = request.form.to_dict()
-        fullPath = "corpus/" + saveFileName['a'] + ".json"
-        #pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl"
+        #fullPath = "corpus/" + saveFileName['a'] + ".json"
+        pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl"
 
 
 
@@ -288,12 +288,12 @@ def upload_corpus():
 
         #jsonTimeStart = time.time()
 
-        json.dump(jsonDictionary, open(fullPath,"w"))
+        #json.dump(jsonDictionary, open(fullPath,"w"))
         #jsonTimeEnd = time.time()
         #jsonTotalTime = jsonTimeEnd - jsonTimeStart 
 
         #pickleTimeStart = time.time()
-        #pickle.dump(jsonDictionary, open(pickleFullPath, 'wb'))
+        pickle.dump(jsonDictionary, open(pickleFullPath, 'wb'))
         #pickleTimeEnd = time.time()
         #pickleTotalTime = pickleTimeEnd - pickleTimeStart 
 
@@ -318,7 +318,8 @@ def upload_corpus():
                         lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
                 #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
                 r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-                idNUmber = idNumber + 1
+                items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
+                idNumber = idNumber + 1
 
         r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
 
@@ -334,25 +335,24 @@ def loadCorpusFile():
     global items 
 
     corpusName = request.args.get('fileName') #Load the specific corpus and assign it to the dictionary table.
-    #pickleName = corpusName[:-5] + ".pkl"
 
     #jsonTimeStart = time.time()
 
-    dictionary = json.load(open(corpusName,"r"))
+    #dictionary = json.load(open(corpusName,"r"))
     #jsonTimeEnd = time.time()
     #jsonTotalTime = jsonTimeEnd - jsonTimeStart 
 
     #pickleTimeStart = time.time()
-    #pickleDictionary = pickle.load(open(pickleName, 'rb'))
+    pickleDictionary = pickle.load(open(corpusName, 'rb'))
     #pickleTimeEnd = time.time()
     #pickleTotalTime = pickleTimeEnd - pickleTimeStart 
 
     #print("Json total time for loading is: " + str(jsonTotalTime) + " pickle total time is: " + str(pickleTotalTime))
 
     corpusLists = lists.copy() # Copy to a new list everything that was in lists from the input files.
-    for x in dictionary: # Add the saved corpus information.
-        corpusLists.append([dictionary[x][0],x,dictionary[x][1]])
-        justCorpusInformation.append([dictionary[x][0],x,dictionary[x][1]])
+    for x in pickleDictionary: # Add the saved corpus information.
+        corpusLists.append([pickleDictionary[x][0],x,pickleDictionary[x][1]])
+        justCorpusInformation.append([pickleDictionary[x][0],x,pickleDictionary[x][1]])
 
     r=[] # Get the information for the similarity score.
     for i in range(0,len(lists)):
@@ -373,6 +373,7 @@ def loadCorpusFile():
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
             #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
             r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
             idNUmber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
@@ -413,7 +414,8 @@ def noCorpus():
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
             #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
             r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-            idNUmber = idNumber + 1
+            items[idNumber] = lists[i][1] + ' - ' + lists[j][1]
+            idNumber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
 
@@ -426,7 +428,8 @@ def addToCorpus():
 
     if request.method == 'POST': # If it is the POST request.
         saveFileName = request.form.to_dict()
-        fullPath = "corpus/" + saveFileName['a'] + ".json"
+        #fullPath = "corpus/" + saveFileName['a'] + ".json"
+        pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl"
         jsonDictionary = {}
 
         for x in justInputInformation: # Copy the input files to the OG_Files directory
@@ -437,7 +440,8 @@ def addToCorpus():
             for x in justCorpusInformation:
                 jsonDictionary[x[1]] = [x[0], x[2]]
    
-        json.dump(jsonDictionary, open(fullPath,"w")) # Save the corpus.
+        #json.dump(jsonDictionary, open(fullPath,"w")) # Save the corpus.
+        pickle.dump(jsonDictionary, open(pickleFullPath, 'wb'))
 
         #jsonDictionary[doc] = [a,originalName] 
     
@@ -449,8 +453,10 @@ def addToCorpus():
 def single_item_a(id): # renders new page when clicking on link
     global items
     print(items)
-    element = items[id][1]
-    filenames = ("C:/Users/trvrh/Desktop/Winnowing data/database/testFile.py", "C:/Users/trvrh/Desktop/Winnowing data/database/testFile_rearranged.py")
+    #element = items[id][1]
+    arrayNames = items[id].split(" - ")
+    filenames = (arrayNames[0], arrayNames[1])
+    #filenames = ("C:/Users/trvrh/Desktop/Winnowing data/database/testFile.py", "C:/Users/trvrh/Desktop/Winnowing data/database/testFile_rearranged.py")
     # filenames = element.split(" - ")
 
 
@@ -531,4 +537,4 @@ if __name__ == '__main__':
     # query the corpus
     # lambda functions to sort by % similarity
 
-    app.run(debug=True)
+    app.run(debug=False)
