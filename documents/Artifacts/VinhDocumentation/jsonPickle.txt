@@ -55,3 +55,6 @@ Json total time for loading is: 0.8100268840789795 pickle total time is: 0.18164
 
 Most of the time pickle seems faster except in one exception but could just be an 
 oulier.
+
+Do it where the user can choose to do command line interface that will just build the table 
+or choose to do the web interface 

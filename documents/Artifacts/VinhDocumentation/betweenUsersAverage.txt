@@ -668,3 +668,5 @@ input/aad2526b2589667672e9ae4187de6f46_1_ShiftTacToe.java - input/c4b2cdc1db0b07
 
 
 Average: 52.57109174031862
+
+Give system all the files, fingerprint all of them, and compare all the files to all the files of different users.

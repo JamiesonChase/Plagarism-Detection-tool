@@ -178,3 +178,9 @@ How to tell if a list is empty in python: https://flexiple.com/check-if-list-is-
 How to do timing tests between pickle and json: https://www.reddit.com/r/Python/comments/b62s14/pickle_has_a_bad_rep_but_all_comparisons_i_found/
 Get the last n characters of a string: https://thispointer.com/remove-last-n-characters-from-string-in-python/
 Pickle Versus Json information: https://docs.python.org/3/library/pickle.html
+
+April 23:
+How to get command line arguments: https://www.tutorialspoint.com/python3/python_command_line_arguments.htm
+
+April 28:
+Solve line profiler problem: https://github.com/rkern/line_profiler/issues/35

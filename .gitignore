@@ -11,4 +11,6 @@ secondComparisonAlgorithm/templates/Input/
 secondComparisonAlgorithm/templates/corpusFiles/
 templates/Input/
 templates/corpusFiles/
+cleanFlask/timeTesting.py 
+cleanFlask/corpus/OG_Files/
 
