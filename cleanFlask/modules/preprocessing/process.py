@@ -32,6 +32,7 @@ def process(filename):
 
     processed = str("".join(processed)) # join all the tokens
     processed = "".join([s for s in processed.strip().splitlines(True) if s.strip()]) # remove blank lines
+    processed = processed.replace(" ","")
 
     stripped = str("".join(stripped))  # join all the tokens
     stripped = "".join([s for s in stripped.strip().splitlines(True) if s.strip()])  # remove blank lines
