@@ -42,9 +42,13 @@ table, th, td {
 <thead><tr><th>{{filenames[0]}}</th><th>{{filenames[1]}}</th></tr></thead>
 <tbody>
 {% for start in lines %}
-<tr bgcolor="{{colors[loop.index0]}}">
-    <td><a href="left_filled.html#{{start[0]}}" target="left_code">{{start[0] , start[1]}}</a></td>
-    <td><a href="right_filled.html#{{start[2]}}" target="right_code">{{start[2] , start[3]}}</a></td>
+<tr bgcolor="white">
+	{% if start[0] != None %}
+	<td bgcolor = "{{colors[start[0][0]]}}"><a href="left_filled.html#{{start[0][1][0]}}" target="left_code" >{{start[0][1][0], start[0][1][1]}}</a></td>
+	{% endif %}
+	{% if start[1] != None %}
+	<td bgcolor = "{{colors[start[1][0]]}}"><a href="right_filled.html#{{start[1][1][0]}}" target="right_code" >{{start[1][1][0], start[1][1][1]}}</a></td>
+	{% endif %}
 </tr>
 {% endfor %}
 </tbody>

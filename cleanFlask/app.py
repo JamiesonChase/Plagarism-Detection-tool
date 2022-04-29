@@ -10,9 +10,7 @@ import difflib as dl
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
-from modules.comparison.comparison import highlightedBlocks
-# from modules.comparison.comparison3 import highlightedBlocks
-# a,b = highlightedBlocks(file1,file2)
+from modules.comparison.comparison3 import highlightedBlocks
 import shutil 
 import time
 import pickle
@@ -339,7 +337,9 @@ def single_item_a(id): # renders new page when clicking on link
     global items
     print(items)
     element = items[id][1]
-    filenames = element.split(" - ")
+    filenames = ("C:/Users/trvrh/Desktop/Winnowing data/database/testFile.py", "C:/Users/trvrh/Desktop/Winnowing data/database/testFile_rearranged.py")
+    # filenames = element.split(" - ")
+
 
     left_file=open(filenames[0]) # open left and right files
     right_file=open(filenames[1])
@@ -370,19 +370,37 @@ def single_item_a(id): # renders new page when clicking on link
         res_right.append([i,line,'black'])
         i += 1
 
-    lines = [[10,13,15,20],[15,20,2,7],[35,40,50,55]] # REPLACE WITH TREVORS CODE
+    linesLeft, linesRight = highlightedBlocks(filenames[0], filenames[1]) #[[colorNum, (startLine, endLine)], ...]
     colors = ['blue','green','red','orange','purple','brown','violet','turquoise','cadetblue']
+    for line in linesLeft: line[0] = line[0] % len(colors)
+    for line in linesRight: line[0] = line[0] % len(colors)
     random.shuffle(colors)
 
-    for i in range(0,len(lines)): # highlight lines
-        b = lines[i]
-        for j in range(b[0],b[1]+1):
-            res_left[j][2] = colors[i%len(colors)] # changing line #'s color
-        for k in range(b[2],b[3]+1):
-            res_right[k][2] = colors[i%len(colors)]
+    for i in range(0,len(linesLeft)): # highlight lines
+        color = linesLeft[i][0]
+        startLine = linesLeft[i][1][0]-1
+        endLine = linesLeft[i][1][1]-1
+        for j in range(startLine, endLine+1):
+            res_left[j][2] = colors[color] # changing line #'s color
+
+    for i in range(0,len(linesRight)): # highlight lines
+        color = linesRight[i][0]
+        startLine = linesRight[i][1][0]-1
+        endLine = linesRight[i][1][1]-1
+        for j in range(startLine, endLine+1):
+            res_right[j][2] = colors[color] # changing line #'s color
 
     Template(render_template('left_template.html',left=res_left)).stream().dump('templates/left_filled.html')
     Template(render_template('right_template.html',right=res_right)).stream().dump('templates/right_filled.html')
+    lines = []
+    maxLen = max(len(linesLeft), len(linesRight))
+    for i in range(maxLen):
+        if i >= len(linesLeft):
+            linesLeft.append(None)
+        if i >= len(linesRight):
+            linesRight.append(None)
+        lines.append((linesLeft[i], linesRight[i]))
+
     return render_template("left-right.html",filenames = filenames,lines=lines,colors=colors)
 
 
