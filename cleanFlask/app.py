@@ -17,14 +17,14 @@ import pickle
 import sys 
 
 app = Flask(__name__)
-global items 
+global items # To map idNumber to names
 items = {}
 totalhashes = {}
-global r 
+global r # Hold the table information 
 r = []
-global idNumber 
+global idNumber #Used with the link route
 idNumber = 1
-global lists 
+global lists # Used to calculate the table.
 lists = [] #How initial information about the input
 global justCorpusInformation # Hold just the corpus winnowed information 
 justCorpusInformation = [] 
@@ -34,7 +34,7 @@ justInputInformation = []
 ALLOWED_EXTENSIONS = set(['py', 'c', 'java']) #Only these extensions will be allowed to be uploaded
 app.secret_key = "secret key" #Secret key to make the seure_filename upload work.
 
-def createNgrams(directory):
+def createNgrams(directory): #Directory to create the ngrams.
     documents = os.listdir(directory)  # find documents inside testfiles directory
     lists = []
     for doc in documents: # Go through the process of getting the winnowed information for the inputs
@@ -45,17 +45,18 @@ def createNgrams(directory):
         a=winnow(4,a)
         lists.append([a,doc,originalName]) # winnow the hashes and append to lists
 
-    return lists 
+    return lists # Return the lits
 
-def compareAndPrint(lists):
-    idNumber = 0
+def compareAndPrint(lists, lists2): # Compare lists to get the table.
+    global items
+    idNumber = 1
 
     r=[] # Just calculate similairty based off of the inputs
     for i in range(0,len(lists)):
         a = lists[i][0]
         a = [lis[1] for lis in a] # do intersection comparison
-        for j in range(i+1,len(lists)):
-            b = lists[j][0]
+        for j in range(i+1,len(lists2)): # Second list for the corpus so that the corpus is not compared against each other.
+            b = lists2[j][0]
             b = [lis[1] for lis in b]
             s = dl.SequenceMatcher(None, a, b) # sequence match a&b
             sum = 0
@@ -64,24 +65,15 @@ def compareAndPrint(lists):
                 sum = sum + block[2] # calculate total matched hashes
                 if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            r.append([idNumber, lists[i][1] + ' - ' + lists2[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            items[idNumber] = lists[i][1] + ' - ' + lists2[j][1] # Map idNumber to the name
             idNUmber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
 
-    total = 0
-    num = 0
-    for x in r:
-        print(x)
-        
-        total = total + x[2]
-        num = num + 1
+    return r 
 
-    average = total / num 
-    print("Average is: " + str(average))
-
-def comparisonsFilter(lists):
+def comparisonsFilter(lists): # To do the filtering so same users submission are not compared to each other.
     idNumber = 0
 
     r=[] # Just calculate similairty based off of the inputs
@@ -105,24 +97,15 @@ def comparisonsFilter(lists):
                 sum = sum + block[2] # calculate total matched hashes
                 if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
             r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
             idNUmber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
 
-    total = 0
-    num = 0
-    for x in r:
-        print(x)
-        
-        total = total + x[2]
-        num = num + 1
+    return r
+    
 
-    average = total / num 
-    print("Average is: " + str(average))
-
-def cleanDirectory(directory):
+def cleanDirectory(directory): # Clean the _Stripped file from the directory.
     files_in_directory = os.listdir(directory)
     filtered_files = [file for file in files_in_directory if file.endswith("_Stripped")]
     for file in filtered_files:
@@ -130,21 +113,25 @@ def cleanDirectory(directory):
         os.remove(path_to_file)
 
 if (len(sys.argv) == 1): # Just running it regularly.
-    print("Continue onto regular flask application")
-elif (len(sys.argv) == 2):
-    result = createNgrams(sys.argv[1])
-    compareAndPrint(result)
+    pass 
+elif (len(sys.argv) == 2): # 
+    result = createNgrams(sys.argv[1]) #Command line argument to get the table.
+    r = compareAndPrint(result, result)
     cleanDirectory(sys.argv[1])
+    for x in r:
+        print(x)
     exit()
-elif (len(sys.argv) == 3):
+elif (len(sys.argv) == 3): # Command line argument to use the filter.
     if (sys.argv[1] != "-f"):
         print("Format: python3 [input directory] or python3 -f [input directory]")
         exit()
     result = createNgrams(sys.argv[2])
-    comparisonsFilter(result)
+    r = comparisonsFilter(result)
     cleanDirectory(sys.argv[2])
+    for x in r:
+        print(x)
     exit()
-else:
+else: # Error in the format.
     print("Format: python3 [input directory] or python3 -f [input directory]")
     exit()
 
@@ -210,6 +197,8 @@ def upload_file():
         flash('Files successfully uploaded')
         documents = os.listdir('input/')  # find documents inside testfiles directory
 
+        justInputInformation = []
+
         lists = []
 
         for doc in documents: # Go through the process of getting the winnowed information for the inputs
@@ -243,87 +232,63 @@ def upload_corpus():
     global items 
 
     if request.method == 'POST': # If it is the POST request.
-        if 'files[]' not in request.files: # If no files were selected display a message on the page.
-            flash('No file part')
-            return redirect(request.url)
+        requestArguments = request.form.to_dict() # Get the request sent
+        if (requestArguments['Check'] == "uploadCorpus"):
+            print("+++++DFSDSF+FDS+DFS+DSF+SD+F+SDF+SDF")
+            if 'files[]' not in request.files: # If no files were selected display a message on the page.
+                flash('No file part')
+                return redirect(request.url)
 
-        if not os.path.isdir("corpus/OG_Files/"): # If the input directory does not exist then then make it.
-            os.mkdir("corpus/OG_Files/")
+            if not os.path.isdir("corpus/OG_Files/"): # If the input directory does not exist then then make it.
+                os.mkdir("corpus/OG_Files/")
 
-        if not os.path.isdir("corpus/filesWithProcessed/"): # If the input directory does not exist then then make it.
-            os.mkdir("corpus/filesWithProcessed/")
+            if not os.path.isdir("corpus/filesWithProcessed/"): # If the input directory does not exist then then make it.
+                os.mkdir("corpus/filesWithProcessed/")
 
-        for file in os.scandir("corpus/filesWithProcessed/"): #Remove all the files already in the corpus processed.
-            os.remove(file.path)
+            for file in os.scandir("corpus/filesWithProcessed/"): #Remove all the files already in the corpus processed.
+                os.remove(file.path)
 
-        files = request.files.getlist('files[]') # Get the list of the files uploaded
+            files = request.files.getlist('files[]') # Get the list of the files uploaded
 
-        for file in files: #Add the appropiate path to the filename to save it
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join("corpus/OG_Files/", filename)) # Save the og files to the correct directory
-                shutil.copy("corpus/OG_Files/" + filename, "corpus/filesWithProcessed/" + filename) # Copy the file to the processed directory.
+            for file in files: #Add the appropiate path to the filename to save it
+                if file and allowed_file(file.filename):
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join("corpus/OG_Files/", filename)) # Save the og files to the correct directory
+                    shutil.copy("corpus/OG_Files/" + filename, "corpus/filesWithProcessed/" + filename) # Copy the file to the processed directory.
 
-        flash('Files successfully uploaded')
+            flash('Files successfully uploaded') # Will show that the files were sucessfully uploaded
 
-        saveFileName = request.form.to_dict()
-        #fullPath = "corpus/" + saveFileName['a'] + ".json"
-        pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl"
-
+            saveFileName = request.form.to_dict() # Get the arguments.
+            pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl" #FileNamePath of the 
 
 
-        documents = os.listdir('corpus/filesWithProcessed/')  # find documents inside processed directory
-        corpusLists = lists.copy()
-        jsonDictionary = { }
 
-        for doc in documents: # Add the winnowed information of the corpus to variables.
-            originalName = doc 
-            doc = 'corpus/filesWithProcessed/' + doc
-            a=process(doc)
-            a=hashingFunction(a,7)
-            a=winnow(4,a)
-            corpusLists.append([a,doc,originalName]) # winnow the hashes and append to lists
-            justCorpusInformation.append([a,doc,originalName])
-            jsonDictionary[doc] = [a,originalName] 
+            documents = os.listdir('corpus/filesWithProcessed/')  # find documents inside processed directory
+            corpusLists = [] # Resets the corpus Lists.
+            corpusLists = lists.copy() # Copy the contents into the corpusLists
+            jsonDictionary = { } # Dictionary to be saved.
 
-        #jsonTimeStart = time.time()
+            for doc in documents: # Add the winnowed information of the corpus to variables.
+                originalName = doc 
+                doc = 'corpus/filesWithProcessed/' + doc
+                a=process(doc)
+                a=hashingFunction(a,7)
+                a=winnow(4,a)
+                corpusLists.append([a,doc,originalName]) # winnow the hashes and append to lists
+                justCorpusInformation.append([a,doc,originalName]) # Add to the corpus lists that will corresponds to lists2
+                jsonDictionary[doc] = [a,originalName] # Add to the json dictionary
 
-        #json.dump(jsonDictionary, open(fullPath,"w"))
-        #jsonTimeEnd = time.time()
-        #jsonTotalTime = jsonTimeEnd - jsonTimeStart 
+            pickle.dump(jsonDictionary, open(pickleFullPath, 'wb')) # Save the pickle file
 
-        #pickleTimeStart = time.time()
-        pickle.dump(jsonDictionary, open(pickleFullPath, 'wb'))
-        #pickleTimeEnd = time.time()
-        #pickleTotalTime = pickleTimeEnd - pickleTimeStart 
+            r = compareAndPrint(lists,corpusLists) # Get the corpus Lists.
 
-        #print("Json total time for saving is: " + str(jsonTotalTime) + " pickle total time is: " + str(pickleTotalTime))
+        elif (requestArguments['Check'] == "noCorpus"): # Else if the user choose no corpus.
+            r = compareAndPrint(lists,lists)
+        
+        elif (requestArguments['Check'] == "filter"): # Else if the user choose to do filter
+            r = comparisonsFilter(lists)
 
-        r=[] # Go through the intersection to get the similarity scores.
-        for i in range(0,len(lists)):
-            a = lists[i][0]
-            a = [lis[1] for lis in a] # do intersection comparison
-            for j in range(i + 1,len(corpusLists)):
-                if (lists[i][1] == corpusLists[j][1]):
-                    continue
-
-                b = corpusLists[j][0]
-                b = [lis[1] for lis in b]
-                s = dl.SequenceMatcher(None, a, b) # sequence match a&b
-                sum = 0
-                lines = 0
-                for block in s.get_matching_blocks(): #get matching blocks
-                    sum = sum + block[2] # calculate total matched hashes
-                    if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
-                        lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-                #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-                r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-                items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-                idNumber = idNumber + 1
-
-        r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
-
-    return redirect('/mainTable')
+    return redirect('/mainTable') # All redirects go to the main tabl.
 
 
 @app.route('/loadCorpusFile') # When one of the corpus file is clicked.
@@ -336,128 +301,59 @@ def loadCorpusFile():
 
     corpusName = request.args.get('fileName') #Load the specific corpus and assign it to the dictionary table.
 
-    #jsonTimeStart = time.time()
+    pickleDictionary = pickle.load(open(corpusName, 'rb')) # Pickle dictionary to load.
 
-    #dictionary = json.load(open(corpusName,"r"))
-    #jsonTimeEnd = time.time()
-    #jsonTotalTime = jsonTimeEnd - jsonTimeStart 
-
-    #pickleTimeStart = time.time()
-    pickleDictionary = pickle.load(open(corpusName, 'rb'))
-    #pickleTimeEnd = time.time()
-    #pickleTotalTime = pickleTimeEnd - pickleTimeStart 
-
-    #print("Json total time for loading is: " + str(jsonTotalTime) + " pickle total time is: " + str(pickleTotalTime))
+    corpusLists = [] # Lists 2
+    justCorpusInformation = [] # Reset it if user clicks on new link in same sessoin
 
     corpusLists = lists.copy() # Copy to a new list everything that was in lists from the input files.
-    for x in pickleDictionary: # Add the saved corpus information.
-        corpusLists.append([pickleDictionary[x][0],x,pickleDictionary[x][1]])
+    for x in pickleDictionary: # Add the saved corpus information. 
+        corpusLists.append([pickleDictionary[x][0],x,pickleDictionary[x][1]]) # Add the information.
         justCorpusInformation.append([pickleDictionary[x][0],x,pickleDictionary[x][1]])
 
-    r=[] # Get the information for the similarity score.
-    for i in range(0,len(lists)):
-        a = lists[i][0]
-        a = [lis[1] for lis in a] # do intersection comparison
-        for j in range(i + 1,len(corpusLists)):
-            if (lists[i][1] == corpusLists[j][1]):
-                continue
-
-            b = corpusLists[j][0]
-            b = [lis[1] for lis in b]
-            s = dl.SequenceMatcher(None, a, b) # sequence match a&b
-            sum = 0
-            lines = 0
-            for block in s.get_matching_blocks(): #get matching blocks
-                sum = sum + block[2] # calculate total matched hashes
-                if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
-                    lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-            r.append([idNumber, lists[i][1] + ' - ' + corpusLists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-            items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-            idNUmber = idNumber + 1
-
-    r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
+    r = compareAndPrint(lists,corpusLists) # Build the table.
 
     return redirect('/mainTable')
+
+
+
+
 
 @app.route('/mainTable') # To show everything in the main table.
 def mainTable():
     global items
     global r 
-
-
-
-    #items = [(0,'testfiles/file1.py - testfiles/file2.py', 57.2, 20), (1,'testfiles/file1.py - testfiles/file2.py', 57.2, 20)]
-    
     return render_template("mainTable.html",htmlTable = r) # Load the main compairison page.
 
-@app.route('/noCorpus') # If select not to use corpus.
-def noCorpus():
-    global r
-    global idNumber 
-    global lists 
-    global items
-
-    r=[] # Just calculate similairty based off of the inputs
-    for i in range(0,len(lists)):
-        a = lists[i][0]
-        a = [lis[1] for lis in a] # do intersection comparison
-        for j in range(i+1,len(lists)):
-            b = lists[j][0]
-            b = [lis[1] for lis in b]
-            s = dl.SequenceMatcher(None, a, b) # sequence match a&b
-            sum = 0
-            lines = 0
-            for block in s.get_matching_blocks(): #get matching blocks
-                sum = sum + block[2] # calculate total matched hashes
-                if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
-                    lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            #items[idNumber] = lists[i][1] + ' - ' + corpusLists[j][1]
-            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-            items[idNumber] = lists[i][1] + ' - ' + lists[j][1]
-            idNumber = idNumber + 1
-
-    r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
-
-    return redirect('/mainTable')
-
-@app.route('/addToCorpus',methods=['POST']) # If decide to add to corpus.
-def addToCorpus():
-    global justCorpusInformation
+@app.route('/mainTable',methods=['POST'])
+def testAddToCorpus():
+    global justCorpusInformation # Global varaible to save add to corpus
     global justInputInformation
 
-    if request.method == 'POST': # If it is the POST request.
-        saveFileName = request.form.to_dict()
-        #fullPath = "corpus/" + saveFileName['a'] + ".json"
-        pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl"
+    if request.method == 'POST':
+        saveFileName = request.form.to_dict() # Get the name of the file to save
+        pickleFullPath = "corpus/" + saveFileName['a'] + ".pkl" # Build the full path.
         jsonDictionary = {}
 
         for x in justInputInformation: # Copy the input files to the OG_Files directory
             shutil.copy(x[1], "corpus/OG_Files/" + x[2])
             jsonDictionary["corpus/OG_Files/" + x[2]] = [ x[0], x[2] ] # Add to dictionary to be saved.
 
-        if (len(justCorpusInformation) != 0): # Add the corpus used
+        if (len(justCorpusInformation) != 0): # Add the corpus used if there was one.
             for x in justCorpusInformation:
                 jsonDictionary[x[1]] = [x[0], x[2]]
    
-        #json.dump(jsonDictionary, open(fullPath,"w")) # Save the corpus.
-        pickle.dump(jsonDictionary, open(pickleFullPath, 'wb'))
-
-        #jsonDictionary[doc] = [a,originalName] 
-    
+        pickle.dump(jsonDictionary, open(pickleFullPath, 'wb')) #Save the file.
+        
     return redirect('/mainTable')
-
-
+    
 
 @app.route('/Link/<int:id>')
 def single_item_a(id): # renders new page when clicking on link
     global items
     print(items)
-    #element = items[id][1]
     arrayNames = items[id].split(" - ")
     filenames = (arrayNames[0], arrayNames[1])
-    #filenames = ("C:/Users/trvrh/Desktop/Winnowing data/database/testFile.py", "C:/Users/trvrh/Desktop/Winnowing data/database/testFile_rearranged.py")
-    # filenames = element.split(" - ")
 
 
     left_file=open(filenames[0]) # open left and right files

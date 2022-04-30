@@ -36,6 +36,7 @@
             </p>
         </dl>
         <p>Name of file to save <input type = "text" name = "a" /></p>
+        <input type="hidden" name="Check" value="uploadCorpus" />
         <p>
           
             <input type="submit" value="Submit">
@@ -51,8 +52,23 @@
         <tr><th><A HREF="loadCorpusFile?fileName={{i}}">{{i}}</A></th></tr>
     {% endfor %}
     </table>
-    <button onclick="window.location.href = '/noCorpus';">Do not use Corpus</button>
     
+    
+    <form method="post" action="/listCorpus" enctype="multipart/form-data">
+        <input type="hidden" name="Check" value="noCorpus" />
+        <p>
+          
+            <input type="submit" value="Do not use Corpus">
+        </p>
+      </form>
+
+      <form method="post" action="/listCorpus" enctype="multipart/form-data">
+        <input type="hidden" name="Check" value="filter" />
+        <p>
+          
+            <input type="submit" value="Filter">
+        </p>
+      </form>
 
     </body>
 </html>
