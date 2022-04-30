@@ -45,9 +45,13 @@ table, th, td {
 <tr bgcolor="white">
 	{% if start[0] != None %}
 	<td bgcolor = "{{colors[start[0][0]]}}"><a href="left_filled.html#{{start[0][1][0]}}" target="left_code" >{{start[0][1][0], start[0][1][1]}}</a></td>
+	{% else %}
+	<td> </td>
 	{% endif %}
 	{% if start[1] != None %}
 	<td bgcolor = "{{colors[start[1][0]]}}"><a href="right_filled.html#{{start[1][1][0]}}" target="right_code" >{{start[1][1][0], start[1][1][1]}}</a></td>
+	{% else %}
+	<td> </td>
 	{% endif %}
 </tr>
 {% endfor %}

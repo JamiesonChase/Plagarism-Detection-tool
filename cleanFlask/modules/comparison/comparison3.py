@@ -210,7 +210,9 @@ def getBlockMappings(scores, oppBlocks):
         blockMaps = set()
         for line in lineMaps:
             # set addition ignores duplicates
-            blockMaps.add(getBlockFromLine(line, oppBlocks))
+            block = getBlockFromLine(line, oppBlocks)
+            if block != None: 
+                blockMaps.add(block)
         # add this mapping to the dictionary and increment the line number
         mappings[(i, i + score - 1)] = list(blockMaps)
         i += score
