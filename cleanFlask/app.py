@@ -205,7 +205,7 @@ def upload_file():
             originalName = doc 
             doc = 'input/' + doc
             a=process(doc)
-            a=hashingFunction(a,7)
+            a=hashingFunction(a,4)
             a=winnow(4,a)
             lists.append([a,doc,originalName]) # winnow the hashes and append to lists
             justInputInformation.append([a,doc,originalName])
@@ -352,9 +352,9 @@ def testAddToCorpus():
 def single_item_a(id): # renders new page when clicking on link
     global items
     print(items)
+    
     arrayNames = items[id].split(" - ")
     filenames = (arrayNames[0], arrayNames[1])
-
 
     left_file=open(filenames[0]) # open left and right files
     right_file=open(filenames[1])
@@ -405,17 +405,18 @@ def single_item_a(id): # renders new page when clicking on link
         for j in range(startLine, endLine+1):
             res_right[j][2] = colors[color] # changing line #'s color
 
-    Template(render_template('left_template.html',left=res_left)).stream().dump('templates/left_filled.html')
-    Template(render_template('right_template.html',right=res_right)).stream().dump('templates/right_filled.html')
+    
     lines = []
     maxLen = max(len(linesLeft), len(linesRight))
     for i in range(maxLen):
         if i >= len(linesLeft):
             linesLeft.append(None)
-        if i >= len(linesRight):
+        elif i >= len(linesRight):
             linesRight.append(None)
         lines.append((linesLeft[i], linesRight[i]))
 
+    Template(render_template('left_template.html',left=res_left)).stream().dump('templates/left_filled.html')
+    Template(render_template('right_template.html',right=res_right)).stream().dump('templates/right_filled.html')
     return render_template("left-right.html",filenames = filenames,lines=lines,colors=colors)
 
 
