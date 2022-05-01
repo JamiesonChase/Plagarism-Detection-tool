@@ -67,7 +67,7 @@ def compareAndPrint(lists, lists2): # Compare lists to get the table.
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
             r.append([idNumber, lists[i][1] + ' - ' + lists2[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
             items[idNumber] = lists[i][1] + ' - ' + lists2[j][1] # Map idNumber to the name
-            idNUmber = idNumber + 1
+            idNumber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
 
