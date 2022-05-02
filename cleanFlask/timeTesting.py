@@ -140,5 +140,7 @@ createNgrams()
 comparisonsFilter()
 cleanDirectory()
 
+#cleanDirectory()
+
 
     
