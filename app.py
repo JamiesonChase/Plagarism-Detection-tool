@@ -41,22 +41,29 @@ def createNgrams(directory): #Directory to create the ngrams.
         originalName = doc 
         doc = directory + doc
         a=process(doc)
-        a=hashingFunction(a,7)
+        a=hashingFunction(a,4)
         a=winnow(4,a)
         lists.append([a,doc,originalName]) # winnow the hashes and append to lists
 
     return lists # Return the lits
 
-def compareAndPrint(lists, lists2): # Compare lists to get the table.
+def compareAndPrint(lists): # Compare lists to get the table.
     global items
     idNumber = 1
 
-    r=[] # Just calculate similairty based off of the inputs
+
+    r=[]
     for i in range(0,len(lists)):
         a = lists[i][0]
         a = [lis[1] for lis in a] # do intersection comparison
-        for j in range(i+1,len(lists2)): # Second list for the corpus so that the corpus is not compared against each other.
-            b = lists2[j][0]
+        for j in range(i+1,len(lists)):
+
+
+            if ((lists[i][1].find("corpus/filesWithProcessed/") != -1) and (lists[i][1].find("corpus/filesWithProcessed/") != -1)):
+
+                continue
+
+            b = lists[j][0]
             b = [lis[1] for lis in b]
             s = dl.SequenceMatcher(None, a, b) # sequence match a&b
             sum = 0
@@ -65,8 +72,8 @@ def compareAndPrint(lists, lists2): # Compare lists to get the table.
                 sum = sum + block[2] # calculate total matched hashes
                 if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            r.append([idNumber, lists[i][1] + ' - ' + lists2[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
-            items[idNumber] = lists[i][1] + ' - ' + lists2[j][1] # Map idNumber to the name
+            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            items[idNumber] = lists[i][1] + ' - ' + lists[j][1] # Map idNumber to the name
             idNumber = idNumber + 1
 
     r = sorted(r, key=lambda tup: tup[2], reverse=True) # sort by lines matched, tup[2] -> tup[1] to sort by %
@@ -116,7 +123,7 @@ if (len(sys.argv) == 1): # Just running it regularly.
     pass 
 elif (len(sys.argv) == 2): # 
     result = createNgrams(sys.argv[1]) #Command line argument to get the table.
-    r = compareAndPrint(result, result)
+    r = compareAndPrint(result)
     cleanDirectory(sys.argv[1])
     for x in r:
         print(x)
@@ -234,7 +241,6 @@ def upload_corpus():
     if request.method == 'POST': # If it is the POST request.
         requestArguments = request.form.to_dict() # Get the request sent
         if (requestArguments['Check'] == "uploadCorpus"):
-            print("+++++DFSDSF+FDS+DFS+DSF+SD+F+SDF+SDF")
             if 'files[]' not in request.files: # If no files were selected display a message on the page.
                 flash('No file part')
                 return redirect(request.url)
@@ -272,7 +278,7 @@ def upload_corpus():
                 originalName = doc 
                 doc = 'corpus/filesWithProcessed/' + doc
                 a=process(doc)
-                a=hashingFunction(a,7)
+                a=hashingFunction(a,4)
                 a=winnow(4,a)
                 corpusLists.append([a,doc,originalName]) # winnow the hashes and append to lists
                 justCorpusInformation.append([a,doc,originalName]) # Add to the corpus lists that will corresponds to lists2
@@ -280,10 +286,10 @@ def upload_corpus():
 
             pickle.dump(jsonDictionary, open(pickleFullPath, 'wb')) # Save the pickle file
 
-            r = compareAndPrint(lists,corpusLists) # Get the corpus Lists.
+            r = compareAndPrint(corpusLists) # Get the corpus Lists.
 
         elif (requestArguments['Check'] == "noCorpus"): # Else if the user choose no corpus.
-            r = compareAndPrint(lists,lists)
+            r = compareAndPrint(lists)
         
         elif (requestArguments['Check'] == "filter"): # Else if the user choose to do filter
             r = comparisonsFilter(lists)
@@ -311,7 +317,7 @@ def loadCorpusFile():
         corpusLists.append([pickleDictionary[x][0],x,pickleDictionary[x][1]]) # Add the information.
         justCorpusInformation.append([pickleDictionary[x][0],x,pickleDictionary[x][1]])
 
-    r = compareAndPrint(lists,corpusLists) # Build the table.
+    r = compareAndPrint(corpusLists) # Build the table.
 
     return redirect('/mainTable')
 

@@ -184,3 +184,6 @@ How to get command line arguments: https://www.tutorialspoint.com/python3/python
 
 April 28:
 Solve line profiler problem: https://github.com/rkern/line_profiler/issues/35
+
+May 1 2022:
+To find substring inside a string with python: https://codeforgeek.com/python-check-if-string-contains-substring/

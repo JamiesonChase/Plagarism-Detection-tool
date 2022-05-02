@@ -1,3 +1,7 @@
+### To run:
+
+Command line is "python3 app.py [directoryOfInputFiles]" or "python3 app.py -f [directoryOfInputFiles]"
+To start up the server: "python3 app.py"
 ### Team roles:
 Pre-Processing - Chase Jamieson
 
