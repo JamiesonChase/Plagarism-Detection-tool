@@ -3,4 +3,6 @@
 *.py_Stripped
 *.pkl
 *.java_Stripped
-
+corpus/OG_Files/
+corpus/filesWithProcessed/
+input/
