@@ -22,7 +22,7 @@ def index_to_lines(s, index):
     if not len(s):
         return 1
     a = len(s[:min(index)+1].splitlines())
-    return list(range(a,a+1))
+    return a
 
 def hashingFunction(inputString, ngram):
 
