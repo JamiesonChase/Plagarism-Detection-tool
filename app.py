@@ -1,3 +1,5 @@
+from math import ceil
+
 from flask import Flask, url_for, render_template, request, flash, redirect
 from jinja2 import Template
 import random
@@ -69,7 +71,7 @@ def compareAndPrint(lists): # Compare lists to get the table.
                 sum = sum + block[2] # calculate total matched hashes
                 if block[0] < len(a)-1 and block[1] < len(b)-1: # calculate lines matched
                     lines = lines + -lists[i][0][block[0]][0] + lists[i][0][block[0]+block[2]-1][0] + 1
-            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],100*sum/min(len(a),len(b)),lines]) # append to result
+            r.append([idNumber, lists[i][1] + ' - ' + lists[j][1],round(100*sum/min(len(a),len(b)),2),ceil(lines/2)]) # append to result
             items[idNumber] = lists[i][1] + ' - ' + lists[j][1] # Map idNumber to the name
             idNumber = idNumber + 1
 
@@ -334,8 +336,6 @@ def single_item_a(id): # renders new page when clicking on link
 
     left_file=open(filenames[0]) # open left and right files
     right_file=open(filenames[1])
-    print(left_file)
-    print(right_file)
 
     left_text=left_file.readlines() # read lines of left
     left_file.close()
