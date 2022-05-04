@@ -187,3 +187,6 @@ Solve line profiler problem: https://github.com/rkern/line_profiler/issues/35
 
 May 1 2022:
 To find substring inside a string with python: https://codeforgeek.com/python-check-if-string-contains-substring/
+
+May 3 2022:
+To see if the python string starts with a certain string: https://www.programiz.com/python-programming/methods/string/startswith#:~:text=The%20startswith()%20method%20returns,If%20not%2C%20it%20returns%20False%20.
