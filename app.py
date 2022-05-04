@@ -80,7 +80,7 @@ def compareAndPrint(lists): # Compare lists to get the table.
     return r 
 
 def comparisonsFilter(lists): # To do the filtering so same users submission are not compared to each other.
-    idNumber = 0
+    idNumber = 1
 
     r=[] # Just calculate similairty based off of the inputs
     for i in range(0,len(lists)):
