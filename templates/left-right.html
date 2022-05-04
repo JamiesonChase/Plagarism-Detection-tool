@@ -44,12 +44,12 @@ table, th, td {
 {% for start in lines %}
 <tr bgcolor="white">
 	{% if start[0] != None %}
-	<td bgcolor = "{{colors[start[0][0]]}}"><a href="left_filled.html#{{start[0][1][0]}}" target="left_code" >{{start[0][1][0], start[0][1][1]}}</a></td>
+	<td bgcolor = "{{colors[start[0][0]]}}"><a href="javascript:void(0);" onclick="scroll_left({{start[0][1][0]}})">{{start[0][1][0], start[0][1][1]}}</a></td>
 	{% else %}
 	<td> </td>
 	{% endif %}
 	{% if start[1] != None %}
-	<td bgcolor = "{{colors[start[1][0]]}}"><a href="right_filled.html#{{start[1][1][0]}}" target="right_code" >{{start[1][1][0], start[1][1][1]}}</a></td>
+	<td bgcolor = "{{colors[start[1][0]]}}"><a href="javascript:void(0);" onclick="scroll_right({{start[1][1][0]}})" >{{start[1][1][0], start[1][1][1]}}</a></td>
 	{% else %}
 	<td> </td>
 	{% endif %}
@@ -62,15 +62,40 @@ table, th, td {
 
   <div class="flex-child">
     <div class="left">
-        <iframe name="left_code" src="left_filled.html" height="450" width="100%"></iframe>
+        <iframe
+        name="left_code"
+        id="left_code"
+        srcdoc="{% for L,text,color in left %}<PRE id={{L}}><FONT color='{{ color }}'><b>{{ text }}</b></FONT></PRE>{% endfor %}"
+        height="450"
+        width="100%">
+        </iframe>
     </div>
   </div>
   <div class="flex-child">
     <div class="right">
-        <iframe name="right_code" src="right_filled.html" height="450" width="100%"></iframe>
+        <iframe
+        name="right_code"
+        id="right_code"
+        srcdoc="{% for L,text,color in right %}<PRE id={{L}}><FONT color='{{ color }}'><b>{{ text }}</b></FONT></PRE>{% endfor %}"
+        height="450"
+        width="100%">
+        </iframe>
     </div>
   </div>
 
 </div>
 
+<script>
+function scroll_left(line_num) {
+  var iframe = document.getElementById("left_code");
+  var elmnt = iframe.contentWindow.document.getElementsByTagName("PRE")[line_num-1];
+  elmnt.scrollIntoView();
+}
+
+function scroll_right(line_num) {
+  var iframe = document.getElementById("right_code");
+  var elmnt = iframe.contentWindow.document.getElementsByTagName("PRE")[line_num-1];
+  elmnt.scrollIntoView();
+}
+</script>
 </Body></HTML>

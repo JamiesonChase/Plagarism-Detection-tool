@@ -1,18 +1,15 @@
 from flask import Flask, url_for, render_template, request, flash, redirect
 from jinja2 import Template
-from flask_table import Table, Col, LinkCol
 import random
 import os, glob
 import os.path
 from werkzeug.utils import secure_filename 
-import json
 import difflib as dl
 from modules.preprocessing.process import process
 from modules.hashingFingerprinting.hashFingerprint import hashingFunction
 from modules.winnowing.winnowing import winnow
 from modules.comparison.comparison3 import highlightedBlocks
 import shutil 
-import time
 import pickle
 import sys 
 
@@ -142,37 +139,9 @@ else: # Error in the format.
     print("Format: python3 [input directory] or python3 -f [input directory]")
     exit()
 
-class LinkDeciderCol(LinkCol): # will be deleted
-
-    def url(self, item): # will be deleted
-        endpoint = self.endpoint['a']
-        return url_for(endpoint, **self.url_kwargs(item))
-
-
-class ItemTable(Table): # will be deleted
-    classes = ['myclass']
-    name = Col('File Pairs')
-    score = Col("Scores")
-    link_decider = LinkDeciderCol(
-        'Link',
-        {'a': 'single_item_a'},
-        url_kwargs=dict(id='id'))
-
-class CompareTable(Table): # will be deleted
-    classes = ['myclass']
-    left = Col('Left File')
-    right = Col('Right File')
 
 def allowed_file(filename): # Check if the extension is allowed.
     return '.' in filename and filename.rsplit('.',1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route('/Link/left_filled.html') # left code file
-def left():
-    return render_template("left_filled.html")
-
-@app.route('/Link/right_filled.html') # right code file
-def right():
-    return render_template("right_filled.html")
 
 @app.route('/') #Initial Page where you can upload
 def upload_form():
@@ -357,13 +326,14 @@ def testAddToCorpus():
 @app.route('/Link/<int:id>')
 def single_item_a(id): # renders new page when clicking on link
     global items
-    print(items)
-    
+
     arrayNames = items[id].split(" - ")
     filenames = (arrayNames[0], arrayNames[1])
 
     left_file=open(filenames[0]) # open left and right files
     right_file=open(filenames[1])
+    print(left_file)
+    print(right_file)
 
     left_text=left_file.readlines() # read lines of left
     left_file.close()
@@ -421,12 +391,12 @@ def single_item_a(id): # renders new page when clicking on link
             linesRight.append(None)
         lines.append((linesLeft[i], linesRight[i]))
 
-    Template(render_template('left_template.html',left=res_left)).stream().dump('templates/left_filled.html')
-    Template(render_template('right_template.html',right=res_right)).stream().dump('templates/right_filled.html')
-    return render_template("left-right.html",filenames = filenames,lines=lines,colors=colors)
-
-
-
+    return render_template("left-right.html",
+                           filenames = filenames,
+                           lines=lines,
+                           colors=colors,
+                           left=res_left,
+                           right=res_right)
 
 if __name__ == '__main__':
     # html table
