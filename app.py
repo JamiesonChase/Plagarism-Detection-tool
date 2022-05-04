@@ -353,7 +353,8 @@ def single_item_a(id): # renders new page when clicking on link
         i += 1
 
     linesLeft, linesRight = highlightedBlocks(filenames[0], filenames[1]) #[[colorNum, (startLine, endLine)], ...]
-    colors = ['blue','green','red','orange','purple','brown','violet','turquoise','cadetblue']
+    colors = ['blue','green','red','orange','purple','brown','violet','turquoise','cadetblue','indigo',
+              'Sienna','Coral','DarkOliveGreen','OrangeRed','YellowGreen']
     for line in linesLeft: line[0] = line[0] % len(colors)
     for line in linesRight: line[0] = line[0] % len(colors)
     random.shuffle(colors)
