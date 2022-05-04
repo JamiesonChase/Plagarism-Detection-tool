@@ -56,7 +56,7 @@ def compareAndPrint(lists): # Compare lists to get the table.
         for j in range(i+1,len(lists)):
 
 
-            if ((lists[i][1].find("corpus/filesWithProcessed/") != -1) and (lists[i][1].find("corpus/filesWithProcessed/") != -1)):
+            if ( ((lists[i][1].startswith("corpus/filesWithProcessed/") == True) and (lists[i][1].startswith("corpus/filesWithProcessed/") == True) ) or ( (lists[i][1].startswith("corpus/OG_Files/") == True) and (lists[i][1].startswith("corpus/OG_Files/") == True) )):
 
                 continue
 
@@ -245,13 +245,14 @@ def upload_corpus():
 
             for doc in documents: # Add the winnowed information of the corpus to variables.
                 originalName = doc 
+                originalFiles = "corpus/OG_Files/" + doc
                 doc = 'corpus/filesWithProcessed/' + doc
                 a=process(doc)
                 a=hashingFunction(a,4)
                 a=winnow(4,a)
                 corpusLists.append([a,doc,originalName]) # winnow the hashes and append to lists
                 justCorpusInformation.append([a,doc,originalName]) # Add to the corpus lists that will corresponds to lists2
-                jsonDictionary[doc] = [a,originalName] # Add to the json dictionary
+                jsonDictionary[originalFiles] = [a,originalName] # Add to the json dictionary
 
             pickle.dump(jsonDictionary, open(pickleFullPath, 'wb')) # Save the pickle file
 
@@ -316,7 +317,8 @@ def testAddToCorpus():
 
         if (len(justCorpusInformation) != 0): # Add the corpus used if there was one.
             for x in justCorpusInformation:
-                jsonDictionary[x[1]] = [x[0], x[2]]
+
+                jsonDictionary["corpus/OG_Files/" + x[2]] = [x[0], x[2]]
    
         pickle.dump(jsonDictionary, open(pickleFullPath, 'wb')) #Save the file.
         
