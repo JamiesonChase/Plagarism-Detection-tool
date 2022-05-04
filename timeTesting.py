@@ -20,6 +20,7 @@ import atexit
 profile = line_profiler.LineProfiler()
 prof = line_profiler.LineProfiler()
 atexit.register(profile.print_stats)
+import sys 
 
 
 
@@ -29,14 +30,14 @@ global lists
 lists = [] #How initial information about the input
 
 @profile
-def createNgrams():
+def createNgrams(dir):
     global lists
     global r
-    documents = os.listdir('Test2/')  # find documents inside testfiles directory
+    documents = os.listdir(dir)  # find documents inside testfiles directory
     lists = []
     for doc in documents: # Go through the process of getting the winnowed information for the inputs
         originalName = doc 
-        doc = 'Test2/' + doc
+        doc = dir + doc
         a=process(doc)
         a=hashingFunction(a,7)
         a=winnow(4,a)
@@ -121,24 +122,36 @@ def comparisonsFilter():
         num = num + 1
 
     average = total / num 
-    print("++++++++++++++++++++++++++++++++++++++++++++")
     print("Average is: " + str(average))
 
     
-        
-
-def cleanDirectory():
-    directory = "Test2/"
+def cleanDirectory(dir):
+    directory = dir
     files_in_directory = os.listdir(directory)
     filtered_files = [file for file in files_in_directory if file.endswith("_Stripped")]
     for file in filtered_files:
         path_to_file = os.path.join(directory, file)
         os.remove(path_to_file)
 
+if (len(sys.argv) == 2):
+    createNgrams(sys.argv[1])
+    comparisons()
+    cleanDirectory(sys.argv[1])
 
-createNgrams()
-comparisonsFilter()
-cleanDirectory()
+elif (len(sys.argv) == 3): # Command line argument to use the filter.
+    if (sys.argv[1] != "-f"):
+        print("Format: python3 timeTesting.py [input directory] or python3 timeTesting.py -f [input directory]")
+        exit()
+
+    createNgrams(sys.argv[2])
+    comparisonsFilter()
+    cleanDirectory(sys.argv[2])
+
+else: # Error in the format.
+    print("Format: python3 timeTesting.py [input directory] or python3 timeTesting.py -f [input directory]")
+    exit()
+
+
 
 #cleanDirectory()
 

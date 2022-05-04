@@ -132,7 +132,7 @@ elif (len(sys.argv) == 3): # Command line argument to use the filter.
         print(x)
     exit()
 else: # Error in the format.
-    print("Format: python3 [input directory] or python3 -f [input directory]")
+    print("Format: python3 app.py [input directory] or python3 app.py -f [input directory]")
     exit()
 
 
