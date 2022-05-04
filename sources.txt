@@ -190,3 +190,7 @@ To find substring inside a string with python: https://codeforgeek.com/python-ch
 
 May 3 2022:
 To see if the python string starts with a certain string: https://www.programiz.com/python-programming/methods/string/startswith#:~:text=The%20startswith()%20method%20returns,If%20not%2C%20it%20returns%20False%20.
+
+May 4 2022:
+Pip freeze: https://docs.microsoft.com/en-us/visualstudio/python/managing-required-packages-with-requirements-txt?view=vs-2022#:~:text=The%20most%20common%20command%20is,txt.&text=If%20you%20want%20to%20install,use%20the%20Install%20from%20requirements.
+Image for the karp-rabin hashing slides: https://www.infoarena.ro/blog/rolling-hash
